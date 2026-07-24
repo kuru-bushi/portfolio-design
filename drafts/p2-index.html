@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-2《星月夜》洗練パターン比較 II（フレーム / セクション表示 / アバター 3 案）</title>
+<title>P-2《星月夜》現役候補 2 案（厚塗り統合案）</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -29,83 +29,53 @@
   }
   .frame-wrap { height: 550px; overflow: hidden; }
   .frozen-head { font-size: 16px; margin: 40px 0 16px; color: #8b8b99; border-top: 1px solid #3a3a46; padding-top: 24px; }
+  .out-list { font-size: 12.5px; color: #999; line-height: 2.1; margin-bottom: 8px; }
+  .out-list a { color: #22d3ee; text-decoration: none; }
+  .out-list a:hover { text-decoration: underline; }
   @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-  <h1>P-2《星月夜》洗練パターン比較 II：フレーム / セクション表示 / アバター 6 案</h1>
-  <p class="note">各パネルは 50% 縮小表示です。ホバー・スクロール時の動きは「原寸で開く」で確認してください。スクロールバーは全案 B「月光の筆」（金→群青のピル型）で統一済みです。</p>
+  <h1>P-2《星月夜》現役候補：厚塗り統合案 2 パターン</h1>
+  <p class="note">各パネルは 50% 縮小表示です。ホバー・スクロール・「すべて表示する」ボタンの動きは「原寸で開く」で確認してください。</p>
   <ul class="common">
-    <li><b>今回の比較軸（3 案で異なる部分）</b>: Works のフレームデザイン / スクロール時のセクション強調方法 / 左上アバター</li>
-    <li><b>共通の修正</b>: 上へスクロールしたときにセクションが非アクティブのままになるバグを修正（常にどれか 1 つが選ばれる方式に変更）。全体を暗くする減光方式は廃止</li>
+    <li><b>決定事項（両案共通）</b></li>
+    <li>Works の枠・セクション強調 = E「厚塗り」（油絵フィルタで揺らぐ二重フレーム / 筆致の下線）</li>
+    <li>Works の多件数表示 = 「✦ すべて表示する（全 10 件）」で展開する省略 UI（J 案を統合）</li>
+    <li>Articles の多件数表示 = 最新 5 件 + 「過去の記事アーカイブへ →」（M 案を統合）</li>
+    <li>スクロールバー = B「月光の筆」 / 境界線 = P7 式 / スクロールスパイ修正済み</li>
+    <li><b>比較軸はアイコンのみ</b>: D の 3D 油絵の月 か、E のパレットナイフか</li>
   </ul>
   <div class="grid">
     <div class="cell">
-      <div class="bar">P-2D. 額装 — 美術館の二重額 <a href="mock-p2d-gallery.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 金の内縁+外側に浮かせた細い額。ホバーで額ごと傾いて持ち上がる ／ セクション: 巨大な透かし番号+天井スポットライト ／ アバター: 筆致テクスチャが自転する「3D 油絵の月」（canvas）</div>
-      <div class="frame-wrap"><iframe src="mock-p2d-gallery.html"></iframe></div>
+      <div class="bar">P-2D 更新版 — アイコン: 3D 油絵の月 <a href="mock-p2d2-oilmoon.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">渦の筆致テクスチャが自転する canvas 製の月。球面の陰影で立体に見える。枠・セクション・件数表示は E 仕様。</div>
+      <div class="frame-wrap"><iframe src="mock-p2d2-oilmoon.html"></iframe></div>
     </div>
     <div class="cell">
-      <div class="bar">P-2E. 厚塗り — 絵の具で描いた歪む枠 <a href="mock-p2e-impasto.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 油絵フィルタで縁が筆致のように揺らぐ二重フレーム ／ セクション: 太い絵の具の下線がスッと走る ／ アバター: パレットナイフの厚塗りスクエア</div>
-      <div class="frame-wrap"><iframe src="mock-p2e-impasto.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2F. 星座 — つながる星のフレーム <a href="mock-p2f-constellation.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 点線+星ノード。ホバーで星がつながり実線に ／ セクション: 見出しが 1 文字ずつ星のように灯り、小星座の線がつながる ／ アバター: 月の軌道を 2 つの星が巡る</div>
-      <div class="frame-wrap"><iframe src="mock-p2f-constellation.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2G. 渦潮 — 反転する渦の枠 <a href="mock-p2g-vortex.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 対角だけ丸めた非対称フレーム。ホバーで渦の向きが反転し金の弧が光る ／ セクション: 月の周りを渦のリングが回り、見出しに金のシマーが流れる ／ アバター: conic-gradient が自転する銀河の渦</div>
-      <div class="frame-wrap"><iframe src="mock-p2g-vortex.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2H. 月相 — 満ち欠けるフレームと月 <a href="mock-p2h-moonphase.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 四隅に新月のリング。ホバーで金の満月に満ちる ／ セクション: 三日月がすっと満月に満ち、月光の点線が伸びる ／ アバター: 夜の影が横切り満ち欠けを繰り返す月</div>
-      <div class="frame-wrap"><iframe src="mock-p2h-moonphase.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2I. ステンドグラス — 色ガラスと鉛線の窓 <a href="mock-p2i-vitrail.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">枠: 色ガラスのグラデーション縁。ホバーで光条がガラスを横切る ／ セクション: 色ガラスの栞バーが伸びて見出しが窓の光で浮かぶ ／ アバター: 鉛線で仕切られたバラ窓がゆっくり回る</div>
-      <div class="frame-wrap"><iframe src="mock-p2i-vitrail.html"></iframe></div>
+      <div class="bar">P-2E 更新版 — アイコン: パレットナイフ <a href="mock-p2e2-impasto.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">絵の具の塊が油絵フィルタで歪む厚塗りスクエア。ホバーで少し傾く。枠・セクション・件数表示は同じ E 仕様。</div>
+      <div class="frame-wrap"><iframe src="mock-p2e2-impasto.html"></iframe></div>
     </div>
   </div>
-  <h2 class="frozen-head" style="color:#eee">件数が増えたときの Works / Articles 表示 4 案（Works 10 件・Articles 8 件のダミーデータ入り）</h2>
-  <div class="grid">
-    <div class="cell">
-      <div class="bar">P-2J. 省略 + 展開 — すべて見るボタン <a href="mock-p2j-expand.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">初期表示は Works 4 件・Articles 3 件のみ。金の破線ボタン「✦ すべて見る（全 N 件）」で残りがふわっと展開。たたむと元のセクション位置へ戻る。ページの縦の長さを一定に保てる定番案。</div>
-      <div class="frame-wrap"><iframe src="mock-p2j-expand.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2K. 横スクロール回廊 — ギャラリーの壁 <a href="mock-p2k-hscroll.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">カードを横一列に並べ、画廊の壁のように横へスクロール。端は夜にフェードし、下の金のレールが現在地を表示。矢印ボタンで 1 画面ずつ送れる。縦の長さは最小、作品数の多さを演出できる。</div>
-      <div class="frame-wrap"><iframe src="mock-p2k-hscroll.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2L. タブ切り替え — カテゴリ / 年で絞り込み <a href="mock-p2l-tabs.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">Works は WEB / AI / TOOL、Articles は年のピルタブ（件数バッジ付き）で絞り込み。見たいものへ最短で辿り着ける。件数がさらに増えても破綻しにくい。</div>
-      <div class="frame-wrap"><iframe src="mock-p2l-tabs.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2M. ページ送り + アーカイブ <a href="mock-p2m-paging.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">Works は 4 件ずつ、星のドット ✦ と矢印でページ送り。Articles は最新 5 件だけ見せて「過去記事アーカイブへ →」で別ページへ逃がす。トップを常に一画面級のコンパクトさに保つ案。</div>
-      <div class="frame-wrap"><iframe src="mock-p2m-paging.html"></iframe></div>
-    </div>
-  </div>
-  <h2 class="frozen-head">決定済み・参考</h2>
-  <div class="grid">
-    <div class="cell">
-      <div class="bar">P-2B. スクロールバー基準（決定） <a href="mock-p2b-scroll-gold.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">スクロールバーは本案「月光の筆」に決定。D/E/F すべてに適用済み。</div>
-      <div class="frame-wrap"><iframe src="mock-p2b-scroll-gold.html"></iframe></div>
-    </div>
-    <div class="cell">
-      <div class="bar">P-2. 改修前の版 <a href="mock-p2-flowfield.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">検討済み: <a href="mock-p2a-scroll-hidden.html" target="_blank" style="color:#22d3ee">A 消灯</a> ／ <a href="mock-p2c-scroll-star.html" target="_blank" style="color:#22d3ee">C 流星</a>（スクロールバー比較で B に敗退）</div>
-      <div class="frame-wrap"><iframe src="mock-p2-flowfield.html"></iframe></div>
-    </div>
-  </div>
+
+  <h2 class="frozen-head">候補外（アーカイブ・これ以上編集しない）</h2>
+  <p class="out-list">
+    洗練 II（フレーム / セクション / アバターの組み合わせ）:
+    <a href="mock-p2d-gallery.html" target="_blank">D 額装</a> ／
+    <a href="mock-p2e-impasto.html" target="_blank">E 厚塗り（旧）</a> ／
+    <a href="mock-p2f-constellation.html" target="_blank">F 星座</a> ／
+    <a href="mock-p2g-vortex.html" target="_blank">G 渦潮</a> ／
+    <a href="mock-p2h-moonphase.html" target="_blank">H 月相</a> ／
+    <a href="mock-p2i-vitrail.html" target="_blank">I ステンドグラス</a><br>
+    件数増加時の表示: <a href="mock-p2j-expand.html" target="_blank">J 省略+展開</a> ／
+    <a href="mock-p2k-hscroll.html" target="_blank">K 横スクロール回廊</a> ／
+    <a href="mock-p2l-tabs.html" target="_blank">L タブ切り替え</a> ／
+    <a href="mock-p2m-paging.html" target="_blank">M ページ送り+アーカイブ</a><br>
+    スクロールバー比較: <a href="mock-p2a-scroll-hidden.html" target="_blank">A 消灯</a> ／
+    <a href="mock-p2b-scroll-gold.html" target="_blank">B 月光の筆（採用）</a> ／
+    <a href="mock-p2c-scroll-star.html" target="_blank">C 流星</a> ／
+    改修前: <a href="mock-p2-flowfield.html" target="_blank">P-2 初版</a>
+  </p>
 </body>
 </html>
