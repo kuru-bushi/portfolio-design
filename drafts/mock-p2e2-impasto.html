@@ -263,6 +263,24 @@
   }
   .archive:hover { text-shadow: 0 0 12px var(--star); }
 
+  /* CONTACT: 厚塗り枠のボックスから別ページへ飛ばす */
+  .contact-box {
+    position: relative; text-align: center; padding: 46px 30px;
+    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
+    border-radius: 3px;
+  }
+  .contact-box .cfr {
+    position: absolute; inset: -4px; pointer-events: none;
+    border: 2.5px solid rgba(126, 168, 232, 0.55); border-radius: 5px; filter: url(#oilframe);
+  }
+  .contact-box p { font-size: 13px; color: var(--sub); margin-bottom: 24px; }
+  .contact-btn {
+    display: inline-block; padding: 13px 36px; font-size: 12px; letter-spacing: 3px;
+    color: var(--star); text-decoration: none;
+    border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px; transition: all .25s;
+  }
+  .contact-btn:hover { background: rgba(255, 215, 106, 0.12); border-style: solid; text-shadow: 0 0 10px var(--star); }
+
   .pback {
     position: fixed; right: 30px; bottom: 16px; z-index: 97;
     font-size: 11px; letter-spacing: 2px; color: var(--sub); text-decoration: none;
@@ -449,19 +467,33 @@
     <div class="sec-head reveal"><span class="moon"></span><span class="num sans">03</span><h2>CAREER</h2><span class="rule"></span></div>
     <div class="timeline sans">
       <div class="tl-item reveal">
-        <time>2024 —</time>
-        <h4>Web エンジニア</h4>
-        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+        <time>2025 —</time>
+        <h4>IT コンサルタント</h4>
+        <p>DX 推進・システム導入の企画から実行までを支援。</p>
       </div>
       <div class="tl-item reveal">
-        <time>2022 — 2024</time>
-        <h4>システムエンジニア</h4>
-        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+        <time>2022 — 2025</time>
+        <h4>AI クラウドエンジニア</h4>
+        <p>クラウドインフラの構築・自動化、AI サービスの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2021 — 2022</time>
+        <h4>Web エンジニア</h4>
+        <p>Web アプリケーションの開発・運用を担当。</p>
       </div>
     </div>
   </section>
 
-  <footer id="contact" class="sans">
+  <section id="contact">
+    <div class="sec-head reveal"><span class="moon"></span><span class="num sans">04</span><h2>CONTACT</h2><span class="rule"></span></div>
+    <div class="contact-box sans reveal">
+      <i class="cfr"></i>
+      <p>お仕事のご相談・ご連絡は、お問い合わせページからお願いします。</p>
+      <a class="contact-btn" href="contact.html">✦ お問い合わせページへ →</a>
+    </div>
+  </section>
+
+  <footer class="sans">
     <span>© 2026 IKEDA</span>
     <span>LA NUIT ÉTOILÉE</span>
   </footer>
@@ -755,7 +787,7 @@
     for (const s of secs) if (s.getBoundingClientRect().top <= line) cur = s;
     secs.forEach(s => s.classList.toggle('focus', s === cur));
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
-    const id = (atBottom && footerC) ? footerC.id : cur.id;
+    const id = (atBottom && footerC && footerC.id) ? footerC.id : cur.id;
     navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
   }
   window.addEventListener('scroll', spyUpdate, { passive: true });
