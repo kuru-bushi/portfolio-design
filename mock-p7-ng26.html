@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-7 カンディンスキー《コンポジション VIII》× Ng 26 — 油彩の構成</title>
+<title>P-7 カンディンスキー × Ng 26 — 夜の寒色の油彩構成</title>
 <style>
   :root {
-    --wall: #191713;
-    --canvas: #d8cdb0;
-    --ink: #241f17;
-    --sub: #6e6555;
-    --gold: #c9a227;
-    --red: #c22f1e;
-    --blue: #16355c;
-    --yellow: #e0a51c;
-    --green: #1e5c47;
+    --wall: #12151d;
+    --canvas: #101318;
+    --ink: #dfe5f0;
+    --sub: #8593a8;
+    --gold: #7fc4de;
+    --red: #5b8dd8;
+    --blue: #2a4d80;
+    --yellow: #58c4ba;
+    --green: #6b79d0;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -38,10 +38,10 @@
   }
   #cur-dot { width: 7px; height: 7px; background: var(--red); }
   #cur-ring {
-    width: 34px; height: 34px; border: 1.5px solid rgba(36, 31, 23, 0.6);
+    width: 34px; height: 34px; border: 1.5px solid rgba(223, 229, 240, 0.5);
     transition: width .25s, height .25s, border-color .25s, background .25s;
   }
-  #cur-ring.on { width: 58px; height: 58px; border-color: var(--red); background: rgba(194, 47, 30, 0.10); }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--red); background: rgba(91, 141, 216, 0.12); }
   @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
 
   .reveal { opacity: 0; transform: translateY(38px); transition: opacity .9s ease, transform .9s ease; }
@@ -52,30 +52,30 @@
 
   /* ===== サイドバー：美術館の暗い壁 + 金の額 ===== */
   aside {
-    width: 280px; background: var(--wall); color: #e8e0cf;
+    width: 280px; background: var(--wall); color: #dfe5f0;
     border-right: 3px solid var(--gold);
     padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
   }
   .avatar {
     width: 96px; height: 96px; margin-bottom: 22px;
-    border: 3px solid var(--gold); padding: 5px; background: #23201a;
+    border: 3px solid var(--gold); padding: 5px; background: #171c27;
   }
   .avatar .inner {
-    width: 100%; height: 100%; position: relative; background: #d8cdb0; overflow: hidden;
+    width: 100%; height: 100%; position: relative; background: #1a2030; overflow: hidden;
   }
   .avatar .inner i { position: absolute; }
   aside h1 { font-size: 22px; letter-spacing: 4px; font-weight: 600; color: #fff; }
   aside .role { font-size: 11px; letter-spacing: 4px; margin: 5px 0 20px; color: var(--gold); }
   .caption {
-    border: 1px solid rgba(201, 162, 39, 0.5); padding: 14px 16px; margin-bottom: 30px;
-    background: rgba(35, 32, 26, 0.7); font-size: 11px; line-height: 1.9; color: #b3a88f;
+    border: 1px solid rgba(127, 196, 222, 0.4); padding: 14px 16px; margin-bottom: 30px;
+    background: rgba(20, 25, 35, 0.7); font-size: 11px; line-height: 1.9; color: #9fb0c6;
   }
   .caption .title { font-size: 13px; color: #fff; font-weight: 600; letter-spacing: 1px; }
   .caption .em { color: var(--gold); }
   aside nav { display: flex; flex-direction: column; margin-bottom: 32px; }
   aside nav a {
-    color: #b3a88f; text-decoration: none; font-size: 12px; letter-spacing: 4px;
-    padding: 13px 4px; border-bottom: 1px solid rgba(201, 162, 39, 0.3);
+    color: #9fb0c6; text-decoration: none; font-size: 12px; letter-spacing: 4px;
+    padding: 13px 4px; border-bottom: 1px solid rgba(127, 196, 222, 0.3);
     display: flex; align-items: center; gap: 12px;
     transition: color .2s, padding-left .25s;
   }
@@ -87,14 +87,14 @@
   aside nav a:hover, aside nav a.active { color: #fff; padding-left: 8px; }
   aside nav a:hover .brush, aside nav a.active .brush { transform: rotate(6deg); width: 22px; }
   .side-sec { margin-bottom: 30px; }
-  .side-sec h3 { font-size: 10px; letter-spacing: 4px; color: #7d7460; margin-bottom: 13px; text-transform: uppercase; }
+  .side-sec h3 { font-size: 10px; letter-spacing: 4px; color: #6e7f96; margin-bottom: 13px; text-transform: uppercase; }
   .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
   .skill-tags span {
-    font-size: 11px; border: 1px solid rgba(201, 162, 39, 0.45);
-    padding: 3px 12px; color: #b3a88f; transition: all .2s;
+    font-size: 11px; border: 1px solid rgba(127, 196, 222, 0.4);
+    padding: 3px 12px; color: #9fb0c6; transition: all .2s;
   }
   .skill-tags span:hover { color: var(--wall); background: var(--gold); }
-  .sns a { color: #b3a88f; font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a { color: #9fb0c6; font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
   .sns a:hover { color: var(--gold); }
 
   main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
@@ -103,7 +103,7 @@
   .hero::before {
     content: ""; position: absolute; inset: -52px -60px; z-index: -1;
     background: radial-gradient(ellipse at 32% 42%,
-      rgba(216, 205, 176, 0.94) 0%, rgba(216, 205, 176, 0.6) 56%, transparent 80%);
+      rgba(16, 19, 24, 0.94) 0%, rgba(16, 19, 24, 0.6) 56%, transparent 80%);
   }
   .hero .eyebrow { font-size: 12px; letter-spacing: 7px; color: var(--blue); margin-bottom: 20px; font-weight: 600; }
   .hero h2 { font-size: 56px; line-height: 1.28; font-weight: 600; letter-spacing: 2px; }
@@ -119,46 +119,46 @@
 
   .works { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
   .work {
-    background: #f6f1e3; border: 2px solid var(--ink); position: relative;
-    box-shadow: 0 10px 26px rgba(36, 31, 23, 0.25);
+    background: #171c27; border: 1px solid rgba(223, 229, 240, 0.35); position: relative;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
     transition: transform .22s, box-shadow .22s;
   }
-  .work:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: 0 22px 44px rgba(36, 31, 23, 0.35); }
-  .work .stripe { height: 12px; border-bottom: 2px solid var(--ink); }
+  .work:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: 0 22px 44px rgba(0, 0, 0, 0.65); }
+  .work .stripe { height: 12px; border-bottom: 1px solid rgba(223, 229, 240, 0.35); }
   .work .body { padding: 24px; }
   .work h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: 1px; }
   .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
   .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; font-weight: 700; }
   .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
   .work .links a {
-    color: #f6f1e3; background: var(--ink); text-decoration: none; padding: 6px 15px;
+    color: #101318; background: var(--ink); text-decoration: none; padding: 6px 15px;
     transition: background .2s;
   }
   .work .links a:hover { background: var(--red); }
 
   .article {
     display: flex; align-items: baseline; gap: 20px; padding: 20px 16px;
-    border-bottom: 1px solid rgba(36, 31, 23, 0.3);
-    text-decoration: none; color: inherit; background: rgba(246, 241, 227, 0.82);
+    border-bottom: 1px solid rgba(223, 229, 240, 0.18);
+    text-decoration: none; color: inherit; background: rgba(18, 23, 33, 0.82);
     transition: background .25s, padding-left .25s;
   }
   .article:first-of-type { border-top: 2px solid var(--ink); }
-  .article:last-of-type { border-bottom: 2px solid var(--ink); }
-  .article:hover { background: #f6f1e3; padding-left: 28px; }
+  .article:last-of-type { border-bottom: 1px solid rgba(223, 229, 240, 0.35); }
+  .article:hover { background: #1c222f; padding-left: 28px; }
   .article time { font-size: 12px; color: var(--blue); white-space: nowrap; letter-spacing: 1px; font-weight: 700; }
   .article .t { font-size: 15px; flex: 1; }
   .article:hover .t { color: var(--red); }
-  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(36, 31, 23, 0.35); border-radius: 999px; padding: 1px 10px; }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(223, 229, 240, 0.3); border-radius: 999px; padding: 1px 10px; }
 
-  .timeline { border-left: 2px solid var(--ink); padding-left: 28px; margin-left: 10px; }
+  .timeline { border-left: 1px solid rgba(223, 229, 240, 0.35); padding-left: 28px; margin-left: 10px; }
   .tl-item { position: relative; padding-bottom: 32px; }
   .tl-item::before {
     content: ""; position: absolute; left: -35px; top: 8px;
     width: 12px; height: 12px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #e56a54, var(--red));
-    border: 2px solid var(--ink); transition: transform .25s;
+    background: radial-gradient(circle at 35% 35%, #9fc2ee, var(--red));
+    border: 1px solid rgba(223, 229, 240, 0.4); transition: transform .25s;
   }
-  .tl-item:nth-child(2)::before { background: radial-gradient(circle at 35% 35%, #f0c96a, var(--yellow)); }
+  .tl-item:nth-child(2)::before { background: radial-gradient(circle at 35% 35%, #a5e6df, var(--yellow)); }
   .tl-item:hover::before { transform: scale(1.3); }
   .tl-item time { font-size: 12px; color: var(--red); letter-spacing: 2px; font-weight: 700; }
   .tl-item h4 { font-size: 16px; margin: 2px 0; letter-spacing: 1px; }
@@ -188,10 +188,10 @@
 <aside>
   <div class="avatar">
     <div class="inner">
-      <i style="background:#c22f1e; width:56%; height:56%; border-radius:50%; left:6%; top:8%"></i>
-      <i style="background:#16355c; width:70%; height:14%; left:16%; top:64%; transform:rotate(-14deg)"></i>
-      <i style="background:#e0a51c; width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-bottom:28px solid #e0a51c; right:4%; top:6%"></i>
-      <i style="background:#1e5c47; width:22%; height:22%; right:10%; bottom:8%"></i>
+      <i style="background:#5b8dd8; width:56%; height:56%; border-radius:50%; left:6%; top:8%"></i>
+      <i style="background:#2a4d80; width:70%; height:14%; left:16%; top:64%; transform:rotate(-14deg)"></i>
+      <i style="background:#58c4ba; width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-bottom:28px solid #58c4ba; right:4%; top:6%"></i>
+      <i style="background:#6b79d0; width:22%; height:22%; right:10%; bottom:8%"></i>
     </div>
   </div>
   <h1>IKEDA</h1>
@@ -201,7 +201,7 @@
     <div class="title">Composition in Motion</div>
     2026 ── スクリーンに油彩とコード<br>
     <span class="em">カンディンスキー《コンポジション VIII》</span>(1923) と
-    <span class="em">ルイス・メディナ《Ng 26》</span>(2021) に着想。筆致はすべてプログラムで描画。
+    <span class="em">ルイス・メディナ《Ng 26》</span>(2021) に着想。筆致はすべてプログラムで描画。夜想の寒色変奏。
   </div>
 
   <nav class="sans">
@@ -227,9 +227,9 @@
 
 <main>
   <div class="hero">
-    <div class="eyebrow sans">AFTER KANDINSKY — COMPOSITION VIII</div>
+    <div class="eyebrow sans">AFTER KANDINSKY — NOCTURNAL VARIATION</div>
     <h2>油彩の筆致が、<br><em>構図</em>を奏でる。</h2>
-    <p class="sans">円・三角・線分——カンディンスキーの造形言語を、油絵具のかすれとムラごとコードで再現したポートフォリオ。クリックのたびに、新しい一枚が描き直されます。</p>
+    <p class="sans">円・三角・線分——カンディンスキーの造形言語を、黒いキャンバスの上に寒色の油絵具で再現したポートフォリオ。クリックのたびに、新しい一枚が描き直されます。</p>
     <div class="hint sans">✦ 余白をクリックすると構図が描き直されます / スクロールとマウスで絵に視差がつきます</div>
   </div>
 
@@ -237,7 +237,7 @@
     <div class="sec-head reveal"><span class="daub" style="background:var(--red)"></span><h2>WORKS</h2><span class="rule"></span></div>
     <div class="works sans">
       <div class="work reveal">
-        <div class="stripe" style="background:repeating-linear-gradient(95deg, #c22f1e 0 34px, #a82717 34px 40px, #c22f1e 40px 78px, #d4472f 78px 84px)"></div>
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #5b8dd8 0 34px, #4a77bd 34px 40px, #5b8dd8 40px 78px, #6f9de2 78px 84px)"></div>
         <div class="body">
           <h3>タスク管理アプリ</h3>
           <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
@@ -246,7 +246,7 @@
         </div>
       </div>
       <div class="work reveal">
-        <div class="stripe" style="background:repeating-linear-gradient(95deg, #16355c 0 30px, #102845 30px 37px, #16355c 37px 70px, #1f4674 70px 76px)"></div>
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #2a4d80 0 30px, #20406e 30px 37px, #2a4d80 37px 70px, #33589b 70px 76px)"></div>
         <div class="body">
           <h3>RAG チャットボット</h3>
           <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
@@ -255,16 +255,16 @@
         </div>
       </div>
       <div class="work reveal">
-        <div class="stripe" style="background:repeating-linear-gradient(95deg, #e0a51c 0 32px, #c89010 32px 38px, #e0a51c 38px 72px, #f0bc45 72px 78px)"></div>
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #58c4ba 0 32px, #48a89f 32px 38px, #58c4ba 38px 72px, #6fd2c9 72px 78px)"></div>
         <div class="body">
           <h3>家計簿 PWA</h3>
           <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
-          <div class="stack" style="color:#a87b0e">REACT / PWA</div>
+          <div class="stack" style="color:#58c4ba">REACT / PWA</div>
           <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
         </div>
       </div>
       <div class="work reveal">
-        <div class="stripe" style="background:repeating-linear-gradient(95deg, #1e5c47 0 36px, #164a38 36px 42px, #1e5c47 42px 80px, #2a7a5e 80px 86px)"></div>
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #6b79d0 0 36px, #5866b8 36px 42px, #6b79d0 42px 80px, #7e8ce0 80px 86px)"></div>
         <div class="body">
           <h3>CLI ツール集</h3>
           <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
@@ -329,13 +329,13 @@
 
   // ---- 絵の具（ベース色 [r,g,b]）----
   const OIL = {
-    red:    [194, 47, 30],
-    blue:   [22, 53, 92],
-    yellow: [224, 165, 28],
-    green:  [30, 92, 71],
-    black:  [30, 26, 20],
-    white:  [236, 228, 208],
-    sienna: [138, 75, 42]
+    red:    [91, 141, 216],   // コバルト
+    blue:   [34, 66, 110],    // プルシアン
+    yellow: [88, 196, 186],   // ティール
+    green:  [88, 100, 190],   // すみれ
+    black:  [10, 13, 20],     // 藍黒
+    white:  [214, 226, 238],  // 青白
+    sienna: [104, 120, 168]   // 青灰
   };
   const NAMES = Object.keys(OIL);
 
@@ -377,7 +377,7 @@
     ground = document.createElement('canvas');
     ground.width = W; ground.height = H;
     const g = ground.getContext('2d');
-    g.fillStyle = '#d8cdb0';
+    g.fillStyle = '#101318';
     g.fillRect(0, 0, W, H);
     // 大きな下塗りのムラ
     for (let i = 0; i < 420; i++) {
@@ -394,7 +394,7 @@
     }
     // 織り目
     g.globalAlpha = 0.05;
-    g.strokeStyle = '#5c5240';
+    g.strokeStyle = '#39404f';
     g.lineWidth = 0.5;
     for (let x = 0; x < W; x += 3) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
     for (let y = 0; y < H; y += 3) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }

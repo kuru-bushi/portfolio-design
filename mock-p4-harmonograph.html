@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-4 ポロック《ブルー・ポールズ》— 消えゆく軌跡</title>
+<title>P-4 ポロック《ドリップ》緑青変奏 — 消えゆく軌跡</title>
 <style>
   :root {
-    --bg: #0d1524;
-    --panel: #14203a;
-    --text: #dde6f4;
-    --sub: #8395b3;
-    --ochre: #7fb4e8;
-    --rust: #3566c4;
-    --bone: #e8eef8;
+    --bg: #0c1a17;
+    --panel: #10251e;
+    --text: #ddf0e6;
+    --sub: #86a89a;
+    --ochre: #7fe0c3;
+    --rust: #2fa887;
+    --bone: #e6f4ec;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -35,10 +35,10 @@
   }
   #cur-dot { width: 7px; height: 7px; background: var(--ochre); }
   #cur-ring {
-    width: 34px; height: 34px; border: 1.5px solid rgba(127, 180, 232, 0.65);
+    width: 34px; height: 34px; border: 1.5px solid rgba(127, 224, 195, 0.65);
     transition: width .25s, height .25s, border-color .25s, background .25s;
   }
-  #cur-ring.on { width: 58px; height: 58px; border-color: var(--rust); background: rgba(53, 102, 196, 0.15); }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--rust); background: rgba(47, 168, 135, 0.15); }
   @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
 
   .reveal { opacity: 0; transform: translateY(38px) rotate(-0.5deg); transition: opacity .85s ease, transform .85s ease; }
@@ -48,8 +48,8 @@
   .works .reveal:nth-child(4) { transition-delay: .18s; }
 
   aside {
-    width: 280px; background: #0a111f;
-    border-right: 1px solid rgba(127, 180, 232, 0.35);
+    width: 280px; background: #08140f;
+    border-right: 1px solid rgba(127, 224, 195, 0.35);
     padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
   }
   .avatar { width: 92px; height: 92px; margin-bottom: 20px; position: relative; }
@@ -60,7 +60,7 @@
   aside nav { display: flex; flex-direction: column; margin-bottom: 34px; }
   aside nav a {
     color: var(--sub); text-decoration: none; font-size: 13px; letter-spacing: 3px; font-weight: 700;
-    padding: 12px 4px; border-bottom: 1px dashed rgba(127, 180, 232, 0.3);
+    padding: 12px 4px; border-bottom: 1px dashed rgba(127, 224, 195, 0.3);
     display: flex; align-items: center; gap: 12px;
     transition: color .2s, padding-left .25s;
   }
@@ -71,17 +71,17 @@
   aside nav a:nth-child(1) .drip { background: var(--rust); }
   aside nav a:nth-child(2) .drip { background: var(--ochre); }
   aside nav a:nth-child(3) .drip { background: var(--bone); }
-  aside nav a:nth-child(4) .drip { background: #8ea6c4; }
+  aside nav a:nth-child(4) .drip { background: #8fc4b0; }
   aside nav a:hover, aside nav a.active { color: #fff; padding-left: 10px; }
   aside nav a:hover .drip, aside nav a.active .drip { transform: rotate(315deg) scale(1.3); }
   .side-sec { margin-bottom: 30px; }
-  .side-sec h3 { font-size: 10px; letter-spacing: 3px; color: #5a6b85; margin-bottom: 13px; text-transform: uppercase; }
+  .side-sec h3 { font-size: 10px; letter-spacing: 3px; color: #5a8573; margin-bottom: 13px; text-transform: uppercase; }
   .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
   .skill-tags span {
-    font-size: 11px; border: 1px solid rgba(127, 180, 232, 0.4); border-radius: 2px;
+    font-size: 11px; border: 1px solid rgba(127, 224, 195, 0.4); border-radius: 2px;
     padding: 3px 12px; color: var(--sub); transition: all .2s;
   }
-  .skill-tags span:hover { color: #0a111f; background: var(--ochre); }
+  .skill-tags span:hover { color: #08140f; background: var(--ochre); }
   .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
   .sns a:hover { color: var(--ochre); }
 
@@ -92,18 +92,18 @@
   .hero h2 { font-size: 60px; line-height: 1.2; font-weight: 900; color: #fff; }
   .hero h2 em { font-style: normal; color: var(--ochre); }
   .hero p { margin-top: 20px; color: var(--sub); font-size: 14px; max-width: 500px; }
-  .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(127, 180, 232, 0.8); font-weight: 700; }
+  .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(127, 224, 195, 0.8); font-weight: 700; }
 
   section { margin-bottom: 96px; }
   .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
   .sec-head .splat { width: 26px; height: 26px; flex-shrink: 0; }
   .sec-head h2 { font-size: 26px; letter-spacing: 6px; font-weight: 900; color: #fff; }
-  .sec-head .rule { flex: 1; height: 2px; background: repeating-linear-gradient(90deg, rgba(127, 180, 232, 0.6) 0 14px, transparent 14px 22px); }
+  .sec-head .rule { flex: 1; height: 2px; background: repeating-linear-gradient(90deg, rgba(127, 224, 195, 0.6) 0 14px, transparent 14px 22px); }
 
   .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .work {
-    border: 1px solid rgba(127, 180, 232, 0.35); padding: 30px; position: relative;
-    background: rgba(20, 32, 58, 0.92);
+    border: 1px solid rgba(127, 224, 195, 0.35); padding: 30px; position: relative;
+    background: rgba(16, 38, 31, 0.92);
     transition: transform .22s, border-color .22s, box-shadow .22s;
   }
   .work:hover { transform: translateY(-6px) rotate(-0.6deg); border-color: var(--ochre); box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55); }
@@ -112,25 +112,25 @@
   .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--ochre); font-weight: 700; }
   .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
   .work .links a {
-    color: #0a111f; background: var(--bone); text-decoration: none; padding: 6px 15px;
+    color: #08140f; background: var(--bone); text-decoration: none; padding: 6px 15px;
     font-weight: 900; transition: all .2s;
   }
   .work .links a:hover { background: var(--rust); color: #fff; }
 
   .article {
     display: flex; align-items: baseline; gap: 20px; padding: 22px 18px;
-    border-bottom: 1px solid rgba(127, 180, 232, 0.25);
+    border-bottom: 1px solid rgba(127, 224, 195, 0.25);
     text-decoration: none; color: inherit; transition: background .25s, padding-left .25s;
-    background: rgba(10, 17, 31, 0.6);
+    background: rgba(8, 20, 16, 0.6);
   }
-  .article:first-of-type { border-top: 2px solid rgba(127, 180, 232, 0.5); }
-  .article:hover { background: rgba(127, 180, 232, 0.12); padding-left: 30px; }
+  .article:first-of-type { border-top: 2px solid rgba(127, 224, 195, 0.5); }
+  .article:hover { background: rgba(127, 224, 195, 0.12); padding-left: 30px; }
   .article time { font-size: 12px; color: var(--rust); white-space: nowrap; letter-spacing: 1px; font-weight: 700; }
   .article .t { font-size: 15px; flex: 1; font-weight: 700; }
   .article:hover .t { color: var(--ochre); }
-  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(127, 180, 232, 0.35); padding: 1px 10px; }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(127, 224, 195, 0.35); padding: 1px 10px; }
 
-  .timeline { border-left: 2px solid rgba(127, 180, 232, 0.45); padding-left: 28px; margin-left: 10px; }
+  .timeline { border-left: 2px solid rgba(127, 224, 195, 0.45); padding-left: 28px; margin-left: 10px; }
   .tl-item { position: relative; padding-bottom: 32px; }
   .tl-item::before {
     content: ""; position: absolute; left: -35px; top: 7px;
@@ -144,7 +144,7 @@
   .tl-item p { font-size: 13px; color: var(--sub); }
 
   footer {
-    border-top: 1px solid rgba(127, 180, 232, 0.35); padding-top: 24px;
+    border-top: 1px solid rgba(127, 224, 195, 0.35); padding-top: 24px;
     display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); letter-spacing: 2px;
   }
 
@@ -167,12 +167,12 @@
 <aside>
   <div class="avatar">
     <svg viewBox="0 0 92 92" fill="none">
-      <path d="M8 66 C 30 10, 50 84, 84 24" stroke="#3566c4" stroke-width="3" stroke-linecap="round"/>
-      <path d="M12 30 C 44 70, 60 8, 82 58" stroke="#7fb4e8" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M20 80 C 36 40, 70 66, 76 12" stroke="#e8eef8" stroke-width="1.6" stroke-linecap="round"/>
-      <circle cx="30" cy="52" r="3.4" fill="#3566c4"/>
-      <circle cx="64" cy="36" r="2.6" fill="#7fb4e8"/>
-      <circle cx="52" cy="70" r="2" fill="#e8eef8"/>
+      <path d="M8 66 C 30 10, 50 84, 84 24" stroke="#2fa887" stroke-width="3" stroke-linecap="round"/>
+      <path d="M12 30 C 44 70, 60 8, 82 58" stroke="#7fe0c3" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M20 80 C 36 40, 70 66, 76 12" stroke="#e6f4ec" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="30" cy="52" r="3.4" fill="#2fa887"/>
+      <circle cx="64" cy="36" r="2.6" fill="#7fe0c3"/>
+      <circle cx="52" cy="70" r="2" fill="#e6f4ec"/>
     </svg>
   </div>
   <h1>IKEDA</h1>
@@ -201,15 +201,15 @@
 
 <main>
   <div class="hero">
-    <div class="eyebrow">AFTER POLLOCK — BLUE POLES</div>
+    <div class="eyebrow">AFTER POLLOCK — IN VIRIDIAN</div>
     <h2>軌跡が、<br><em>絵になる</em>。</h2>
-    <p>ジャクソン・ポロック《ブルー・ポールズ》(1952) に着想を得たポートフォリオ。振り子が青の絵の具を垂らし続け、古い軌跡は夜に溶けるように消えていきます。</p>
+    <p>ジャクソン・ポロックのドリップを緑青（ビリジアン）の寒色で変奏したポートフォリオ。振り子が絵の具を垂らし続け、古い軌跡はどんどん薄くなって夜に溶けていきます。</p>
     <div class="hint">✦ 余白をクリックするとそこから絵の具が垂れ始めます / スクロールで筆が加速し、古い軌跡は時間とともに消えます</div>
   </div>
 
   <section id="works">
     <div class="sec-head reveal">
-      <svg class="splat" viewBox="0 0 26 26"><circle cx="12" cy="13" r="6" fill="#3566c4"/><circle cx="21" cy="7" r="2.4" fill="#3566c4"/><circle cx="20" cy="20" r="1.7" fill="#3566c4"/><circle cx="4" cy="6" r="1.5" fill="#3566c4"/></svg>
+      <svg class="splat" viewBox="0 0 26 26"><circle cx="12" cy="13" r="6" fill="#2fa887"/><circle cx="21" cy="7" r="2.4" fill="#2fa887"/><circle cx="20" cy="20" r="1.7" fill="#2fa887"/><circle cx="4" cy="6" r="1.5" fill="#2fa887"/></svg>
       <h2>WORKS</h2><span class="rule"></span>
     </div>
     <div class="works">
@@ -242,7 +242,7 @@
 
   <section id="articles">
     <div class="sec-head reveal">
-      <svg class="splat" viewBox="0 0 26 26"><circle cx="13" cy="12" r="5.4" fill="#7fb4e8"/><circle cx="5" cy="19" r="2.2" fill="#7fb4e8"/><circle cx="22" cy="16" r="1.7" fill="#7fb4e8"/></svg>
+      <svg class="splat" viewBox="0 0 26 26"><circle cx="13" cy="12" r="5.4" fill="#7fe0c3"/><circle cx="5" cy="19" r="2.2" fill="#7fe0c3"/><circle cx="22" cy="16" r="1.7" fill="#7fe0c3"/></svg>
       <h2>ARTICLES</h2><span class="rule"></span>
     </div>
     <a class="article reveal" href="#">
@@ -264,7 +264,7 @@
 
   <section id="career">
     <div class="sec-head reveal">
-      <svg class="splat" viewBox="0 0 26 26"><circle cx="12" cy="13" r="5" fill="#e8eef8"/><circle cx="21" cy="8" r="2" fill="#e8eef8"/><circle cx="6" cy="5" r="1.6" fill="#e8eef8"/></svg>
+      <svg class="splat" viewBox="0 0 26 26"><circle cx="12" cy="13" r="5" fill="#e6f4ec"/><circle cx="21" cy="8" r="2" fill="#e6f4ec"/><circle cx="6" cy="5" r="1.6" fill="#e6f4ec"/></svg>
       <h2>CAREER</h2><span class="rule"></span>
     </div>
     <div class="timeline">
@@ -283,7 +283,7 @@
 
   <footer id="contact">
     <span>© 2026 IKEDA</span>
-    <span>BLUE POLES</span>
+    <span>IN VIRIDIAN</span>
   </footer>
 </main>
 
@@ -299,7 +299,7 @@
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = '#0d1524';
+    ctx.fillStyle = '#0c1a17';
     ctx.fillRect(0, 0, W, H);
   }
   resize();
@@ -307,13 +307,13 @@
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ブルー・ポールズの絵の具：藍黒・青白・アイスブルー・コバルト・青緑
+  // 緑青の絵の具：深松・青磁白・ミント・エメラルド・青緑
   const PAINTS = [
-    { c: '8, 14, 30', base: 0.55 },
-    { c: '232, 238, 248', base: 0.42 },
-    { c: '127, 180, 232', base: 0.45 },
-    { c: '53, 102, 196', base: 0.48 },
-    { c: '96, 190, 196', base: 0.38 }
+    { c: '6, 20, 16', base: 0.55 },
+    { c: '230, 244, 236', base: 0.42 },
+    { c: '127, 224, 195', base: 0.45 },
+    { c: '47, 168, 135', base: 0.48 },
+    { c: '78, 172, 180', base: 0.38 }
   ];
 
   let params, T, paint;
@@ -379,7 +379,7 @@
 
   function step() {
     // ごくわずかに地の色を重ねて古い層を沈める
-    ctx.fillStyle = 'rgba(13, 21, 36, 0.02)';
+    ctx.fillStyle = 'rgba(10, 22, 19, 0.04)';
     ctx.fillRect(0, 0, W, H);
 
     const steps = Math.round(60 * (1 + energy));
@@ -415,7 +415,7 @@
   }
 
   function loop() { step(); requestAnimationFrame(loop); }
-  for (let i = 0; i < 200; i++) step();
+  for (let i = 0; i < 150; i++) step();
   if (!reduced) requestAnimationFrame(loop);
 
   // リビール

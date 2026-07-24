@@ -386,23 +386,23 @@
       const p = starPx(s);
       const tw = 1 + 0.12 * Math.sin(t * 6 + p.x); // またたき
       const R = s.r * tw;
-      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 4);
-      if (s.moon) {
-        g.addColorStop(0, 'rgba(255, 240, 200, 0.95)');
-        g.addColorStop(0.25, 'rgba(255, 225, 150, 0.5)');
-        g.addColorStop(1, 'rgba(255, 215, 106, 0)');
-      } else {
-        g.addColorStop(0, 'rgba(255, 235, 170, 0.9)');
-        g.addColorStop(0.3, 'rgba(255, 215, 106, 0.35)');
-        g.addColorStop(1, 'rgba(255, 215, 106, 0)');
+      // 段階的な光輪：同心円を何層も重ね、絵の具を塗り重ねたハロにする
+      const rings = s.moon
+        ? [[5.0, 0.02], [4.0, 0.03], [3.1, 0.042], [2.3, 0.06], [1.6, 0.085], [1.15, 0.12]]
+        : [[4.4, 0.024], [3.4, 0.036], [2.6, 0.05], [1.9, 0.072], [1.4, 0.10], [1.05, 0.13]];
+      for (const [k, a] of rings) {
+        ctx.beginPath();
+        ctx.arc(p.x + Math.sin(t * 2 + k * 7) * 0.8, p.y + Math.cos(t * 1.7 + k * 5) * 0.8,
+                R * k, 0, Math.PI * 2);
+        ctx.fillStyle = s.moon
+          ? 'rgba(236, 205, 118, ' + a + ')'
+          : 'rgba(222, 180, 72, ' + a + ')';
+        ctx.fill();
       }
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, R * 4, 0, Math.PI * 2);
-      ctx.fill();
+      // 芯：ゴッホのクロムイエローに寄せた少し暗い黄
       ctx.beginPath();
       ctx.arc(p.x, p.y, R * 0.55, 0, Math.PI * 2);
-      ctx.fillStyle = s.moon ? '#fff3cf' : '#ffe9a8';
+      ctx.fillStyle = s.moon ? '#eed185' : '#e2bd55';
       ctx.fill();
     }
   }
@@ -451,9 +451,9 @@
           if (dd < R) glow = Math.max(glow, 1 - dd / R);
         }
         const c = p.col;
-        const rr = Math.round(c[0] + (255 - c[0]) * glow);
-        const gg = Math.round(c[1] + (215 - c[1]) * glow);
-        const bb = Math.round(c[2] + (120 - c[2]) * glow);
+        const rr = Math.round(c[0] + (232 - c[0]) * glow);
+        const gg = Math.round(c[1] + (190 - c[1]) * glow);
+        const bb = Math.round(c[2] + (86 - c[2]) * glow);
 
         // 暗い下塗り + 明るい本塗りの二度描きで厚塗り（インパスト）に
         ctx.lineCap = 'round';

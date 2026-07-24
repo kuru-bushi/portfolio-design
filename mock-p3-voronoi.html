@@ -194,7 +194,7 @@
   <div class="hero">
     <div class="eyebrow sans">BONAFÉ COMPOSITION × WHISTLER NOCTURNE</div>
     <h2>夜の青に、<br>区画は<em>静かに</em>揺れる。</h2>
-    <p class="sans">ロジェ・ボナフェの「大胆でシンプルな構成」と南仏のモチーフ（糸杉・農家）を、ホイッスラー《ノクターン》の暗い青に置き換えたポートフォリオ。ボロノイの夜空の下に、灯りのともる村が静かに横たわります。</p>
+    <p class="sans">ロジェ・ボナフェの「大胆でシンプルな構成」と南仏のモチーフ（糸杉・農家）を、ホイッスラー《ノクターン》の暗い青に置き換えたポートフォリオ。ボロノイの夜空はガラス片のような光沢を帯びて盛り上がり、その下に灯りのともる村が横たわります。</p>
     <div class="hint sans">✦ 余白をクリックすると新しい区画と火花が生まれます / スクロールで夜が流れます</div>
   </div>
 
@@ -434,20 +434,36 @@
           if (d < d1) { d2 = d1; d1 = d; k1 = k; }
           else if (d < d2) { d2 = d; }
         }
-        const edge = Math.sqrt(d2) - Math.sqrt(d1);
+        const dist1 = Math.sqrt(d1);
+        const edge = Math.sqrt(d2) - dist1;
         const idx = (gy * gw + gx) * 4;
-        const c = seeds[k1].c, b = breath[k1];
-        let r = c[0] * b, g = c[1] * b, bl = c[2] * b;
+        const s1 = seeds[k1];
+        const c = s1.c, b = breath[k1];
+
+        // --- 立体化：クッションのように盛り上がった面として陰影をつける ---
+        // 左上からの光。シードから離れる向きと光の向きの内積で明暗を決める
+        const inv = dist1 > 0.5 ? 1 / dist1 : 0;
+        const dot = ((px - s1.x) * -0.7071 + (py - s1.y) * -0.7071) * inv;
+        let shade = 0.80 + 0.45 * Math.max(0, dot) - 0.26 * Math.max(0, -dot);
+
+        // 光沢：シードの左上に鏡面ハイライト
+        const hx = px - (s1.x - 24), hy = py - (s1.y - 24);
+        const dh = Math.sqrt(hx * hx + hy * hy);
+        const sp = Math.max(0, 1 - dh / 48);
+        const specA = sp * sp * sp * 165;
+
+        let r = c[0] * b * shade + specA;
+        let g = c[1] * b * shade + specA;
+        let bl = c[2] * b * shade + specA * 0.92;
+
         if (edge < EDGE_W) {
-          // 境界：塗り分けではなく、霧のように淡い銀青を混ぜる
-          const w = 1 - edge / EDGE_W;           // 0→1
-          const soft = w * w * (3 - 2 * w);      // smoothstep で滑らかに
-          const mix = soft * 0.5;
-          r = r + (150 - r) * mix;
-          g = g + (172 - g) * mix;
-          bl = bl + (200 - bl) * mix;
+          // 縁は溝のようになだらかに沈み込む（面取り）
+          const w = 1 - edge / EDGE_W;
+          const soft = w * w * (3 - 2 * w);
+          const k2 = 1 - soft * 0.6;
+          r *= k2; g *= k2; bl *= k2;
         }
-        data[idx] = r; data[idx + 1] = g; data[idx + 2] = bl;
+        data[idx] = Math.min(255, r); data[idx + 1] = Math.min(255, g); data[idx + 2] = Math.min(255, bl);
         data[idx + 3] = 255;
       }
     }

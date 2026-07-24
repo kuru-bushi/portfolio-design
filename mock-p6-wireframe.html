@@ -462,7 +462,7 @@
         if (sh.cx < 0.28 || sh.cx > 0.99) sh.vx *= -1;
         if (sh.cy < 0.01 || sh.cy > 0.99) sh.vy *= -1;
       }
-      if (sh.grow < 1) sh.grow = Math.min(1, sh.grow + 0.015);
+      if (sh.grow < 1) sh.grow = Math.min(1, sh.grow + 0.0045);
     }
 
     // 衝突判定：近づきすぎた 2 体は砕けて破片になる
