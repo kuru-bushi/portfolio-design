@@ -3,145 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-2《星月夜》洗練パターン一覧</title>
+<title>P-2《星月夜》洗練パターン比較（スクロールバー 3 案）</title>
 <style>
-  :root {
-    --bg: #0d1b3e;
-    --panel: #122450;
-    --text: #e8ecfb;
-    --sub: #93a0c8;
-    --star: #ffd76a;
-    --moon: #ffe9a8;
-    --swirl: #7ea8e8;
-  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-    background:
-      radial-gradient(circle at 78% 12%, rgba(255, 215, 106, 0.10), transparent 30%),
-      radial-gradient(circle at 20% 60%, rgba(126, 168, 232, 0.08), transparent 45%),
-      linear-gradient(180deg, #0a1533, #0d1b3e 60%, #12264a);
-    color: var(--text); line-height: 1.9; min-height: 100vh;
-    padding: 64px 24px 80px;
+    background: #1e1e28; color: #eee; padding: 32px;
   }
-  .wrap { max-width: 880px; margin: 0 auto; }
-
-  .eyebrow { font-size: 12px; letter-spacing: 6px; color: var(--swirl); margin-bottom: 14px; }
-  h1 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 34px; letter-spacing: 3px; color: #fff; margin-bottom: 10px; }
-  h1 em { font-style: normal; color: var(--star); text-shadow: 0 0 24px rgba(255, 215, 106, 0.5); }
-  .lead { font-size: 14px; color: var(--sub); margin-bottom: 44px; max-width: 620px; }
-
-  h2 {
-    font-size: 15px; letter-spacing: 4px; color: var(--star);
-    margin: 48px 0 18px; display: flex; align-items: center; gap: 14px;
+  h1 { font-size: 20px; margin-bottom: 6px; }
+  .note { color: #999; font-size: 13px; margin-bottom: 8px; }
+  ul.common { color: #bbb; font-size: 12.5px; margin: 0 0 24px 18px; line-height: 1.9; }
+  ul.common b { color: #ffd76a; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cell { background: #2a2a36; border-radius: 12px; overflow: hidden; }
+  .cell .bar {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
   }
-  h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255, 215, 106, 0.5), transparent); }
-
-  .common { list-style: none; display: grid; gap: 10px; }
-  .common li {
-    font-size: 13.5px; color: var(--text); background: rgba(18, 36, 80, 0.6);
-    border: 1px solid rgba(126, 168, 232, 0.25); border-radius: 6px; padding: 12px 18px;
+  .cell .bar a { color: #22d3ee; font-size: 12px; text-decoration: none; font-weight: normal; white-space: nowrap; }
+  .cell .bar a:hover { text-decoration: underline; }
+  .cell .desc { padding: 0 16px 12px; font-size: 12px; color: #999; }
+  iframe {
+    width: 200%; height: 1100px; border: none; background: #fff;
+    transform: scale(0.5); transform-origin: 0 0; display: block;
   }
-  .common li b { color: var(--star); font-weight: 600; margin-right: 8px; }
-  .common li span { color: var(--sub); }
-
-  .cards { display: grid; gap: 20px; }
-  a.card {
-    display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center;
-    text-decoration: none; color: inherit;
-    background: linear-gradient(165deg, rgba(18, 36, 80, 0.85), rgba(10, 20, 46, 0.85));
-    border: 1px solid rgba(126, 168, 232, 0.3); border-radius: 8px; padding: 22px 26px;
-    transition: transform .25s, border-color .25s, box-shadow .25s;
-  }
-  a.card:hover { transform: translateY(-4px); border-color: var(--star); box-shadow: 0 18px 44px -14px rgba(255, 215, 106, 0.35); }
-
-  /* ミニチュアのスクロールバー見本 */
-  .demo {
-    width: 150px; height: 96px; border-radius: 6px; position: relative; overflow: hidden;
-    background: linear-gradient(180deg, #0a1533, #12264a);
-    border: 1px solid rgba(126, 168, 232, 0.35);
-  }
-  .demo .ln { position: absolute; left: 14px; height: 5px; border-radius: 3px; background: rgba(126, 168, 232, 0.22); }
-  .demo .ln:nth-child(1) { top: 18px; width: 70px; }
-  .demo .ln:nth-child(2) { top: 34px; width: 96px; }
-  .demo .ln:nth-child(3) { top: 50px; width: 56px; }
-  .demo .ln:nth-child(4) { top: 66px; width: 84px; }
-
-  .demo.a::before { content: ""; position: absolute; top: 0; left: 0; width: 58%; height: 3px;
-    background: linear-gradient(90deg, var(--swirl), var(--star)); box-shadow: 0 0 8px rgba(255, 215, 106, 0.6); }
-
-  .demo.b::after { content: ""; position: absolute; right: 4px; top: 22px; width: 5px; height: 40px; border-radius: 999px;
-    background: linear-gradient(180deg, #ffd76a, #c39135 45%, #4a6cb0); box-shadow: 0 0 6px rgba(255, 215, 106, 0.45); }
-
-  .demo.c::before { content: ""; position: absolute; right: 8px; top: 10px; bottom: 10px; width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(126, 168, 232, 0.5), transparent); }
-  .demo.c::after { content: "✦"; position: absolute; right: 2px; top: 34px; color: var(--star); font-size: 13px;
-    text-shadow: 0 0 8px var(--star), 0 0 18px rgba(255, 215, 106, 0.7); }
-
-  .card h3 { font-size: 17px; color: #fff; letter-spacing: 2px; margin-bottom: 6px; }
-  .card h3 .tag { font-size: 11px; letter-spacing: 2px; color: var(--star); border: 1px solid rgba(255, 215, 106, 0.45);
-    border-radius: 999px; padding: 2px 10px; margin-right: 10px; vertical-align: 2px; }
-  .card p { font-size: 13px; color: var(--sub); }
-  .card .pros { font-size: 12px; color: var(--swirl); margin-top: 6px; }
-
-  .old { margin-top: 40px; font-size: 12.5px; color: var(--sub); }
-  .old a { color: var(--swirl); }
-  .old a:hover { color: var(--star); }
-
-  @media (max-width: 640px) {
-    a.card { grid-template-columns: 1fr; }
-    .demo { width: 100%; }
-  }
+  .frame-wrap { height: 550px; overflow: hidden; }
+  .frozen-head { font-size: 16px; margin: 40px 0 16px; color: #8b8b99; border-top: 1px solid #3a3a46; padding-top: 24px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <div class="eyebrow">P-2 REFINEMENT — THE STARRY NIGHT</div>
-  <h1>《星月夜》<em>洗練</em>パターン一覧</h1>
-  <p class="lead">P-2 フローフィールド案のブラッシュアップ版です。共通の改善を全パターンに適用したうえで、右側スクロールバーのデザインを 3 案用意しました。実際に開いてスクロールし、いちばん心地よいものを選んでください。</p>
-
-  <h2>共通の改善点（全パターン適用済み）</h2>
+  <h1>P-2《星月夜》洗練パターン比較：右スクロールバー 3 案</h1>
+  <p class="note">各パネルは 50% 縮小表示です。スクロールバー・ホバー・セクション強調の動きは「原寸で開く」で確認してください。</p>
   <ul class="common">
-    <li><b>背景の自己回復</b><span>筆あとが残り続けて背景が濁る問題を修正。毎フレーム元の夜空グラデーションへ少しずつ戻すため、線が通ったあとも数秒で元の色に溶けて戻り、コントラストが保たれます。</span></li>
-    <li><b>Works カードの月光ホバー</b><span>カードにカーソルを乗せると、内側が月光に照らされたように白っぽく明るくなり、文字は夜の藍色に反転します。</span></li>
-    <li><b>左サイドバー</b><span>PC 表示では画面の縦いっぱいに固定し、内部のスクロールバーは完全に非表示にしました。</span></li>
+    <li><b>共通の改善（3 案すべてに適用済み）</b></li>
+    <li>背景の自己回復 — 筆あとは数秒で元の夜空グラデーションに溶けて戻り、濁らない</li>
+    <li>Works カードのホバーは控えめな月光ウォッシュ（明度 +10〜15%）に変更。文字は明るいまま保ちコントラスト維持</li>
+    <li>左サイドバーは縦 100% 固定・バー非表示。境界線は P7 と同じ「流れる寒色グラデーション」</li>
+    <li>スクロールで現在のセクションに月明かりが当たり、他は夜に沈む（左ナビも現在地に同期）</li>
   </ul>
-
-  <h2>右側スクロールバー 3 案</h2>
-  <div class="cards">
-
-    <a class="card" href="mock-p2a-scroll-hidden.html">
-      <div class="demo a"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
-      <div>
-        <h3><span class="tag">A</span>消灯 — バー非表示</h3>
-        <p>スクロールバーを完全に隠し、画面上部のプログレスバー（少し太く・発光を強化）だけで現在地を示す、最も没入感の高い案。</p>
-        <div class="pros">◎ 絵画への没入感が最大 / △ 現在地の把握は上端のバー頼み</div>
-      </div>
-    </a>
-
-    <a class="card" href="mock-p2b-scroll-gold.html">
-      <div class="demo b"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
-      <div>
-        <h3><span class="tag">B</span>月光の筆 — 極細ゴールドバー</h3>
-        <p>ネイティブスクロールバーを活かしつつ、月光の金から夜の群青へ流れるグラデーションのピル型サムに再デザイン。ホバーで明るく光ります。</p>
-        <div class="pros">◎ 常時見えて操作性が高い / ◎ CSS のみで軽量</div>
-      </div>
-    </a>
-
-    <a class="card" href="mock-p2c-scroll-star.html">
-      <div class="demo c"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
-      <div>
-        <h3><span class="tag">C</span>流星 — 星が軌道を滑る</h3>
-        <p>細い光の軌道の上を、回転しながら光る星「✦」がサムとして滑るオーバーレイ式。スクロールを止めると星ごとふっと消えます。ドラッグでの移動にも対応。</p>
-        <div class="pros">◎ 世界観との一体感が最高 / ◎ 使わない時は消えて邪魔にならない</div>
-      </div>
-    </a>
-
+  <div class="grid">
+    <div class="cell">
+      <div class="bar">P-2A. 消灯 — バー非表示 <a href="mock-p2a-scroll-hidden.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">スクロールバーを完全に隠し、上部のプログレスバーだけで現在地を示す。没入感最優先。</div>
+      <div class="frame-wrap"><iframe src="mock-p2a-scroll-hidden.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-2B. 月光の筆 — 極細ゴールドバー <a href="mock-p2b-scroll-gold.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">金→群青グラデーションのピル型サム。常時見えて操作性が高い。CSS のみで軽量。</div>
+      <div class="frame-wrap"><iframe src="mock-p2b-scroll-gold.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-2C. 流星 — 星が軌道を滑る <a href="mock-p2c-scroll-star.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">光の軌道上を回転する星 ✦ がサムとして滑る。止まると消える。ドラッグ対応。</div>
+      <div class="frame-wrap"><iframe src="mock-p2c-scroll-star.html"></iframe></div>
+    </div>
   </div>
-
-  <p class="old">参考: 改修前の版 → <a href="mock-p2-flowfield.html">mock-p2-flowfield.html</a></p>
-
-</div>
+  <h2 class="frozen-head">参考（改修前）</h2>
+  <div class="grid">
+    <div class="cell">
+      <div class="bar">P-2. 改修前の版 <a href="mock-p2-flowfield.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p2-flowfield.html"></iframe></div>
+    </div>
+  </div>
 </body>
 </html>
