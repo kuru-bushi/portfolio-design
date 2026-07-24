@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-3 ホイッスラー《ノクターン》— 夜の青のボロノイ</title>
+<title>P-3 ボナフェ × ノクターン — 夜の青のボロノイ</title>
 <style>
   :root {
     --bg: #0a1220;
@@ -88,7 +88,7 @@
 
   .hero { margin-bottom: 130px; }
   .hero .eyebrow { font-size: 11px; letter-spacing: 9px; color: var(--sub); margin-bottom: 26px; }
-  .hero h2 { font-size: 52px; line-height: 1.5; font-weight: 500; color: #fff; letter-spacing: 4px; }
+  .hero h2 { font-size: 62px; line-height: 1.4; font-weight: 600; color: #fff; letter-spacing: 4px; }
   .hero h2 em { font-style: normal; color: var(--gold); }
   .hero p { margin-top: 24px; color: var(--sub); font-size: 14px; max-width: 480px; }
   .hero .hint { margin-top: 30px; font-size: 10px; letter-spacing: 3px; color: rgba(212, 178, 94, 0.6); }
@@ -96,7 +96,7 @@
   section { margin-bottom: 110px; }
   .sec-head { display: flex; align-items: baseline; gap: 20px; margin-bottom: 44px; }
   .sec-head .rn { font-size: 15px; color: var(--gold); letter-spacing: 2px; }
-  .sec-head h2 { font-size: 21px; letter-spacing: 8px; font-weight: 500; color: #fff; }
+  .sec-head h2 { font-size: 24px; letter-spacing: 8px; font-weight: 600; color: #fff; }
   .sec-head .rule { flex: 1; height: 1px; background: var(--hair); position: relative; top: -5px; }
 
   .works { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
@@ -192,9 +192,9 @@
 
 <main>
   <div class="hero">
-    <div class="eyebrow sans">AFTER WHISTLER — NOCTURNE IN BLUE AND GOLD</div>
+    <div class="eyebrow sans">BONAFÉ COMPOSITION × WHISTLER NOCTURNE</div>
     <h2>夜の青に、<br>区画は<em>静かに</em>揺れる。</h2>
-    <p class="sans">ホイッスラー《ノクターン》の霧がかった夜の青に着想を得たポートフォリオ。ボロノイのセルが夜霧のように溶け合い、金の火花がまばらに降ります。</p>
+    <p class="sans">ロジェ・ボナフェの「大胆でシンプルな構成」と南仏のモチーフ（糸杉・農家）を、ホイッスラー《ノクターン》の暗い青に置き換えたポートフォリオ。ボロノイの夜空の下に、灯りのともる村が静かに横たわります。</p>
     <div class="hint sans">✦ 余白をクリックすると新しい区画と火花が生まれます / スクロールで夜が流れます</div>
   </div>
 
@@ -348,6 +348,65 @@
 
   let t = 0;
 
+  // ボナフェ風の村：大胆でシンプルなシルエット（丘・農家・糸杉）
+  function cypress(x, baseY, h) {
+    ctx.beginPath();
+    ctx.moveTo(x, baseY);
+    ctx.bezierCurveTo(x - h * 0.16, baseY - h * 0.30, x - h * 0.13, baseY - h * 0.72, x, baseY - h);
+    ctx.bezierCurveTo(x + h * 0.13, baseY - h * 0.72, x + h * 0.16, baseY - h * 0.30, x, baseY);
+    ctx.closePath();
+    ctx.fill();
+  }
+  function house(x, y, w, h, winOn) {
+    ctx.fillRect(x, y - h, w, h);
+    ctx.beginPath();
+    ctx.moveTo(x - w * 0.10, y - h);
+    ctx.lineTo(x + w / 2, y - h - w * 0.42);
+    ctx.lineTo(x + w * 1.10, y - h);
+    ctx.closePath();
+    ctx.fill();
+    if (winOn > 0.05) {
+      const wf = ctx.fillStyle;
+      ctx.fillStyle = 'rgba(230, 200, 120, ' + winOn + ')';
+      ctx.fillRect(x + w * 0.18, y - h * 0.62, w * 0.20, h * 0.30);
+      ctx.fillRect(x + w * 0.60, y - h * 0.62, w * 0.20, h * 0.30);
+      ctx.fillStyle = wf;
+    }
+  }
+  function drawVillage() {
+    const hy = H * 0.82;
+    // 奥の丘
+    ctx.fillStyle = 'rgba(10, 17, 31, 0.94)';
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.lineTo(0, hy + 26);
+    ctx.quadraticCurveTo(W * 0.28, hy - 52, W * 0.55, hy + 10);
+    ctx.quadraticCurveTo(W * 0.78, hy + 56, W, hy - 8);
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fill();
+    // 奥の糸杉と家
+    cypress(W * 0.40, hy + 6, 86);
+    house(W * 0.475, hy + 10, 46, 34, 0.35 + 0.18 * Math.sin(t * 1.3));
+    cypress(W * 0.66, hy + 30, 66);
+    // 手前の丘
+    ctx.fillStyle = 'rgba(6, 11, 21, 0.97)';
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.lineTo(0, H - 44);
+    ctx.quadraticCurveTo(W * 0.35, H - 108, W * 0.62, H - 58);
+    ctx.quadraticCurveTo(W * 0.85, H - 22, W, H - 66);
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fill();
+    // 手前の家並みと糸杉（大きめ＝大胆に）
+    house(W * 0.56, H - 40, 62, 46, 0.5 + 0.22 * Math.sin(t * 1.7 + 2));
+    house(W * 0.72, H - 30, 44, 34, 0.4 + 0.2 * Math.sin(t * 1.1 + 4));
+    cypress(W * 0.51, H - 34, 128);
+    cypress(W * 0.86, H - 40, 104);
+    cypress(W * 0.935, H - 30, 62);
+  }
+
   function frame() {
     t += 0.016;
     if (!reduced) {
@@ -396,6 +455,8 @@
 
     ctx.imageSmoothingEnabled = true;
     ctx.drawImage(off, 0, 0, gw, gh, 0, 0, W, H);
+
+    drawVillage();
 
     // 金の火花：ゆっくり落ちながらまたたく
     for (let i = sparks.length - 1; i >= 0; i--) {
