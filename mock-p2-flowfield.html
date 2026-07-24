@@ -25,7 +25,7 @@
   a { cursor: none; }
   .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
 
-  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: url(#oilpaint); }
   #progress {
     position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
     background: linear-gradient(90deg, var(--swirl), var(--star));
@@ -170,6 +170,12 @@
 
 <div id="progress"></div>
 <canvas id="bg"></canvas>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="oilpaint">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="13" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 <div id="cur-ring"></div>
 <div id="cur-dot"></div>
 
@@ -381,27 +387,64 @@
     }
   });
 
+  // 真円ではなく、絵の具で描いたようにいびつな輪を描く
+  function blob(cx, cy, R, ph) {
+    ctx.beginPath();
+    for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.26) {
+      const rr = R * (1 + 0.10 * Math.sin(3 * a + ph) + 0.06 * Math.sin(7 * a + ph * 1.7));
+      const x = cx + Math.cos(a) * rr;
+      const y = cy + Math.sin(a) * rr;
+      a === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
   function drawStars() {
     for (const s of stars) {
       const p = starPx(s);
-      const tw = 1 + 0.12 * Math.sin(t * 6 + p.x); // またたき
+      if (!s.ph) s.ph = Math.random() * 6.28;
+      // 放射状の光条（ゴッホの星のまわりの短い筆致）を星ごとに固定生成
+      if (!s.dashes) {
+        s.dashes = [];
+        const nd = s.moon ? 26 : 16 + Math.floor(Math.random() * 6);
+        for (let i = 0; i < nd; i++) {
+          s.dashes.push({
+            a: (i / nd) * Math.PI * 2 + Math.random() * 0.3,
+            r0: 1.15 + Math.random() * 0.35,
+            r1: 1.8 + Math.random() * 1.2,
+            w: 1.4 + Math.random() * 1.8
+          });
+        }
+      }
+      const tw = 1 + 0.12 * Math.sin(t * 6 + p.x);
       const R = s.r * tw;
-      // 段階的な光輪：同心円を何層も重ね、絵の具を塗り重ねたハロにする
+
+      // 段階的ないびつな光輪
       const rings = s.moon
         ? [[5.0, 0.02], [4.0, 0.03], [3.1, 0.042], [2.3, 0.06], [1.6, 0.085], [1.15, 0.12]]
         : [[4.4, 0.024], [3.4, 0.036], [2.6, 0.05], [1.9, 0.072], [1.4, 0.10], [1.05, 0.13]];
       for (const [k, a] of rings) {
-        ctx.beginPath();
-        ctx.arc(p.x + Math.sin(t * 2 + k * 7) * 0.8, p.y + Math.cos(t * 1.7 + k * 5) * 0.8,
-                R * k, 0, Math.PI * 2);
+        blob(p.x, p.y, R * k, s.ph + k * 1.9);
         ctx.fillStyle = s.moon
           ? 'rgba(236, 205, 118, ' + a + ')'
           : 'rgba(222, 180, 72, ' + a + ')';
         ctx.fill();
       }
-      // 芯：ゴッホのクロムイエローに寄せた少し暗い黄
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, R * 0.55, 0, Math.PI * 2);
+
+      // 光条：外へ向かう短い筆あと
+      ctx.lineCap = 'round';
+      for (const d of s.dashes) {
+        const a0 = d.a + Math.sin(t * 2.4 + d.a * 5) * 0.05;
+        ctx.beginPath();
+        ctx.moveTo(p.x + Math.cos(a0) * R * d.r0, p.y + Math.sin(a0) * R * d.r0);
+        ctx.lineTo(p.x + Math.cos(a0) * R * d.r1, p.y + Math.sin(a0) * R * d.r1);
+        ctx.strokeStyle = s.moon ? 'rgba(236, 205, 118, 0.22)' : 'rgba(222, 180, 72, 0.20)';
+        ctx.lineWidth = d.w;
+        ctx.stroke();
+      }
+
+      // 芯：クロムイエローの少しいびつな塊
+      blob(p.x, p.y, R * 0.55, s.ph * 2.3);
       ctx.fillStyle = s.moon ? '#eed185' : '#e2bd55';
       ctx.fill();
     }

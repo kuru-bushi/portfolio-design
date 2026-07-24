@@ -194,7 +194,7 @@
   <div class="hero">
     <div class="eyebrow sans">BONAFÉ COMPOSITION × WHISTLER NOCTURNE</div>
     <h2>夜の青に、<br>区画は<em>静かに</em>揺れる。</h2>
-    <p class="sans">ロジェ・ボナフェの「大胆でシンプルな構成」と南仏のモチーフ（糸杉・農家）を、ホイッスラー《ノクターン》の暗い青に置き換えたポートフォリオ。ボロノイの夜空はガラス片のような光沢を帯びて盛り上がり、その下に灯りのともる村が横たわります。</p>
+    <p class="sans">ロジェ・ボナフェの「大胆でシンプルな構成」と南仏のモチーフ（糸杉・農家）を、ホイッスラー《ノクターン》の暗い青に置き換えたポートフォリオ。ボロノイの夜空は、それぞれ違う角度に傾いた色ガラスの破片。旋回する光を面ごとに反射してきらめきます。</p>
     <div class="hint sans">✦ 余白をクリックすると新しい区画と火花が生まれます / スクロールで夜が流れます</div>
   </div>
 
@@ -295,20 +295,25 @@
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 夜の青のパレット（ノクターン：ごく近い明度の青を重ねる）
+  // 夜の寒色パレット（藍・青緑・菫・鋼青・深シアン）
   const PALETTE = [
-    [13, 22, 40], [17, 28, 49], [21, 34, 58], [11, 19, 34],
-    [25, 40, 66], [15, 26, 46], [19, 31, 54], [23, 37, 62]
+    [16, 32, 58], [14, 46, 54], [30, 28, 66], [12, 42, 40],
+    [36, 52, 88], [24, 20, 50], [13, 50, 68], [22, 38, 48],
+    [40, 34, 78], [10, 26, 46]
   ];
 
   const MAXSEEDS = 20;
   const seeds = [];
   function addSeed(x, y) {
+    // 各セル＝それぞれ違う角度に傾いた平面。法線をランダムに持つ
+    const tx = (Math.random() - 0.5) * 1.2, ty = (Math.random() - 0.5) * 1.2;
+    const nl = Math.sqrt(tx * tx + ty * ty + 1);
     seeds.push({
       x, y,
       vx: (Math.random() - 0.5) * 0.35,
       vy: (Math.random() - 0.5) * 0.35,
       c: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+      nx: tx / nl, ny: ty / nl, nz: 1 / nl,
       ph: Math.random() * Math.PI * 2
     });
     if (seeds.length > MAXSEEDS) seeds.shift();
@@ -420,7 +425,23 @@
     const img = octx.createImageData(gw, gh);
     const data = img.data;
     const n = seeds.length;
-    const breath = seeds.map(s => 1 + 0.05 * Math.sin(t * 0.5 + s.ph));
+    // 光源はゆっくり旋回。面（セル）ごとに一定の明るさ＋鏡面光を計算する
+    const Lx = Math.cos(t * 0.10) * 0.45, Ly = Math.sin(t * 0.08) * 0.45, Lz = 0.88;
+    const Ln = Math.sqrt(Lx * Lx + Ly * Ly + Lz * Lz);
+    const hxv = Lx / Ln, hyv = Ly / Ln, hzv = Lz / Ln + 1;
+    const hn = Math.sqrt(hxv * hxv + hyv * hyv + hzv * hzv);
+    const shaded = seeds.map(s => {
+      const wob = 0.05 * Math.sin(t * 0.4 + s.ph);
+      const nx = s.nx + wob, ny = s.ny - wob, nz = s.nz;
+      const lam = Math.max(0, (nx * Lx + ny * Ly + nz * Lz) / Ln);
+      const spec = Math.pow(Math.max(0, (nx * hxv + ny * hyv + nz * hzv) / hn), 60);
+      const b = 0.55 + 0.75 * lam;
+      return [
+        Math.min(255, s.c[0] * b + spec * 195),
+        Math.min(255, s.c[1] * b + spec * 205),
+        Math.min(255, s.c[2] * b + spec * 235)
+      ];
+    });
     const EDGE_W = SCALE * 1.6; // 幅広に取り、なだらかなグラデーションの境界にする
 
     for (let gy = 0; gy < gh; gy++) {
@@ -434,36 +455,18 @@
           if (d < d1) { d2 = d1; d1 = d; k1 = k; }
           else if (d < d2) { d2 = d; }
         }
-        const dist1 = Math.sqrt(d1);
-        const edge = Math.sqrt(d2) - dist1;
+        const edge = Math.sqrt(d2) - Math.sqrt(d1);
         const idx = (gy * gw + gx) * 4;
-        const s1 = seeds[k1];
-        const c = s1.c, b = breath[k1];
-
-        // --- 立体化：クッションのように盛り上がった面として陰影をつける ---
-        // 左上からの光。シードから離れる向きと光の向きの内積で明暗を決める
-        const inv = dist1 > 0.5 ? 1 / dist1 : 0;
-        const dot = ((px - s1.x) * -0.7071 + (py - s1.y) * -0.7071) * inv;
-        let shade = 0.80 + 0.45 * Math.max(0, dot) - 0.26 * Math.max(0, -dot);
-
-        // 光沢：シードの左上に鏡面ハイライト
-        const hx = px - (s1.x - 24), hy = py - (s1.y - 24);
-        const dh = Math.sqrt(hx * hx + hy * hy);
-        const sp = Math.max(0, 1 - dh / 48);
-        const specA = sp * sp * sp * 165;
-
-        let r = c[0] * b * shade + specA;
-        let g = c[1] * b * shade + specA;
-        let bl = c[2] * b * shade + specA * 0.92;
-
+        // セル内は「傾いた平面」なので明るさは一様。境界だけ溝として沈む
+        const sc = shaded[k1];
+        let r = sc[0], g = sc[1], bl = sc[2];
         if (edge < EDGE_W) {
-          // 縁は溝のようになだらかに沈み込む（面取り）
           const w = 1 - edge / EDGE_W;
           const soft = w * w * (3 - 2 * w);
-          const k2 = 1 - soft * 0.6;
+          const k2 = 1 - soft * 0.62;
           r *= k2; g *= k2; bl *= k2;
         }
-        data[idx] = Math.min(255, r); data[idx + 1] = Math.min(255, g); data[idx + 2] = Math.min(255, bl);
+        data[idx] = r; data[idx + 1] = g; data[idx + 2] = bl;
         data[idx + 3] = 255;
       }
     }

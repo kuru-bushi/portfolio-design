@@ -27,6 +27,7 @@
   .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
 
   #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #trail { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
   #progress {
     position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
     background: linear-gradient(90deg, var(--red), var(--yellow), var(--blue));
@@ -53,9 +54,16 @@
   /* ===== サイドバー：美術館の暗い壁 + 金の額 ===== */
   aside {
     width: 280px; background: var(--wall); color: #dfe5f0;
-    border-right: 3px solid var(--gold);
+    border-right: none;
     padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
   }
+  aside::after {
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, #5b8dd8, #58c4ba, #6b79d0, #7fc4de, #5b8dd8);
+    background-size: 100% 400%;
+    animation: borderFlow 9s linear infinite;
+  }
+  @keyframes borderFlow { to { background-position: 0 400%; } }
   .avatar {
     width: 96px; height: 96px; margin-bottom: 22px;
     border: 3px solid var(--gold); padding: 5px; background: #171c27;
@@ -117,13 +125,14 @@
   .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; }
   .sec-head .rule { flex: 1; height: 2px; background: linear-gradient(90deg, var(--ink), transparent); }
 
-  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; perspective: 1000px; }
   .work {
     background: #171c27; border: 1px solid rgba(223, 229, 240, 0.35); position: relative;
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
-    transition: transform .22s, box-shadow .22s;
+    transition: transform .16s ease-out, box-shadow .22s;
+    transform-style: preserve-3d; will-change: transform;
   }
-  .work:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: 0 22px 44px rgba(0, 0, 0, 0.65); }
+  .work:hover { box-shadow: 0 24px 48px rgba(0, 0, 0, 0.7); }
   .work .stripe { height: 12px; border-bottom: 1px solid rgba(223, 229, 240, 0.35); }
   .work .body { padding: 24px; }
   .work h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: 1px; }
@@ -184,6 +193,7 @@
 <canvas id="bg"></canvas>
 <div id="cur-ring"></div>
 <div id="cur-dot"></div>
+<canvas id="trail"></canvas>
 
 <aside>
   <div class="avatar">
@@ -230,7 +240,7 @@
     <div class="eyebrow sans">AFTER KANDINSKY — NOCTURNAL VARIATION</div>
     <h2>油彩の筆致が、<br><em>構図</em>を奏でる。</h2>
     <p class="sans">円・三角・線分——カンディンスキーの造形言語を、黒いキャンバスの上に寒色の油絵具で再現したポートフォリオ。クリックのたびに、新しい一枚が描き直されます。</p>
-    <div class="hint sans">✦ 余白をクリックすると構図が描き直されます / スクロールとマウスで絵に視差がつきます</div>
+    <div class="hint sans">✦ クリックで構図が描き直される / カーソルは筆あとを残し、カードは奥行きに傾く / スクロールで本文がしなり、絵は視差で動く</div>
   </div>
 
   <section id="works">
@@ -322,6 +332,9 @@
 (function () {
   const canvas = document.getElementById('bg');
   const ctx = canvas.getContext('2d');
+  const tc = document.getElementById('trail');
+  const tctx = tc.getContext('2d');
+  const mainEl = document.querySelector('main');
   let W, H;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -512,6 +525,7 @@
   function resize() {
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W; canvas.height = H;
+    tc.width = W; tc.height = H;
     paintGround();
     if (!shapes.length) buildShapes();
   }
@@ -534,9 +548,11 @@
   const mouse = { x: 0.5, y: 0.5 };
   window.addEventListener('mousemove', e => { mouse.x = e.clientX / W; mouse.y = e.clientY / H; });
 
-  let scrollY0 = 0;
+  let scrollY0 = 0, skew = 0, skewT = 0;
   window.addEventListener('scroll', () => {
+    const dyS = window.scrollY - scrollY0;
     scrollY0 = window.scrollY;
+    skewT = Math.max(-3.2, Math.min(3.2, dyS * 0.045)); // 慣性のしなり
     const max = document.documentElement.scrollHeight - window.innerHeight;
     document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
   });
@@ -574,9 +590,76 @@
       ctx.restore();
     }
 
+    // スクロール慣性：本文が布のようにわずかにしなって追従する
+    skew += (skewT - skew) * 0.12;
+    skewT *= 0.88;
+    mainEl.style.transform = Math.abs(skew) > 0.01 ? 'skewY(' + skew.toFixed(3) + 'deg)' : '';
+
     requestAnimationFrame(frame);
   }
   frame();
+
+  // ---- 筆あとトレイル：カーソルの動きに沿って絵の具のタッチが残り、すっと消える ----
+  const TRAILCOLS = ['#5b8dd8', '#58c4ba', '#6b79d0', '#7fc4de'];
+  const daubs = [];
+  let lastMx = -1, lastMy = -1;
+  window.addEventListener('mousemove', e => {
+    if (lastMx < 0) { lastMx = e.clientX; lastMy = e.clientY; return; }
+    const dx = e.clientX - lastMx, dy = e.clientY - lastMy;
+    if (dx * dx + dy * dy > 42) {
+      daubs.push({
+        x: e.clientX, y: e.clientY,
+        ang: Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.4,
+        len: 9 + Math.random() * 14,
+        w: 3 + Math.random() * 3.5,
+        c: TRAILCOLS[Math.floor(Math.random() * TRAILCOLS.length)],
+        life: 1
+      });
+      if (daubs.length > 34) daubs.shift();
+      lastMx = e.clientX; lastMy = e.clientY;
+    }
+  });
+  (function trailLoop() {
+    tctx.clearRect(0, 0, W, H);
+    tctx.lineCap = 'round';
+    for (let i = daubs.length - 1; i >= 0; i--) {
+      const d = daubs[i];
+      d.life -= 0.028;
+      if (d.life <= 0) { daubs.splice(i, 1); continue; }
+      tctx.globalAlpha = d.life * 0.5;
+      tctx.strokeStyle = d.c;
+      tctx.lineWidth = d.w * (0.4 + d.life * 0.6);
+      tctx.beginPath();
+      tctx.moveTo(d.x - Math.cos(d.ang) * d.len / 2, d.y - Math.sin(d.ang) * d.len / 2);
+      tctx.lineTo(d.x + Math.cos(d.ang) * d.len / 2, d.y + Math.sin(d.ang) * d.len / 2);
+      tctx.stroke();
+    }
+    tctx.globalAlpha = 1;
+    requestAnimationFrame(trailLoop);
+  })();
+
+  // ---- カードの 3D チルト：マウス位置に合わせて奥行き方向に傾く ----
+  document.querySelectorAll('.work').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform =
+        'translateY(-6px) rotateY(' + (px * 7).toFixed(2) + 'deg) rotateX(' + (-py * 7).toFixed(2) + 'deg)';
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  });
+
+  // ---- マグネティックナビ：リンクがカーソルに吸い寄せられる ----
+  document.querySelectorAll('aside nav a').forEach(a => {
+    a.addEventListener('mousemove', e => {
+      const r = a.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top + r.height / 2);
+      a.style.transform = 'translate(' + (dx * 0.10).toFixed(1) + 'px,' + (dy * 0.22).toFixed(1) + 'px)';
+    });
+    a.addEventListener('mouseleave', () => { a.style.transform = ''; });
+  });
 
   // リビール
   const io = new IntersectionObserver(es => es.forEach(e => {
