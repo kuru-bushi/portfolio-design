@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-2《星月夜》洗練パターン比較（スクロールバー 3 案）</title>
+<title>P-2《星月夜》洗練パターン比較 II（フレーム / セクション表示 / アバター 3 案）</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -33,36 +33,39 @@
 </style>
 </head>
 <body>
-  <h1>P-2《星月夜》洗練パターン比較：右スクロールバー 3 案</h1>
-  <p class="note">各パネルは 50% 縮小表示です。スクロールバー・ホバー・セクション強調の動きは「原寸で開く」で確認してください。</p>
+  <h1>P-2《星月夜》洗練パターン比較 II：フレーム / セクション表示 / アバター 3 案</h1>
+  <p class="note">各パネルは 50% 縮小表示です。ホバー・スクロール時の動きは「原寸で開く」で確認してください。スクロールバーは全案 B「月光の筆」（金→群青のピル型）で統一済みです。</p>
   <ul class="common">
-    <li><b>共通の改善（3 案すべてに適用済み）</b></li>
-    <li>背景の自己回復 — 筆あとは数秒で元の夜空グラデーションに溶けて戻り、濁らない</li>
-    <li>Works カードのホバーは控えめな月光ウォッシュ（明度 +10〜15%）に変更。文字は明るいまま保ちコントラスト維持</li>
-    <li>左サイドバーは縦 100% 固定・バー非表示。境界線は P7 と同じ「流れる寒色グラデーション」</li>
-    <li>スクロールで現在のセクションに月明かりが当たり、他は夜に沈む（左ナビも現在地に同期）</li>
+    <li><b>今回の比較軸（3 案で異なる部分）</b>: Works のフレームデザイン / スクロール時のセクション強調方法 / 左上アバター</li>
+    <li><b>共通の修正</b>: 上へスクロールしたときにセクションが非アクティブのままになるバグを修正（常にどれか 1 つが選ばれる方式に変更）。全体を暗くする減光方式は廃止</li>
   </ul>
   <div class="grid">
     <div class="cell">
-      <div class="bar">P-2A. 消灯 — バー非表示 <a href="mock-p2a-scroll-hidden.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">スクロールバーを完全に隠し、上部のプログレスバーだけで現在地を示す。没入感最優先。</div>
-      <div class="frame-wrap"><iframe src="mock-p2a-scroll-hidden.html"></iframe></div>
+      <div class="bar">P-2D. 額装 — 美術館の二重額 <a href="mock-p2d-gallery.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">枠: 金の内縁+外側に浮かせた細い額。ホバーで額ごと傾いて持ち上がる ／ セクション: 巨大な透かし番号+天井スポットライト ／ アバター: 筆致テクスチャが自転する「3D 油絵の月」（canvas）</div>
+      <div class="frame-wrap"><iframe src="mock-p2d-gallery.html"></iframe></div>
     </div>
     <div class="cell">
-      <div class="bar">P-2B. 月光の筆 — 極細ゴールドバー <a href="mock-p2b-scroll-gold.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">金→群青グラデーションのピル型サム。常時見えて操作性が高い。CSS のみで軽量。</div>
+      <div class="bar">P-2E. 厚塗り — 絵の具で描いた歪む枠 <a href="mock-p2e-impasto.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">枠: 油絵フィルタで縁が筆致のように揺らぐ二重フレーム ／ セクション: 太い絵の具の下線がスッと走る ／ アバター: パレットナイフの厚塗りスクエア</div>
+      <div class="frame-wrap"><iframe src="mock-p2e-impasto.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-2F. 星座 — つながる星のフレーム <a href="mock-p2f-constellation.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">枠: 点線+星ノード。ホバーで星がつながり実線に ／ セクション: 見出しが 1 文字ずつ星のように灯り、小星座の線がつながる ／ アバター: 月の軌道を 2 つの星が巡る</div>
+      <div class="frame-wrap"><iframe src="mock-p2f-constellation.html"></iframe></div>
+    </div>
+  </div>
+  <h2 class="frozen-head">決定済み・参考</h2>
+  <div class="grid">
+    <div class="cell">
+      <div class="bar">P-2B. スクロールバー基準（決定） <a href="mock-p2b-scroll-gold.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">スクロールバーは本案「月光の筆」に決定。D/E/F すべてに適用済み。</div>
       <div class="frame-wrap"><iframe src="mock-p2b-scroll-gold.html"></iframe></div>
     </div>
     <div class="cell">
-      <div class="bar">P-2C. 流星 — 星が軌道を滑る <a href="mock-p2c-scroll-star.html" target="_blank">原寸で開く ↗</a></div>
-      <div class="desc">光の軌道上を回転する星 ✦ がサムとして滑る。止まると消える。ドラッグ対応。</div>
-      <div class="frame-wrap"><iframe src="mock-p2c-scroll-star.html"></iframe></div>
-    </div>
-  </div>
-  <h2 class="frozen-head">参考（改修前）</h2>
-  <div class="grid">
-    <div class="cell">
       <div class="bar">P-2. 改修前の版 <a href="mock-p2-flowfield.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="desc">検討済み: <a href="mock-p2a-scroll-hidden.html" target="_blank" style="color:#22d3ee">A 消灯</a> ／ <a href="mock-p2c-scroll-star.html" target="_blank" style="color:#22d3ee">C 流星</a>（スクロールバー比較で B に敗退）</div>
       <div class="frame-wrap"><iframe src="mock-p2-flowfield.html"></iframe></div>
     </div>
   </div>

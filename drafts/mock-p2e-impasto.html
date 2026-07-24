@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-2B《星月夜》— スクロール：月光の筆</title>
+<title>P-2E《星月夜》— 厚塗り：絵の具で描いた歪む枠</title>
 <style>
   :root {
     --bg: #0d1b3e;
@@ -78,14 +78,24 @@
     animation: borderFlow 9s linear infinite;
   }
   @keyframes borderFlow { to { background-position: 0 400%; } }
+  /* パレットナイフの厚塗りアバター：絵の具の塊が油絵フィルタで歪む */
   .avatar {
-    width: 92px; height: 92px; border-radius: 50%; margin-bottom: 20px;
+    width: 96px; height: 96px; margin-bottom: 20px; border-radius: 4px; position: relative;
+    filter: url(#oilframe);
     background:
-      radial-gradient(circle at 38% 34%, #ffe9a8 0 14%, rgba(255, 215, 106, 0.65) 26%, rgba(255, 215, 106, 0.12) 48%, transparent 60%),
-      radial-gradient(circle at 60% 66%, rgba(126, 168, 232, 0.5), transparent 55%),
-      #122450;
-    box-shadow: 0 0 40px -4px rgba(255, 215, 106, 0.5);
+      linear-gradient(118deg, transparent 40%, rgba(255, 215, 106, 0.9) 40% 56%, transparent 56%),
+      linear-gradient(64deg, transparent 28%, rgba(126, 168, 232, 0.85) 28% 45%, transparent 45%),
+      linear-gradient(155deg, transparent 55%, rgba(232, 236, 251, 0.85) 55% 66%, transparent 66%),
+      linear-gradient(82deg, transparent 62%, rgba(52, 84, 156, 0.95) 62% 84%, transparent 84%),
+      #16294f;
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.6), 0 0 34px -6px rgba(255, 215, 106, 0.4);
+    transition: transform .5s;
   }
+  .avatar::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.20), transparent 42%, rgba(0, 0, 0, 0.30));
+  }
+  .avatar:hover { transform: rotate(-3deg) scale(1.04); }
   aside h1 { font-size: 22px; letter-spacing: 3px; font-weight: 600; color: #fff; }
   aside .role { font-size: 12px; letter-spacing: 3px; margin: 4px 0 20px; color: var(--star); }
   aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
@@ -147,47 +157,52 @@
   .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; color: #fff; }
   .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255, 215, 106, 0.6), transparent); }
 
-  /* スクロールスパイ：中央帯にあるセクションだけ月明かりが当たり、他は夜に沈む */
-  main section { opacity: .45; transition: opacity .7s ease; }
-  main section.focus { opacity: 1; }
+  /* セクション強調（厚塗り案）：筆で描いた太い下線がスッと走り、見出しに絵の具が乗る */
   .sec-head .num { font-size: 11px; letter-spacing: 3px; color: rgba(255, 215, 106, 0.5); transition: color .6s; }
-  .sec-head .moon { transition: box-shadow .7s, transform .7s; }
-  .sec-head h2 { transition: text-shadow .7s, letter-spacing .7s; }
-  .sec-head .rule { transform: scaleX(.25); transform-origin: left; transition: transform .9s cubic-bezier(.22, .8, .3, 1); }
   section.focus .sec-head .num { color: var(--star); }
-  section.focus .sec-head .moon { transform: scale(1.22); box-shadow: 0 0 34px rgba(255, 215, 106, 0.85); }
-  section.focus .sec-head h2 { letter-spacing: 8px; text-shadow: 0 0 20px rgba(255, 215, 106, 0.35); }
+  .sec-head h2 { color: rgba(232, 236, 251, 0.5); transition: color .7s, text-shadow .7s; }
+  section.focus .sec-head h2 { color: #fff; text-shadow: 0 0 18px rgba(255, 215, 106, 0.4); }
+  .sec-head .moon { filter: url(#oilframe); transition: transform .7s, box-shadow .7s; }
+  section.focus .sec-head .moon { transform: scale(1.18) rotate(10deg); box-shadow: 0 0 26px rgba(255, 215, 106, 0.8); }
+  .sec-head .rule {
+    height: 7px; border-radius: 4px; filter: url(#oilframe);
+    background: linear-gradient(90deg, rgba(255, 215, 106, 0.85), rgba(126, 168, 232, 0.55) 55%, transparent 92%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1s cubic-bezier(.22, .8, .3, 1);
+  }
   section.focus .sec-head .rule { transform: scaleX(1); }
 
   .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  /* 絵の具で描いた枠：oilframe フィルタで縁が筆致のように揺らぐ二重フレーム */
   .work {
-    border: 1px solid rgba(126, 168, 232, 0.3); border-radius: 4px; padding: 30px; position: relative;
+    border: none; border-radius: 3px; padding: 34px 32px; position: relative;
     background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
-    transition: transform .45s cubic-bezier(.22, .8, .3, 1), border-color .45s, box-shadow .45s;
+    transition: transform .5s cubic-bezier(.22, .8, .3, 1);
   }
-  /* ホバー時：月光がうっすら差す程度（+10〜15% の明度）に留め、文字は明るいまま保ってコントラストを確保 */
+  .work .fr {
+    position: absolute; inset: -4px; pointer-events: none; z-index: 1;
+    border: 2.5px solid rgba(126, 168, 232, 0.55); border-radius: 5px;
+    filter: url(#oilframe); transition: border-color .5s;
+  }
+  .work .fr::before {
+    content: ""; position: absolute; inset: 6px;
+    border: 1.5px solid rgba(255, 215, 106, 0.28); border-radius: 3px; transition: border-color .5s;
+  }
+  .work:hover { transform: translateY(-6px) rotate(-0.6deg); }
+  .work:hover .fr { border-color: var(--star); }
+  .work:hover .fr::before { border-color: rgba(126, 168, 232, 0.65); }
   .work::after {
-    content: ""; position: absolute; inset: 0; border-radius: 4px; z-index: 0;
-    background: linear-gradient(165deg, rgba(186, 208, 246, 0.16), rgba(226, 236, 252, 0.08));
+    content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+    background: linear-gradient(165deg, rgba(186, 208, 246, 0.15), rgba(226, 236, 252, 0.07));
     opacity: 0; transition: opacity .5s ease;
   }
   .work > * { position: relative; z-index: 1; }
-  /* 額縁のような金のコーナー飾り。ホバーで伸びて光る */
-  .work .fr { position: absolute; inset: 0; pointer-events: none; }
-  .work .fr::before, .work .fr::after {
-    content: ""; position: absolute; width: 15px; height: 15px;
-    opacity: .3; transition: opacity .45s, width .45s, height .45s;
-  }
-  .work .fr::before { top: 9px; left: 9px; border-top: 1px solid var(--star); border-left: 1px solid var(--star); }
-  .work .fr::after { bottom: 9px; right: 9px; border-bottom: 1px solid var(--star); border-right: 1px solid var(--star); }
-  .work:hover .fr::before, .work:hover .fr::after { opacity: .95; width: 24px; height: 24px; }
   .work::before {
     content: "✦"; position: absolute; top: 16px; right: 20px; z-index: 1;
     color: rgba(255, 215, 106, 0.25); font-size: 20px; transition: all .3s;
   }
-  .work:hover { transform: translateY(-6px); border-color: rgba(255, 215, 106, 0.75); box-shadow: 0 20px 48px -12px rgba(255, 215, 106, 0.3); }
-  .work:hover::after { opacity: 1; }
   .work:hover::before { color: var(--star); transform: rotate(72deg) scale(1.3); text-shadow: 0 0 16px var(--star); }
+  .work:hover::after { opacity: 1; }
   .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; letter-spacing: 1px; transition: text-shadow .45s; }
   .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; transition: color .45s; }
   .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--swirl); font-weight: 700; transition: color .45s; }
@@ -258,11 +273,15 @@
     <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="13" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
+  <filter id="oilframe">
+    <feTurbulence type="fractalNoise" baseFrequency="0.05 0.07" numOctaves="2" seed="4" result="m"/>
+    <feDisplacementMap in="SourceGraphic" in2="m" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
 </svg>
 <div id="cur-ring"></div>
 <div id="cur-dot"></div>
 <!-- ==SBHTML== -->
-<a class="pback sans" href="p2-index.html">✦ P2-B 月光の筆｜パターン一覧へ</a>
+<a class="pback sans" href="p2-index.html">✦ P2-E 厚塗り｜パターン一覧へ</a>
 
 <aside>
   <div class="avatar"></div>

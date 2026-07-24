@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-2B《星月夜》— スクロール：月光の筆</title>
+<title>P-2F《星月夜》— 星座：つながる星のフレーム</title>
 <style>
   :root {
     --bg: #0d1b3e;
@@ -78,14 +78,26 @@
     animation: borderFlow 9s linear infinite;
   }
   @keyframes borderFlow { to { background-position: 0 400%; } }
+  /* 月と、その軌道を巡る 2 つの星 */
   .avatar {
-    width: 92px; height: 92px; border-radius: 50%; margin-bottom: 20px;
+    width: 92px; height: 92px; margin-bottom: 24px; position: relative; border-radius: 50%;
     background:
-      radial-gradient(circle at 38% 34%, #ffe9a8 0 14%, rgba(255, 215, 106, 0.65) 26%, rgba(255, 215, 106, 0.12) 48%, transparent 60%),
-      radial-gradient(circle at 60% 66%, rgba(126, 168, 232, 0.5), transparent 55%),
+      radial-gradient(circle at 38% 34%, #ffe9a8 0 22%, rgba(255, 215, 106, 0.5) 40%, rgba(255, 215, 106, 0.08) 62%, transparent 70%),
       #122450;
-    box-shadow: 0 0 40px -4px rgba(255, 215, 106, 0.5);
+    box-shadow: 0 0 36px -4px rgba(255, 215, 106, 0.45);
   }
+  .avatar i {
+    position: absolute; inset: -4px; border-radius: 50%;
+    border: 1px dashed rgba(126, 168, 232, 0.35);
+    animation: orbit 13s linear infinite;
+  }
+  .avatar i::after {
+    content: "✦"; position: absolute; top: -7px; left: 50%; margin-left: -5px;
+    color: var(--star); font-size: 10px; text-shadow: 0 0 8px var(--star);
+  }
+  .avatar i:nth-of-type(2) { inset: -13px; animation-duration: 21s; animation-direction: reverse; border-color: rgba(126, 168, 232, 0.2); }
+  .avatar i:nth-of-type(2)::after { color: var(--swirl); text-shadow: 0 0 8px var(--swirl); font-size: 8px; }
+  @keyframes orbit { to { transform: rotate(360deg); } }
   aside h1 { font-size: 22px; letter-spacing: 3px; font-weight: 600; color: #fff; }
   aside .role { font-size: 12px; letter-spacing: 3px; margin: 4px 0 20px; color: var(--star); }
   aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
@@ -147,47 +159,66 @@
   .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; color: #fff; }
   .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255, 215, 106, 0.6), transparent); }
 
-  /* スクロールスパイ：中央帯にあるセクションだけ月明かりが当たり、他は夜に沈む */
-  main section { opacity: .45; transition: opacity .7s ease; }
-  main section.focus { opacity: 1; }
-  .sec-head .num { font-size: 11px; letter-spacing: 3px; color: rgba(255, 215, 106, 0.5); transition: color .6s; }
-  .sec-head .moon { transition: box-shadow .7s, transform .7s; }
-  .sec-head h2 { transition: text-shadow .7s, letter-spacing .7s; }
-  .sec-head .rule { transform: scaleX(.25); transform-origin: left; transition: transform .9s cubic-bezier(.22, .8, .3, 1); }
+  /* セクション強調（星座案）：見出しの文字が星のように 1 文字ずつ灯り、小星座の線がつながる */
+  .sec-head .num { font-size: 11px; letter-spacing: 3px; color: rgba(126, 168, 232, 0.55); transition: color .6s; }
   section.focus .sec-head .num { color: var(--star); }
-  section.focus .sec-head .moon { transform: scale(1.22); box-shadow: 0 0 34px rgba(255, 215, 106, 0.85); }
-  section.focus .sec-head h2 { letter-spacing: 8px; text-shadow: 0 0 20px rgba(255, 215, 106, 0.35); }
+  .sec-head h2 span { color: rgba(147, 160, 200, 0.45); transition: color .55s, text-shadow .55s; }
+  section.focus .sec-head h2 span { color: #fff; text-shadow: 0 0 14px rgba(255, 215, 106, 0.55); }
+  .sec-head .moon {
+    width: 32px; height: 26px; border-radius: 0; box-shadow: none; position: relative;
+    background:
+      radial-gradient(circle 2.5px at 15% 78%, var(--star) 50%, transparent 51%),
+      radial-gradient(circle 3.5px at 55% 22%, var(--moon) 50%, transparent 51%),
+      radial-gradient(circle 2px at 88% 62%, var(--swirl) 50%, transparent 51%);
+  }
+  .sec-head .moon::before, .sec-head .moon::after {
+    content: ""; position: absolute; height: 1px; background: rgba(255, 215, 106, 0.7);
+    transform-origin: left center; opacity: 0; transition: opacity .6s .15s;
+  }
+  .sec-head .moon::before { left: 17%; top: 74%; width: 44%; transform: rotate(-51deg); }
+  .sec-head .moon::after { left: 56%; top: 26%; width: 38%; transform: rotate(48deg); }
+  section.focus .sec-head .moon::before, section.focus .sec-head .moon::after { opacity: 1; }
+  .sec-head .rule {
+    height: 1px; background: repeating-linear-gradient(90deg, rgba(255, 215, 106, 0.7) 0 6px, transparent 6px 14px);
+    transform: scaleX(0); transform-origin: left; transition: transform 1.1s ease .15s;
+  }
   section.focus .sec-head .rule { transform: scaleX(1); }
 
   .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  /* 星座の枠：点線の境界と四隅 + 辺中央の星ノード。ホバーで星がつながり実線になる */
   .work {
-    border: 1px solid rgba(126, 168, 232, 0.3); border-radius: 4px; padding: 30px; position: relative;
-    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
-    transition: transform .45s cubic-bezier(.22, .8, .3, 1), border-color .45s, box-shadow .45s;
+    border: 1px dashed rgba(126, 168, 232, 0.45); border-radius: 6px; padding: 30px; position: relative;
+    background: linear-gradient(165deg, rgba(18, 36, 80, 0.9), rgba(10, 20, 46, 0.9));
+    transition: transform .5s cubic-bezier(.22, .8, .3, 1), border-color .5s, box-shadow .5s;
   }
-  /* ホバー時：月光がうっすら差す程度（+10〜15% の明度）に留め、文字は明るいまま保ってコントラストを確保 */
+  .work .fr { position: absolute; inset: -5px; pointer-events: none; z-index: 1; }
+  .work .fr::before {
+    content: ""; position: absolute; inset: 0; opacity: .55; transition: opacity .5s, filter .5s;
+    background:
+      radial-gradient(circle 3px at 0% 0%, var(--star) 45%, transparent 46%),
+      radial-gradient(circle 3px at 100% 0%, var(--star) 45%, transparent 46%),
+      radial-gradient(circle 3px at 0% 100%, var(--star) 45%, transparent 46%),
+      radial-gradient(circle 3px at 100% 100%, var(--star) 45%, transparent 46%),
+      radial-gradient(circle 2px at 50% 0%, rgba(126, 168, 232, 0.9) 45%, transparent 46%),
+      radial-gradient(circle 2px at 50% 100%, rgba(126, 168, 232, 0.9) 45%, transparent 46%);
+  }
+  .work:hover {
+    transform: translateY(-6px); border-style: solid; border-color: rgba(255, 215, 106, 0.8);
+    box-shadow: 0 18px 44px -14px rgba(255, 215, 106, 0.3), inset 0 0 34px rgba(126, 168, 232, 0.08);
+  }
+  .work:hover .fr::before { opacity: 1; filter: drop-shadow(0 0 5px var(--star)); }
   .work::after {
-    content: ""; position: absolute; inset: 0; border-radius: 4px; z-index: 0;
-    background: linear-gradient(165deg, rgba(186, 208, 246, 0.16), rgba(226, 236, 252, 0.08));
+    content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+    background: linear-gradient(165deg, rgba(186, 208, 246, 0.15), rgba(226, 236, 252, 0.07));
     opacity: 0; transition: opacity .5s ease;
   }
   .work > * { position: relative; z-index: 1; }
-  /* 額縁のような金のコーナー飾り。ホバーで伸びて光る */
-  .work .fr { position: absolute; inset: 0; pointer-events: none; }
-  .work .fr::before, .work .fr::after {
-    content: ""; position: absolute; width: 15px; height: 15px;
-    opacity: .3; transition: opacity .45s, width .45s, height .45s;
-  }
-  .work .fr::before { top: 9px; left: 9px; border-top: 1px solid var(--star); border-left: 1px solid var(--star); }
-  .work .fr::after { bottom: 9px; right: 9px; border-bottom: 1px solid var(--star); border-right: 1px solid var(--star); }
-  .work:hover .fr::before, .work:hover .fr::after { opacity: .95; width: 24px; height: 24px; }
   .work::before {
     content: "✦"; position: absolute; top: 16px; right: 20px; z-index: 1;
     color: rgba(255, 215, 106, 0.25); font-size: 20px; transition: all .3s;
   }
-  .work:hover { transform: translateY(-6px); border-color: rgba(255, 215, 106, 0.75); box-shadow: 0 20px 48px -12px rgba(255, 215, 106, 0.3); }
-  .work:hover::after { opacity: 1; }
   .work:hover::before { color: var(--star); transform: rotate(72deg) scale(1.3); text-shadow: 0 0 16px var(--star); }
+  .work:hover::after { opacity: 1; }
   .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; letter-spacing: 1px; transition: text-shadow .45s; }
   .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; transition: color .45s; }
   .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--swirl); font-weight: 700; transition: color .45s; }
@@ -262,10 +293,10 @@
 <div id="cur-ring"></div>
 <div id="cur-dot"></div>
 <!-- ==SBHTML== -->
-<a class="pback sans" href="p2-index.html">✦ P2-B 月光の筆｜パターン一覧へ</a>
+<a class="pback sans" href="p2-index.html">✦ P2-F 星座｜パターン一覧へ</a>
 
 <aside>
-  <div class="avatar"></div>
+  <div class="avatar"><i></i><i></i></div>
   <h1>IKEDA</h1>
   <div class="role sans">WEB ENGINEER</div>
   <p class="bio sans">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
@@ -670,6 +701,12 @@
   window.addEventListener('scroll', spyUpdate, { passive: true });
   window.addEventListener('resize', spyUpdate);
   spyUpdate();
+
+  // 見出しを 1 文字ずつ <span> 化し、星が順に灯るようにする
+  document.querySelectorAll('.sec-head h2').forEach(h => {
+    h.innerHTML = h.textContent.split('').map((ch, i) =>
+      '<span style="transition-delay:' + (i * 70) + 'ms">' + ch + '</span>').join('');
+  });
 
   // ==SBJS==
 })();
