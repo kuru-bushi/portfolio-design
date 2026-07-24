@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock C — ミニマル・タイポグラフィ型</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #24292f;
+    --sub: #57606a;
+    --accent: #0969da;
+    --border: #d0d7de;
+    --hover-bg: #f6f8fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.9; font-size: 16px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 80px 24px; }
+
+  .profile { margin-bottom: 72px; }
+  .profile h1 { font-size: 28px; margin-bottom: 12px; letter-spacing: 0.02em; }
+  .profile p { color: var(--sub); font-size: 15px; }
+  .profile .links { margin-top: 20px; display: flex; gap: 20px; font-size: 14px; }
+  .profile .links a { color: var(--accent); text-decoration: none; }
+  .profile .links a:hover { text-decoration: underline; }
+
+  h2 {
+    font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sub); margin-bottom: 24px; font-weight: 600;
+  }
+  section { margin-bottom: 72px; }
+
+  .post {
+    display: block; padding: 16px 0; text-decoration: none; color: inherit;
+    border-bottom: 1px solid var(--border);
+  }
+  .post:first-of-type { border-top: 1px solid var(--border); }
+  .post .title { font-size: 17px; font-weight: 600; }
+  .post:hover .title { color: var(--accent); }
+  .post .meta { font-size: 13px; color: var(--sub); margin-top: 2px; }
+
+  .work { padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .work:first-of-type { border-top: 1px solid var(--border); }
+  .work .name { display: flex; justify-content: space-between; align-items: baseline; }
+  .work .name a { font-size: 17px; font-weight: 600; color: inherit; text-decoration: none; }
+  .work .name a:hover { color: var(--accent); }
+  .work .stack { font-size: 12px; color: var(--sub); font-family: ui-monospace, monospace; }
+  .work p { font-size: 14px; color: var(--sub); margin-top: 4px; }
+
+  footer { color: var(--sub); font-size: 13px; padding-top: 24px; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="profile">
+    <h1>Ikeda</h1>
+    <p>Web エンジニア。個人開発と技術記事の執筆をしています。クラウドインフラの自動化と AI 活用が主なテーマです。</p>
+    <div class="links">
+      <a href="#">GitHub</a>
+      <a href="#">Zenn</a>
+      <a href="#">X</a>
+      <a href="#">RSS</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>Writing</h2>
+    <a class="post" href="#">
+      <div class="title">WSL2 + Claude Code で開発環境を整える</div>
+      <div class="meta">2026年7月10日 · Zenn</div>
+    </a>
+    <a class="post" href="#">
+      <div class="title">Terraform で AWS 環境をコード管理する入門</div>
+      <div class="meta">2026年6月28日 · Zenn</div>
+    </a>
+    <a class="post" href="#">
+      <div class="title">RAG の精度を上げるチャンク分割戦略</div>
+      <div class="meta">2026年6月5日 · Qiita</div>
+    </a>
+    <a class="post" href="#">
+      <div class="title">個人開発サービスを Cloudflare Pages で公開するまで</div>
+      <div class="meta">2026年5月19日 · Blog</div>
+    </a>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="work">
+      <div class="name"><a href="#">タスク管理アプリ ↗</a><span class="stack">Next.js / Supabase</span></div>
+      <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期に対応。</p>
+    </div>
+    <div class="work">
+      <div class="name"><a href="#">RAG チャットボット ↗</a><span class="stack">Python / Azure</span></div>
+      <p>社内ドキュメントを検索できる AI チャット。</p>
+    </div>
+    <div class="work">
+      <div class="name"><a href="#">家計簿 PWA ↗</a><span class="stack">React / PWA</span></div>
+      <p>オフラインでも使える家計簿アプリ。グラフで支出を可視化。</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Ikeda · <a href="#">ikeda.k.autom92@gmail.com</a>
+  </footer>
+
+</div>
+</body>
+</html>

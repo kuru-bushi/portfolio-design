@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-1 ブループリント（設計図）型</title>
+<style>
+  :root {
+    --bg: #0b1b33;
+    --bg2: #0e2140;
+    --line: rgba(140, 180, 230, 0.14);
+    --line-strong: rgba(140, 180, 230, 0.3);
+    --text: #dce8f7;
+    --sub: #8aa3c4;
+    --accent: #4cc9f0;
+    --accent2: #ff9f1c;
+    --border: rgba(140, 180, 230, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--line-strong) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-strong) 1px, transparent 1px),
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    color: var(--text); line-height: 1.7;
+    display: flex; min-height: 100vh;
+  }
+  .mono { font-family: ui-monospace, "Cascadia Code", monospace; }
+
+  aside {
+    width: 280px; background: rgba(11, 27, 51, 0.85);
+    border-right: 1px dashed var(--border);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto;
+    backdrop-filter: blur(2px);
+  }
+  .frame-label {
+    font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 2px;
+    color: var(--sub); border: 1px solid var(--border); display: inline-block;
+    padding: 2px 8px; margin-bottom: 24px;
+  }
+  .avatar {
+    width: 88px; height: 88px; border: 1px solid var(--accent);
+    border-radius: 50%; position: relative; margin-bottom: 8px;
+  }
+  .avatar::before, .avatar::after {
+    content: ""; position: absolute; background: var(--accent); opacity: 0.6;
+  }
+  .avatar::before { left: 50%; top: -8px; bottom: -8px; width: 1px; }
+  .avatar::after { top: 50%; left: -8px; right: -8px; height: 1px; }
+  .avatar-cap { font-family: ui-monospace, monospace; font-size: 10px; color: var(--sub); margin-bottom: 20px; }
+  aside h1 { color: #fff; font-size: 20px; margin-bottom: 4px; letter-spacing: 1px; }
+  aside .role { font-size: 12px; color: var(--accent); margin-bottom: 20px; font-family: ui-monospace, monospace; }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 32px; }
+  aside nav a {
+    color: var(--sub); text-decoration: none; font-size: 13px;
+    padding: 9px 14px; border-left: 2px solid transparent;
+    font-family: ui-monospace, monospace; letter-spacing: 1px;
+  }
+  aside nav a .idx { color: var(--accent2); margin-right: 10px; font-size: 11px; }
+  aside nav a.active { border-left-color: var(--accent); color: #fff; background: rgba(76, 201, 240, 0.08); }
+  aside nav a:hover { color: #fff; }
+  .side-sec h3 {
+    font-size: 10px; letter-spacing: 2px; color: var(--sub); margin-bottom: 12px;
+    font-family: ui-monospace, monospace; text-transform: uppercase;
+  }
+  .side-sec { margin-bottom: 28px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px dashed var(--border); padding: 3px 10px;
+    color: var(--sub); font-family: ui-monospace, monospace;
+  }
+  .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; font-family: ui-monospace, monospace; }
+  .sns a:hover { color: var(--accent); }
+
+  main { margin-left: 280px; flex: 1; padding: 48px 56px; max-width: 1020px; }
+  section { margin-bottom: 64px; }
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+  .sec-head .fig { font-family: ui-monospace, monospace; font-size: 12px; color: var(--accent2); letter-spacing: 1px; }
+  .sec-head h2 { font-size: 22px; letter-spacing: 2px; color: #fff; }
+  .sec-head .rule { flex: 1; border-bottom: 1px dashed var(--border); position: relative; top: -6px; }
+  .sec-head .rule::after {
+    content: ""; position: absolute; right: 0; top: -3px;
+    width: 7px; height: 7px; border: 1px solid var(--accent); transform: rotate(45deg);
+  }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .work {
+    border: 1px solid var(--border); padding: 24px; position: relative;
+    background: rgba(14, 33, 64, 0.6);
+  }
+  .work::before, .work::after,
+  .work .c3, .work .c4 {
+    content: ""; position: absolute; width: 10px; height: 10px;
+    border: 1px solid var(--accent);
+  }
+  .work::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .work::after { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+  .work .c3 { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+  .work .c4 { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+  .work:hover { border-color: var(--accent); }
+  .work .num { font-family: ui-monospace, monospace; font-size: 11px; color: var(--accent2); margin-bottom: 10px; }
+  .work h3 { font-size: 17px; color: #fff; margin-bottom: 8px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 16px; }
+  .work .stack { font-family: ui-monospace, monospace; font-size: 11px; color: var(--accent); margin-bottom: 14px; }
+  .work .links { display: flex; gap: 16px; font-size: 12px; font-family: ui-monospace, monospace; }
+  .work .links a { color: var(--text); text-decoration: none; border-bottom: 1px dashed var(--accent); }
+  .work .links a:hover { color: var(--accent); }
+
+  .article {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 16px 20px; margin-bottom: 10px;
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    text-decoration: none; color: inherit; background: rgba(14, 33, 64, 0.6);
+  }
+  .article:hover { border-color: var(--accent); }
+  .article .t { font-size: 14px; font-weight: 600; }
+  .article .meta { font-size: 11px; color: var(--sub); white-space: nowrap; font-family: ui-monospace, monospace; }
+
+  .timeline { border-left: 1px dashed var(--border); padding-left: 28px; margin-left: 6px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -34px; top: 7px;
+    width: 9px; height: 9px; border: 1px solid var(--accent);
+    transform: rotate(45deg); background: var(--bg);
+  }
+  .tl-item time { font-size: 11px; color: var(--accent2); font-family: ui-monospace, monospace; }
+  .tl-item h4 { font-size: 15px; margin: 2px 0; color: #fff; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--sub);
+    border-top: 1px dashed var(--border); padding-top: 20px;
+    display: flex; justify-content: space-between;
+  }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; border-right: none; border-bottom: 1px dashed var(--border); }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="frame-label">PORTFOLIO — REV.1.0</div>
+  <div class="avatar"></div>
+  <div class="avatar-cap">FIG.0 — PROFILE φ88</div>
+  <h1>Ikeda</h1>
+  <div class="role">&gt; web_engineer</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active"><span class="idx">01</span>WORKS</a>
+    <a href="#articles"><span class="idx">02</span>ARTICLES</a>
+    <a href="#career"><span class="idx">03</span>CAREER</a>
+    <a href="#contact"><span class="idx">04</span>CONTACT</a>
+  </nav>
+  <div class="side-sec">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>Links</h3>
+    <a href="#">→ GitHub</a>
+    <a href="#">→ Zenn</a>
+    <a href="#">→ X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <div class="sec-head"><span class="fig">FIG. 01</span><h2>WORKS</h2><span class="rule"></span></div>
+    <div class="works">
+      <div class="work"><span class="c3"></span><span class="c4"></span>
+        <div class="num">NO. 001</div>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="stack">[ Next.js / Supabase / Vercel ]</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work"><span class="c3"></span><span class="c4"></span>
+        <div class="num">NO. 002</div>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。チャンク分割とリランキングで精度改善。</p>
+        <div class="stack">[ Python / Azure OpenAI ]</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work"><span class="c3"></span><span class="c4"></span>
+        <div class="num">NO. 003</div>
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="stack">[ React / PWA / IndexedDB ]</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work"><span class="c3"></span><span class="c4"></span>
+        <div class="num">NO. 004</div>
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製・クロスプラットフォーム。</p>
+        <div class="stack">[ Go ]</div>
+        <div class="links"><a href="#">GITHUB</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head"><span class="fig">FIG. 02</span><h2>ARTICLES</h2><span class="rule"></span></div>
+    <a class="article" href="#">
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">2026-07-10 // ZENN</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">2026-06-28 // ZENN</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">2026-06-05 // QIITA</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head"><span class="fig">FIG. 03</span><h2>CAREER</h2><span class="rule"></span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <span>© 2026 IKEDA.DEV</span>
+    <span>DRAWN: 2026-07-24 / SCALE 1:1</span>
+  </footer>
+</main>
+
+</body>
+</html>

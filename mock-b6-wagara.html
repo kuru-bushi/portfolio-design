@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-6 和柄幾何学型</title>
+<style>
+  :root {
+    --ai: #1f3251;        /* 藍 */
+    --ai-deep: #16263e;
+    --kinari: #f6f1e5;    /* 生成り */
+    --text: #2b2b26;
+    --sub: #757065;
+    --gold: #b7862c;      /* 金茶 */
+    --border: #e2dbc9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    background: var(--kinari); color: var(--text); line-height: 1.9;
+    display: flex; min-height: 100vh;
+  }
+  .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+
+  /* 七宝文様（サイドバー背景） */
+  aside {
+    width: 280px; padding: 40px 28px; position: fixed; top: 0; bottom: 0;
+    overflow-y: auto; color: #e9e4d6;
+    background-color: var(--ai);
+    background-image:
+      radial-gradient(circle at 0 0, transparent 22px, rgba(233,228,214,0.07) 22px 24px, transparent 24px),
+      radial-gradient(circle at 48px 0, transparent 22px, rgba(233,228,214,0.07) 22px 24px, transparent 24px),
+      radial-gradient(circle at 0 48px, transparent 22px, rgba(233,228,214,0.07) 22px 24px, transparent 24px),
+      radial-gradient(circle at 48px 48px, transparent 22px, rgba(233,228,214,0.07) 22px 24px, transparent 24px),
+      radial-gradient(circle at 24px 24px, transparent 22px, rgba(233,228,214,0.07) 22px 24px, transparent 24px);
+    background-size: 48px 48px;
+  }
+  .avatar {
+    width: 92px; height: 92px; margin-bottom: 8px; border-radius: 50%;
+    border: 2px solid var(--gold); position: relative;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(183,134,44,0.5), transparent 60%),
+      var(--ai-deep);
+  }
+  .avatar::after {
+    content: ""; position: absolute; inset: 6px; border-radius: 50%;
+    border: 1px solid rgba(183,134,44,0.5);
+  }
+  .kamon-cap { font-size: 10px; color: rgba(233,228,214,0.5); letter-spacing: 3px; margin-bottom: 18px; }
+  aside h1 { color: #fff; font-size: 22px; margin-bottom: 2px; letter-spacing: 6px; font-weight: 600; }
+  aside .role { font-size: 12px; color: var(--gold); margin-bottom: 20px; letter-spacing: 3px; }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: rgba(233,228,214,0.75); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 32px; border-top: 1px solid rgba(183,134,44,0.4); }
+  aside nav a {
+    color: #e9e4d6; text-decoration: none; font-size: 13px; letter-spacing: 4px;
+    padding: 13px 6px; border-bottom: 1px solid rgba(183,134,44,0.4);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  aside nav a::after { content: "❖"; font-size: 9px; color: rgba(183,134,44,0.6); }
+  aside nav a.active { color: var(--gold); font-weight: 600; }
+  aside nav a.active::after, aside nav a:hover::after { color: var(--gold); }
+  aside nav a:hover { color: #fff; }
+  .side-sec { margin-bottom: 30px; }
+  .side-sec h3 {
+    font-size: 10px; letter-spacing: 4px; color: rgba(233,228,214,0.5);
+    margin-bottom: 14px;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px solid rgba(183,134,44,0.5); padding: 3px 11px;
+    color: rgba(233,228,214,0.85);
+  }
+  .sns a { color: rgba(233,228,214,0.75); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; letter-spacing: 2px; }
+  .sns a:hover { color: var(--gold); }
+
+  main { margin-left: 280px; flex: 1; padding: 56px 60px; max-width: 1020px; }
+  section { margin-bottom: 72px; }
+  .sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .sec-head .kikko {
+    width: 22px; height: 25px; background: var(--ai); flex-shrink: 0;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    position: relative;
+  }
+  .sec-head h2 { font-size: 22px; letter-spacing: 6px; font-weight: 600; color: var(--ai); }
+  .sec-head h2 .en { font-size: 11px; color: var(--gold); letter-spacing: 2px; margin-left: 14px; font-family: "Hiragino Sans", sans-serif; }
+  .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .work {
+    background: #fffdf8; border: 1px solid var(--border);
+    padding: 28px; position: relative; transition: border-color .2s;
+  }
+  .work::before {
+    content: ""; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px;
+    border: 1px solid var(--border); pointer-events: none;
+  }
+  .work:hover { border-color: var(--gold); }
+  .work:hover::before { border-color: rgba(183,134,44,0.4); }
+  .work .mon {
+    width: 42px; height: 48px; margin-bottom: 16px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .mon-1 { background: linear-gradient(160deg, #1f3251, #3a5a8c); }
+  .mon-2 { background: linear-gradient(160deg, #5c1f2e, #a04358); }
+  .mon-3 { background: linear-gradient(160deg, #2e4a2c, #5d8a58); }
+  .mon-4 { background: linear-gradient(160deg, #8c6a1f, #c9a24b); }
+  .work h3 { font-size: 17px; margin-bottom: 8px; letter-spacing: 1px; color: var(--ai); }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .stack { font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 14px; }
+  .work .links { display: flex; gap: 18px; font-size: 12px; letter-spacing: 2px; }
+  .work .links a { color: var(--ai); text-decoration: none; border-bottom: 1px solid var(--gold); }
+  .work .links a:hover { color: var(--gold); }
+
+  .article {
+    display: flex; align-items: baseline; gap: 20px; padding: 18px 8px;
+    border-bottom: 1px dashed var(--border); text-decoration: none; color: inherit;
+  }
+  .article:first-of-type { border-top: 1px solid var(--gold); }
+  .article:last-of-type { border-bottom: 1px solid var(--gold); }
+  .article time { font-size: 12px; color: var(--gold); white-space: nowrap; letter-spacing: 1px; }
+  .article .t { font-size: 15px; flex: 1; color: var(--text); }
+  .article:hover .t { color: var(--ai); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--gold); }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid var(--border); padding: 1px 10px; }
+
+  .timeline { border-left: 1px solid var(--gold); padding-left: 28px; margin-left: 10px; }
+  .tl-item { position: relative; padding-bottom: 30px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -34px; top: 8px;
+    width: 11px; height: 12px; background: var(--ai);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .tl-item time { font-size: 12px; color: var(--gold); letter-spacing: 2px; }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; color: var(--ai); letter-spacing: 1px; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  /* 青海波（フッター） */
+  footer {
+    margin-left: -60px; margin-right: -60px; margin-bottom: -56px;
+    padding: 44px 60px 36px;
+    background-color: var(--ai);
+    background-image:
+      radial-gradient(circle at 50% 130%, transparent 36px, rgba(233,228,214,0.1) 36px 38px, transparent 38px 46px, rgba(233,228,214,0.1) 46px 48px, transparent 48px 56px, rgba(233,228,214,0.1) 56px 58px, transparent 58px),
+      radial-gradient(circle at 0% 130%, transparent 36px, rgba(233,228,214,0.1) 36px 38px, transparent 38px 46px, rgba(233,228,214,0.1) 46px 48px, transparent 48px 56px, rgba(233,228,214,0.1) 56px 58px, transparent 58px),
+      radial-gradient(circle at 100% 130%, transparent 36px, rgba(233,228,214,0.1) 36px 38px, transparent 38px 46px, rgba(233,228,214,0.1) 46px 48px, transparent 48px 56px, rgba(233,228,214,0.1) 56px 58px, transparent 58px);
+    background-size: 84px 60px;
+    color: rgba(233,228,214,0.8); font-size: 12px; letter-spacing: 3px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+    footer { margin: 0 -20px -32px; padding: 36px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="avatar"></div>
+  <div class="kamon-cap sans">— 家紋風 —</div>
+  <h1>池田</h1>
+  <div class="role sans">WEB ENGINEER</div>
+  <p class="bio sans">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active">作品集</a>
+    <a href="#articles">記事</a>
+    <a href="#career">経歴</a>
+    <a href="#contact">連絡先</a>
+  </nav>
+  <div class="side-sec sans">
+    <h3>SKILLS</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3 class="sans">LINKS</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <div class="sec-head"><span class="kikko"></span><h2>作品集<span class="en">WORKS</span></h2><span class="rule"></span></div>
+    <div class="works sans">
+      <div class="work">
+        <div class="mon mon-1"></div>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="stack">NEXT.JS / SUPABASE</div>
+        <div class="links"><a href="#">実演</a><a href="#">GitHub</a></div>
+      </div>
+      <div class="work">
+        <div class="mon mon-2"></div>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+        <div class="stack">PYTHON / AZURE OPENAI</div>
+        <div class="links"><a href="#">実演</a><a href="#">GitHub</a></div>
+      </div>
+      <div class="work">
+        <div class="mon mon-3"></div>
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="stack">REACT / PWA</div>
+        <div class="links"><a href="#">実演</a><a href="#">GitHub</a></div>
+      </div>
+      <div class="work">
+        <div class="mon mon-4"></div>
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+        <div class="stack">GO</div>
+        <div class="links"><a href="#">GitHub</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head"><span class="kikko"></span><h2>記事<span class="en">ARTICLES</span></h2><span class="rule"></span></div>
+    <div class="sans">
+      <a class="article" href="#">
+        <time>2026.07.10</time>
+        <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+        <span class="src">Zenn</span>
+      </a>
+      <a class="article" href="#">
+        <time>2026.06.28</time>
+        <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+        <span class="src">Zenn</span>
+      </a>
+      <a class="article" href="#">
+        <time>2026.06.05</time>
+        <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+        <span class="src">Qiita</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="career">
+    <div class="sec-head"><span class="kikko"></span><h2>経歴<span class="en">CAREER</span></h2><span class="rule"></span></div>
+    <div class="timeline sans">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact" class="sans">
+    <span>© 2026 池田</span>
+    <span><a href="#">GitHub</a> ・ <a href="#">Zenn</a> ・ <a href="#">X</a></span>
+  </footer>
+</main>
+
+</body>
+</html>

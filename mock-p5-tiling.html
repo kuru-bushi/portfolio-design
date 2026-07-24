@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P-5 モンドリアン《ブロードウェイ・ブギウギ》— 都市のリズム</title>
+<style>
+  :root {
+    --bg: #f4f2ea;
+    --ink: #17150f;
+    --sub: #6b675c;
+    --yellow: #f0c419;
+    --red: #d92b2b;
+    --blue: #2b56d9;
+    --grey: #d8d8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.8;
+    display: flex; min-height: 100vh; cursor: none;
+  }
+  a { cursor: none; }
+
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #progress {
+    position: fixed; top: 0; left: 0; height: 4px; width: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--red) 0 33%, var(--yellow) 33% 66%, var(--blue) 66%);
+  }
+
+  #cur-dot, #cur-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99;
+    transform: translate(-50%, -50%);
+  }
+  #cur-dot { width: 8px; height: 8px; background: var(--red); }
+  #cur-ring {
+    width: 34px; height: 34px; border: 2px solid var(--ink);
+    transition: width .25s, height .25s, border-color .25s, background .25s;
+  }
+  #cur-ring.on { width: 54px; height: 54px; border-color: var(--blue); background: rgba(240, 196, 25, 0.3); }
+  @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
+
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .works .reveal:nth-child(2) { transition-delay: .12s; }
+  .works .reveal:nth-child(3) { transition-delay: .06s; }
+  .works .reveal:nth-child(4) { transition-delay: .18s; }
+
+  aside {
+    width: 280px; background: #fbfaf4; border-right: 4px solid var(--ink);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+  }
+  .avatar {
+    width: 96px; height: 96px; margin-bottom: 22px;
+    border: 4px solid var(--ink);
+    display: grid;
+    grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 2fr;
+  }
+  .avatar i { display: block; border: 2px solid var(--ink); }
+  aside h1 { font-size: 24px; letter-spacing: 2px; font-weight: 900; }
+  aside .role {
+    display: inline-block; font-size: 12px; background: var(--ink); color: #fbfaf4;
+    padding: 3px 12px; margin: 6px 0 20px; font-weight: 700; letter-spacing: 2px;
+  }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 32px; border-top: 4px solid var(--ink); }
+  aside nav a {
+    color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 900;
+    padding: 12px 4px; border-bottom: 4px solid var(--ink);
+    display: flex; align-items: center; gap: 12px; letter-spacing: 1px;
+    transition: padding-left .2s, background .2s;
+  }
+  aside nav a .mark { width: 12px; height: 12px; flex-shrink: 0; border: 2px solid var(--ink); transition: transform .25s; }
+  aside nav a:nth-child(1) .mark { background: var(--red); }
+  aside nav a:nth-child(2) .mark { background: var(--yellow); }
+  aside nav a:nth-child(3) .mark { background: var(--blue); }
+  aside nav a:nth-child(4) .mark { background: var(--grey); }
+  aside nav a:hover { padding-left: 12px; background: rgba(240, 196, 25, 0.25); }
+  aside nav a:hover .mark { transform: translateX(4px); }
+  .side-sec { margin-bottom: 28px; }
+  .side-sec h3 { font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; font-weight: 900; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; border: 2px solid var(--ink); padding: 2px 10px; font-weight: 600;
+    transition: background .2s, color .2s;
+  }
+  .skill-tags span:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .sns a { color: var(--ink); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; font-weight: 600; }
+  .sns a:hover { color: var(--red); }
+
+  main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
+
+  .hero { margin-bottom: 110px; position: relative; }
+  .hero::before {
+    content: ""; position: absolute; inset: -44px -52px; z-index: -1;
+    background: radial-gradient(ellipse at 35% 45%,
+      rgba(244, 242, 234, 0.95) 0%, rgba(244, 242, 234, 0.6) 58%, transparent 80%);
+  }
+  .hero .eyebrow { font-size: 12px; letter-spacing: 6px; color: var(--blue); margin-bottom: 18px; font-weight: 900; }
+  .hero h2 { font-size: 58px; line-height: 1.22; font-weight: 900; }
+  .hero h2 .r { color: var(--red); }
+  .hero h2 .b { color: var(--blue); }
+  .hero h2 .y { background: linear-gradient(transparent 55%, var(--yellow) 55%); }
+  .hero p { margin-top: 18px; color: var(--sub); font-size: 14px; max-width: 500px; }
+  .hero .hint { margin-top: 26px; font-size: 11px; letter-spacing: 2px; color: var(--red); font-weight: 700; }
+
+  section { margin-bottom: 96px; }
+  .sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 38px; }
+  .sec-head .blocks { display: flex; flex-shrink: 0; border: 3px solid var(--ink); }
+  .sec-head .blocks i { display: block; width: 12px; height: 20px; }
+  .sec-head h2 { font-size: 28px; font-weight: 900; letter-spacing: 3px; }
+  .sec-head .rule { flex: 1; height: 4px; background: var(--ink); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .work {
+    background: #fff; border: 4px solid var(--ink);
+    transition: transform .18s, box-shadow .18s; position: relative;
+  }
+  .work:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--w-c, var(--red)); }
+  .work:nth-child(1) { --w-c: var(--red); }
+  .work:nth-child(2) { --w-c: var(--blue); }
+  .work:nth-child(3) { --w-c: var(--yellow); }
+  .work:nth-child(4) { --w-c: var(--grey); }
+  .work .band {
+    height: 16px; border-bottom: 4px solid var(--ink);
+    background: repeating-linear-gradient(90deg,
+      var(--yellow) 0 26px, var(--w-c, var(--red)) 26px 40px,
+      var(--yellow) 40px 70px, var(--ink) 70px 82px);
+  }
+  .work .body { padding: 24px; }
+  .work h3 { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .work .tags span { font-size: 11px; border: 2px solid var(--ink); padding: 2px 8px; font-weight: 600; }
+  .work .links { display: flex; gap: 12px; }
+  .work .links a {
+    font-size: 12px; font-weight: 900; color: #fbfaf4; background: var(--ink);
+    text-decoration: none; padding: 6px 14px; letter-spacing: 1px; transition: background .2s;
+  }
+  .work .links a:hover { background: var(--red); }
+
+  .article {
+    display: flex; align-items: center; gap: 18px;
+    background: #fff; border: 4px solid var(--ink); padding: 16px 20px; margin-bottom: 16px;
+    text-decoration: none; color: inherit;
+    transition: transform .18s, box-shadow .18s;
+  }
+  .article:hover { transform: translate(-3px, -3px); }
+  .article:nth-of-type(1):hover { box-shadow: 8px 8px 0 var(--red); }
+  .article:nth-of-type(2):hover { box-shadow: 8px 8px 0 var(--blue); }
+  .article:nth-of-type(3):hover { box-shadow: 8px 8px 0 var(--yellow); }
+  .article .cell { width: 16px; height: 16px; border: 2px solid var(--ink); flex-shrink: 0; }
+  .article:nth-of-type(1) .cell { background: var(--red); }
+  .article:nth-of-type(2) .cell { background: var(--blue); }
+  .article:nth-of-type(3) .cell { background: var(--yellow); }
+  .article .t { font-size: 15px; font-weight: 700; flex: 1; }
+  .article .meta { font-size: 12px; color: var(--sub); white-space: nowrap; font-weight: 600; }
+
+  .timeline { border-left: 4px solid var(--ink); padding-left: 28px; margin-left: 8px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -38px; top: 4px;
+    width: 14px; height: 14px; background: var(--yellow);
+    border: 3px solid var(--ink); transition: background .2s;
+  }
+  .tl-item:nth-child(2)::before { background: var(--blue); }
+  .tl-item:hover::before { background: var(--red); }
+  .tl-item time { font-size: 12px; font-weight: 900; letter-spacing: 1px; color: var(--blue); }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; font-weight: 900; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    border-top: 4px solid var(--ink); padding-top: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; font-weight: 700;
+  }
+  footer .blocks { display: flex; border: 3px solid var(--ink); }
+  footer .blocks i { display: block; width: 14px; height: 14px; }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; border-right: none; border-bottom: 4px solid var(--ink); }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="bg"></canvas>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
+
+<aside>
+  <div class="avatar">
+    <i style="background:var(--yellow)"></i><i style="background:var(--red)"></i>
+    <i style="background:var(--blue)"></i><i style="background:var(--yellow)"></i>
+  </div>
+  <h1>IKEDA</h1>
+  <div class="role">WEB ENGINEER</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active"><span class="mark"></span>WORKS</a>
+    <a href="#articles"><span class="mark"></span>ARTICLES</a>
+    <a href="#career"><span class="mark"></span>CAREER</a>
+    <a href="#contact"><span class="mark"></span>CONTACT</a>
+  </nav>
+  <div class="side-sec">
+    <h3>SKILLS</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>LINKS</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">AFTER MONDRIAN — BROADWAY BOOGIE WOOGIE</div>
+    <h2><span class="r">都市</span>の<span class="b">リズム</span>で、<br><span class="y">色が踊る</span>。</h2>
+    <p>モンドリアン《ブロードウェイ・ブギウギ》(1943) に着想を得たポートフォリオ。黄色の大通りを赤・青・グレーの光が行き交います。</p>
+    <div class="hint">✦ 余白をクリックすると交通が加速します / スクロールで街が動きます</div>
+  </div>
+
+  <section id="works">
+    <div class="sec-head reveal">
+      <span class="blocks"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i></span>
+      <h2>WORKS</h2><span class="rule"></span>
+    </div>
+    <div class="works">
+      <div class="work reveal">
+        <div class="band"></div>
+        <div class="body">
+          <h3>タスク管理アプリ</h3>
+          <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+          <div class="tags"><span>Next.js</span><span>Supabase</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="band"></div>
+        <div class="body">
+          <h3>RAG チャットボット</h3>
+          <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+          <div class="tags"><span>Python</span><span>Azure</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="band"></div>
+        <div class="body">
+          <h3>家計簿 PWA</h3>
+          <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+          <div class="tags"><span>React</span><span>PWA</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="band"></div>
+        <div class="body">
+          <h3>CLI ツール集</h3>
+          <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+          <div class="tags"><span>Go</span></div>
+          <div class="links"><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head reveal">
+      <span class="blocks"><i style="background:var(--blue)"></i><i style="background:var(--grey)"></i><i style="background:var(--red)"></i></span>
+      <h2>ARTICLES</h2><span class="rule"></span>
+    </div>
+    <a class="article reveal" href="#">
+      <span class="cell"></span>
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">Zenn · 2026-07-10</span>
+    </a>
+    <a class="article reveal" href="#">
+      <span class="cell"></span>
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">Zenn · 2026-06-28</span>
+    </a>
+    <a class="article reveal" href="#">
+      <span class="cell"></span>
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">Qiita · 2026-06-05</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head reveal">
+      <span class="blocks"><i style="background:var(--yellow)"></i><i style="background:var(--red)"></i><i style="background:var(--grey)"></i></span>
+      <h2>CAREER</h2><span class="rule"></span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <span>© 2026 IKEDA</span>
+    <span class="blocks"><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i><i style="background:var(--blue)"></i><i style="background:var(--grey)"></i></span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+
+  const YELLOW = '#f0c419', RED = '#d92b2b', BLUE = '#2b56d9', GREY = '#d8d8d0', INK = '#17150f';
+  const BW = 14; // 大通り（バンド）の幅
+
+  // バンド位置（画面比率）
+  const VX = [0.16, 0.30, 0.42, 0.58, 0.72, 0.88];
+  const HY = [0.10, 0.28, 0.45, 0.62, 0.82];
+
+  // 静的な色ブロック（大きな色面）
+  let blocks = [];
+  function genBlocks() {
+    blocks = [];
+    const cols = [RED, BLUE, YELLOW, GREY];
+    for (let i = 0; i < 10; i++) {
+      const w = 30 + Math.random() * 70;
+      blocks.push({
+        x: Math.random() * 0.9 + 0.05,
+        y: Math.random() * 0.9 + 0.05,
+        w, h: 24 + Math.random() * 56,
+        c: cols[i % 4],
+        inner: cols[(i + 1) % 4]
+      });
+    }
+  }
+  genBlocks();
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 「交通」：バンドの上を走る色のセル
+  const travelers = [];
+  const TCOLORS = [RED, BLUE, GREY, RED, BLUE];
+  function addTraveler() {
+    const vertical = Math.random() < 0.5;
+    const lanes = vertical ? VX : HY;
+    travelers.push({
+      vertical,
+      lane: lanes[Math.floor(Math.random() * lanes.length)],
+      pos: Math.random(),
+      sp: (0.0006 + Math.random() * 0.0016) * (Math.random() < 0.5 ? 1 : -1),
+      c: TCOLORS[Math.floor(Math.random() * TCOLORS.length)],
+      len: 1 + Math.floor(Math.random() * 2) // セルの連結数
+    });
+  }
+  for (let i = 0; i < 64; i++) addTraveler();
+
+  // クリック → 近くの交通が加速 + 新しいセルが流れ込む
+  const pulses = [];
+  window.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    pulses.push({ x: e.clientX, y: e.clientY, age: 0 });
+    if (pulses.length > 4) pulses.shift();
+    for (let i = 0; i < 6; i++) addTraveler();
+    while (travelers.length > 110) travelers.shift();
+  });
+
+  // スクロール → 都市全体のテンポが上がる
+  let tempo = 0, lastY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const dy = Math.abs(window.scrollY - lastY);
+    lastY = window.scrollY;
+    tempo = Math.min(5, tempo + dy * 0.012);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  });
+
+  function frame() {
+    ctx.fillStyle = '#f4f2ea';
+    ctx.fillRect(0, 0, W, H);
+
+    // 大通り（黄色バンド）
+    ctx.fillStyle = YELLOW;
+    for (const fx of VX) ctx.fillRect(fx * W - BW / 2, 0, BW, H);
+    for (const fy of HY) ctx.fillRect(0, fy * H - BW / 2, W, BW);
+
+    // バンド上の句読点（黄の中の小さな赤・青・グレー、固定パターン）
+    for (const fx of VX) {
+      const x = fx * W - BW / 2;
+      for (let y = 0; y < H; y += 64) {
+        const k = Math.floor((y / 64 + fx * 100));
+        const c = [RED, BLUE, GREY][k % 3];
+        ctx.fillStyle = c;
+        ctx.fillRect(x, y + (k * 13) % 40, BW, BW);
+      }
+    }
+    for (const fy of HY) {
+      const y = fy * H - BW / 2;
+      for (let x = 0; x < W; x += 64) {
+        const k = Math.floor((x / 64 + fy * 100));
+        const c = [BLUE, GREY, RED][k % 3];
+        ctx.fillStyle = c;
+        ctx.fillRect(x + (k * 17) % 40, y, BW, BW);
+      }
+    }
+
+    // 大きな色ブロック
+    for (const b of blocks) {
+      const bx = b.x * W, by = b.y * H;
+      ctx.fillStyle = b.c;
+      ctx.fillRect(bx, by, b.w, b.h);
+      ctx.fillStyle = b.inner;
+      ctx.fillRect(bx + b.w * 0.28, by + b.h * 0.28, b.w * 0.44, b.h * 0.44);
+    }
+
+    for (let i = pulses.length - 1; i >= 0; i--) {
+      pulses[i].age++;
+      if (pulses[i].age > 200) pulses.splice(i, 1);
+    }
+
+    // 交通（動くセル）
+    const base = reduced ? 0 : 1 + tempo;
+    tempo *= 0.96;
+    for (const tr of travelers) {
+      let boost = 1;
+      const px = tr.vertical ? tr.lane * W : tr.pos * W;
+      const py = tr.vertical ? tr.pos * H : tr.lane * H;
+      for (const p of pulses) {
+        const d = Math.hypot(px - p.x, py - p.y);
+        if (d < 260) boost += (1 - d / 260) * 3 * (1 - p.age / 200);
+      }
+      tr.pos += tr.sp * base * boost;
+      if (tr.pos > 1.05) tr.pos = -0.05;
+      if (tr.pos < -0.05) tr.pos = 1.05;
+
+      ctx.fillStyle = tr.c;
+      for (let k = 0; k < tr.len; k++) {
+        const off = k * (BW + 4) * (tr.sp > 0 ? -1 : 1);
+        if (tr.vertical) {
+          ctx.fillRect(tr.lane * W - BW / 2, tr.pos * H + off, BW, BW);
+        } else {
+          ctx.fillRect(tr.pos * W + off, tr.lane * H - BW / 2, BW, BW);
+        }
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // リビール
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // カスタムカーソル
+  const dot = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  const mouse = { x: -100, y: -100 };
+  let rx = 0, ry = 0;
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+  });
+  (function curLoop() {
+    rx += (mouse.x - rx) * 0.16; ry += (mouse.y - ry) * 0.16;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(curLoop);
+  })();
+  document.querySelectorAll('a, .work').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('on'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('on'));
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock B — サイドバー固定型</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --sidebar: #111827;
+    --sidebar-text: #d1d5db;
+    --text: #111827;
+    --sub: #6b7280;
+    --accent: #10b981;
+    --card: #ffffff;
+    --border: #e5e7eb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    display: flex; min-height: 100vh;
+  }
+
+  aside {
+    width: 280px; background: var(--sidebar); color: var(--sidebar-text);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto;
+  }
+  .avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    margin-bottom: 20px;
+  }
+  aside h1 { color: #fff; font-size: 20px; margin-bottom: 4px; }
+  aside .role { font-size: 13px; color: var(--accent); margin-bottom: 20px; }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: #9ca3af; }
+  aside nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 32px; }
+  aside nav a {
+    color: var(--sidebar-text); text-decoration: none; font-size: 14px;
+    padding: 10px 14px; border-radius: 8px;
+  }
+  aside nav a.active { background: rgba(16,185,129,0.15); color: var(--accent); font-weight: 600; }
+  aside nav a:hover { background: rgba(255,255,255,0.06); }
+  .skills { margin-bottom: 32px; }
+  .skills h3, .sns h3 { font-size: 11px; letter-spacing: 1.5px; color: #6b7280; margin-bottom: 12px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px solid #374151; padding: 3px 10px;
+    border-radius: 999px; color: #9ca3af;
+  }
+  .sns a { color: #9ca3af; font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: #fff; }
+
+  main { margin-left: 280px; flex: 1; padding: 48px 56px; max-width: 1000px; }
+  section { margin-bottom: 56px; }
+  section > h2 {
+    font-size: 22px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+  }
+  section > h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .work {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: box-shadow .2s;
+  }
+  .work:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.07); }
+  .work .head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .work .icon { width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0; }
+  .icon-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+  .icon-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .icon-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .icon-4 { background: linear-gradient(135deg, #fa709a, #fee140); }
+  .work h3 { font-size: 16px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .links { display: flex; gap: 14px; font-size: 13px; }
+  .work .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+  .article {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 24px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    text-decoration: none; color: inherit;
+  }
+  .article:hover { border-color: var(--accent); }
+  .article .t { font-size: 15px; font-weight: 600; }
+  .article .meta { font-size: 12px; color: var(--sub); white-space: nowrap; }
+
+  .timeline { border-left: 2px solid var(--border); padding-left: 24px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -31px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+  }
+  .tl-item time { font-size: 12px; color: var(--sub); }
+  .tl-item h4 { font-size: 15px; margin: 2px 0; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="avatar"></div>
+  <h1>Ikeda</h1>
+  <div class="role">Web Engineer</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active">Works</a>
+    <a href="#articles">Articles</a>
+    <a href="#career">Career</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="skills">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="sns">
+    <h3>Links</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <h2>Works</h2>
+    <div class="works">
+      <div class="work">
+        <div class="head"><div class="icon icon-1"></div><h3>タスク管理アプリ</h3></div>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。Next.js / Supabase。</p>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="head"><div class="icon icon-2"></div><h3>RAG チャットボット</h3></div>
+        <p>社内ドキュメント検索 AI チャット。Python / Azure OpenAI。</p>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="head"><div class="icon icon-3"></div><h3>家計簿 PWA</h3></div>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。React / PWA。</p>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="head"><div class="icon icon-4"></div><h3>CLI ツール集</h3></div>
+        <p>開発を効率化する小さな CLI ツール群。Go 製・クロスプラットフォーム。</p>
+        <div class="links"><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <h2>Articles</h2>
+    <a class="article" href="#">
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">Zenn · 2026-07-10</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">Zenn · 2026-06-28</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">Qiita · 2026-06-05</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <h2>Career</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

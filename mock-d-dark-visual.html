@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock D — ダーク・ビジュアル型</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141c;
+    --text: #f0f0f5;
+    --sub: #8b8b9e;
+    --accent: #22d3ee;
+    --border: #26262f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+  }
+  .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
+
+  header { padding: 28px 0; }
+  .nav { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-weight: 700; font-size: 17px; letter-spacing: 1px; }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; }
+  .nav-links a { color: var(--sub); text-decoration: none; }
+  .nav-links a:hover { color: var(--accent); }
+
+  .hero { padding: 100px 0 120px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; top: -200px; right: -100px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,211,238,0.12), transparent 65%);
+  }
+  .hero .eyebrow {
+    font-family: ui-monospace, monospace; color: var(--accent);
+    font-size: 14px; margin-bottom: 20px;
+  }
+  .hero h1 { font-size: 64px; line-height: 1.15; font-weight: 800; margin-bottom: 24px; }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, #22d3ee, #a78bfa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--sub); font-size: 17px; max-width: 520px; }
+
+  section { padding: 72px 0; }
+  .sec-label {
+    font-family: ui-monospace, monospace; font-size: 13px; color: var(--accent);
+    margin-bottom: 8px;
+  }
+  section h2 { font-size: 32px; margin-bottom: 40px; }
+
+  .feature { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 28px; background: var(--surface); }
+  .feature:nth-child(even) { grid-template-columns: 1fr 1.2fr; }
+  .feature:nth-child(even) .shot { order: 2; }
+  .shot { min-height: 300px; }
+  .shot-1 { background: linear-gradient(135deg, #1e3a8a, #7c3aed 60%, #22d3ee); }
+  .shot-2 { background: linear-gradient(135deg, #831843, #f472b6 70%, #fbbf24); }
+  .shot-3 { background: linear-gradient(135deg, #064e3b, #10b981 65%, #a3e635); }
+  .feature .info { padding: 44px; display: flex; flex-direction: column; justify-content: center; }
+  .feature .num { font-family: ui-monospace, monospace; color: var(--sub); font-size: 13px; margin-bottom: 12px; }
+  .feature h3 { font-size: 24px; margin-bottom: 12px; }
+  .feature p { color: var(--sub); font-size: 14px; margin-bottom: 20px; }
+  .feature .tags { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .feature .tags span {
+    font-size: 12px; font-family: ui-monospace, monospace;
+    border: 1px solid var(--border); color: var(--sub);
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .feature .links { display: flex; gap: 20px; font-size: 14px; }
+  .feature .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+  .article-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit; gap: 20px;
+  }
+  .article-row:first-of-type { border-top: 1px solid var(--border); }
+  .article-row .t { font-size: 18px; font-weight: 600; transition: color .15s; }
+  .article-row:hover .t { color: var(--accent); }
+  .article-row .m { color: var(--sub); font-size: 13px; font-family: ui-monospace, monospace; white-space: nowrap; }
+
+  footer {
+    padding: 64px 0; text-align: center; color: var(--sub); font-size: 13px;
+    border-top: 1px solid var(--border); margin-top: 48px;
+  }
+  footer .cta { font-size: 22px; color: var(--text); margin-bottom: 12px; font-weight: 700; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 800px) {
+    .hero h1 { font-size: 40px; }
+    .feature, .feature:nth-child(even) { grid-template-columns: 1fr; }
+    .feature:nth-child(even) .shot { order: 0; }
+    .shot { min-height: 200px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="logo">IKEDA<span>.DEV</span></div>
+    <nav class="nav-links">
+      <a href="#works">Works</a>
+      <a href="#articles">Articles</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container hero">
+  <div class="eyebrow">$ whoami</div>
+  <h1>Build things.<br><span class="grad">Share knowledge.</span></h1>
+  <p>Web エンジニア。個人開発サービスと技術記事で、学んだことをかたちにしています。</p>
+</div>
+
+<section id="works">
+  <div class="container">
+    <div class="sec-label">// selected works</div>
+    <h2>Works</h2>
+
+    <div class="feature">
+      <div class="shot shot-1"></div>
+      <div class="info">
+        <div class="num">01</div>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期に対応し、少人数チームの運用に最適化。</p>
+        <div class="tags"><span>Next.js</span><span>Supabase</span><span>Vercel</span></div>
+        <div class="links"><a href="#">Live Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="shot shot-2"></div>
+      <div class="info">
+        <div class="num">02</div>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメントを横断検索できる AI チャット。チャンク分割とリランキングで回答精度を改善。</p>
+        <div class="tags"><span>Python</span><span>Azure OpenAI</span><span>FastAPI</span></div>
+        <div class="links"><a href="#">Live Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="shot shot-3"></div>
+      <div class="info">
+        <div class="num">03</div>
+        <h3>家計簿 PWA</h3>
+        <p>オフラインでも使える家計簿アプリ。グラフによる支出の可視化と月次レポート機能。</p>
+        <div class="tags"><span>React</span><span>PWA</span><span>IndexedDB</span></div>
+        <div class="links"><a href="#">Live Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="articles">
+  <div class="container">
+    <div class="sec-label">// latest posts</div>
+    <h2>Articles</h2>
+    <a class="article-row" href="#">
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="m">2026-07-10 / Zenn</span>
+    </a>
+    <a class="article-row" href="#">
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="m">2026-06-28 / Zenn</span>
+    </a>
+    <a class="article-row" href="#">
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="m">2026-06-05 / Qiita</span>
+    </a>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="container">
+    <div class="cta">Let's build something.</div>
+    <p><a href="mailto:#">ikeda.k.autom92@gmail.com</a> · <a href="#">GitHub</a> · <a href="#">X</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

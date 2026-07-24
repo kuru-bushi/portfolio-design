@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グループ 1：絵画モチーフ × 動く幾何学背景（7 案）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: #1e1e28; color: #eee; padding: 32px;
+  }
+  h1 { font-size: 20px; margin-bottom: 6px; }
+  .note { color: #999; font-size: 13px; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cell { background: #2a2a36; border-radius: 12px; overflow: hidden; }
+  .cell .bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+  }
+  .cell .bar a { color: #22d3ee; font-size: 12px; text-decoration: none; font-weight: normal; }
+  .cell .bar a:hover { text-decoration: underline; }
+  iframe {
+    width: 200%; height: 1100px; border: none; background: #fff;
+    transform: scale(0.5); transform-origin: 0 0; display: block;
+  }
+  .frame-wrap { height: 550px; overflow: hidden; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <h1>グループ 1：絵画モチーフ × 動く幾何学背景（7 案）</h1>
+  <p class="note">各パネルは 50% 縮小表示です。アニメーションの動きは「原寸で開く」で確認するのがおすすめです。</p>
+  <div class="grid">
+    <div class="cell">
+      <div class="bar">P-1. ミロ《星座》— 点と線のネットワーク <a href="mock-p1-lineart-motion.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p1-lineart-motion.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-2. ゴッホ《星月夜》— 渦巻くフローフィールド <a href="mock-p2-flowfield.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p2-flowfield.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-3. クレー《魔方陣》— 呼吸するボロノイ <a href="mock-p3-voronoi.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p3-voronoi.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-4. ポロック《ドリップ》— 振り子の軌跡 <a href="mock-p4-harmonograph.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p4-harmonograph.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-5. モンドリアン《ブロードウェイ・ブギウギ》 <a href="mock-p5-tiling.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p5-tiling.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-6. エッシャー《星》— 多面体の宇宙 <a href="mock-p6-wireframe.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p6-wireframe.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">P-7. カンディンスキー《コンポジション VIII》× Ng 26 — 油彩 <a href="mock-p7-ng26.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-p7-ng26.html"></iframe></div>
+    </div>
+  </div>
+</body>
+</html>

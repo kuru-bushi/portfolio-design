@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-2 バウハウス / 構成主義型</title>
+<style>
+  :root {
+    --bg: #f7f3ea;
+    --text: #16130f;
+    --sub: #5c564c;
+    --red: #e63329;
+    --blue: #1f4fd8;
+    --yellow: #f5c518;
+    --black: #16130f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    display: flex; min-height: 100vh;
+  }
+
+  aside {
+    width: 280px; background: var(--bg);
+    border-right: 3px solid var(--black);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto;
+  }
+  .avatar { position: relative; width: 96px; height: 96px; margin-bottom: 24px; }
+  .avatar .circle {
+    position: absolute; width: 72px; height: 72px; border-radius: 50%;
+    background: var(--red); top: 0; left: 0;
+  }
+  .avatar .square {
+    position: absolute; width: 44px; height: 44px;
+    background: var(--blue); bottom: 0; right: 0;
+  }
+  .avatar .tri {
+    position: absolute; bottom: 4px; left: 8px;
+    width: 0; height: 0;
+    border-left: 26px solid transparent; border-right: 26px solid transparent;
+    border-bottom: 44px solid var(--yellow);
+  }
+  aside h1 { font-size: 24px; margin-bottom: 4px; letter-spacing: 1px; font-weight: 900; }
+  aside .role {
+    display: inline-block; font-size: 12px; background: var(--black); color: var(--bg);
+    padding: 3px 12px; margin-bottom: 20px; font-weight: 700; letter-spacing: 2px;
+  }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 32px; border-top: 3px solid var(--black); }
+  aside nav a {
+    color: var(--text); text-decoration: none; font-size: 14px; font-weight: 700;
+    padding: 12px 4px; border-bottom: 3px solid var(--black);
+    display: flex; align-items: center; gap: 12px; letter-spacing: 1px;
+  }
+  aside nav a .mark { width: 12px; height: 12px; flex-shrink: 0; }
+  aside nav a:nth-child(1) .mark { background: var(--red); border-radius: 50%; }
+  aside nav a:nth-child(2) .mark { background: var(--blue); }
+  aside nav a:nth-child(3) .mark {
+    width: 0; height: 0; background: none;
+    border-left: 7px solid transparent; border-right: 7px solid transparent;
+    border-bottom: 12px solid var(--yellow);
+  }
+  aside nav a:nth-child(4) .mark { background: var(--black); border-radius: 50% 50% 0 0; }
+  aside nav a:hover { background: rgba(0,0,0,0.05); }
+  .side-sec { margin-bottom: 28px; }
+  .side-sec h3 { font-size: 11px; letter-spacing: 2px; margin-bottom: 12px; font-weight: 900; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; border: 2px solid var(--black); padding: 2px 10px; font-weight: 600;
+  }
+  .sns a { color: var(--text); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; font-weight: 600; }
+  .sns a:hover { color: var(--red); }
+
+  main { margin-left: 280px; flex: 1; padding: 48px 56px; max-width: 1020px; }
+  section { margin-bottom: 72px; }
+  .sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .sec-head .shape { width: 28px; height: 28px; flex-shrink: 0; }
+  .shape-circle { background: var(--red); border-radius: 50%; }
+  .shape-square { background: var(--blue); }
+  .shape-tri {
+    width: 0 !important; height: 0 !important; background: none;
+    border-left: 16px solid transparent; border-right: 16px solid transparent;
+    border-bottom: 28px solid var(--yellow);
+  }
+  .sec-head h2 { font-size: 30px; font-weight: 900; letter-spacing: 2px; }
+  .sec-head .rule { flex: 1; height: 3px; background: var(--black); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .work {
+    background: #fff; border: 3px solid var(--black);
+    box-shadow: 8px 8px 0 var(--black);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .work:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--black); }
+  .work .band { height: 14px; border-bottom: 3px solid var(--black); }
+  .band-red { background: var(--red); }
+  .band-blue { background: var(--blue); }
+  .band-yellow { background: var(--yellow); }
+  .band-mix { background: linear-gradient(90deg, var(--red) 33%, var(--yellow) 33% 66%, var(--blue) 66%); }
+  .work .body { padding: 22px; }
+  .work h3 { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .work .tags span { font-size: 11px; border: 2px solid var(--black); padding: 2px 8px; font-weight: 600; }
+  .work .links { display: flex; gap: 12px; }
+  .work .links a {
+    font-size: 12px; font-weight: 900; color: var(--bg); background: var(--black);
+    text-decoration: none; padding: 6px 14px; letter-spacing: 1px;
+  }
+  .work .links a:hover { background: var(--red); }
+
+  .article {
+    display: flex; align-items: center; gap: 18px;
+    background: #fff; border: 3px solid var(--black); padding: 16px 20px; margin-bottom: 14px;
+    text-decoration: none; color: inherit;
+    box-shadow: 6px 6px 0 var(--black); transition: transform .15s, box-shadow .15s;
+  }
+  .article:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--black); }
+  .article .dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+  .article:nth-of-type(1) .dot { background: var(--red); }
+  .article:nth-of-type(2) .dot { background: var(--blue); border-radius: 0; }
+  .article:nth-of-type(3) .dot {
+    width: 0; height: 0; border-radius: 0; background: none;
+    border-left: 9px solid transparent; border-right: 9px solid transparent;
+    border-bottom: 16px solid var(--yellow);
+  }
+  .article .t { font-size: 15px; font-weight: 700; flex: 1; }
+  .article .meta { font-size: 12px; color: var(--sub); white-space: nowrap; font-weight: 600; }
+
+  .timeline { border-left: 3px solid var(--black); padding-left: 28px; margin-left: 8px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -37px; top: 4px;
+    width: 14px; height: 14px; border-radius: 50%; background: var(--red);
+    border: 3px solid var(--black);
+  }
+  .tl-item:nth-child(2)::before { background: var(--yellow); border-radius: 0; }
+  .tl-item time { font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; font-weight: 900; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    border-top: 3px solid var(--black); padding-top: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; font-weight: 700;
+  }
+  footer .shapes { display: flex; gap: 8px; }
+  footer .shapes i { display: block; width: 12px; height: 12px; }
+  footer .shapes i:nth-child(1) { background: var(--red); border-radius: 50%; }
+  footer .shapes i:nth-child(2) { background: var(--yellow); }
+  footer .shapes i:nth-child(3) { background: var(--blue); border-radius: 50% 50% 0 0; }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; border-right: none; border-bottom: 3px solid var(--black); }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="avatar"><div class="circle"></div><div class="tri"></div><div class="square"></div></div>
+  <h1>IKEDA</h1>
+  <div class="role">WEB ENGINEER</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works"><span class="mark"></span>WORKS</a>
+    <a href="#articles"><span class="mark"></span>ARTICLES</a>
+    <a href="#career"><span class="mark"></span>CAREER</a>
+    <a href="#contact"><span class="mark"></span>CONTACT</a>
+  </nav>
+  <div class="side-sec">
+    <h3>SKILLS</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>LINKS</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <div class="sec-head"><span class="shape shape-circle"></span><h2>WORKS</h2><span class="rule"></span></div>
+    <div class="works">
+      <div class="work">
+        <div class="band band-red"></div>
+        <div class="body">
+          <h3>タスク管理アプリ</h3>
+          <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+          <div class="tags"><span>Next.js</span><span>Supabase</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work">
+        <div class="band band-blue"></div>
+        <div class="body">
+          <h3>RAG チャットボット</h3>
+          <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+          <div class="tags"><span>Python</span><span>Azure</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work">
+        <div class="band band-yellow"></div>
+        <div class="body">
+          <h3>家計簿 PWA</h3>
+          <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+          <div class="tags"><span>React</span><span>PWA</span></div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work">
+        <div class="band band-mix"></div>
+        <div class="body">
+          <h3>CLI ツール集</h3>
+          <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+          <div class="tags"><span>Go</span></div>
+          <div class="links"><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head"><span class="shape shape-square"></span><h2>ARTICLES</h2><span class="rule"></span></div>
+    <a class="article" href="#">
+      <span class="dot"></span>
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">Zenn · 2026-07-10</span>
+    </a>
+    <a class="article" href="#">
+      <span class="dot"></span>
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">Zenn · 2026-06-28</span>
+    </a>
+    <a class="article" href="#">
+      <span class="dot"></span>
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">Qiita · 2026-06-05</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head"><span class="shape shape-tri"></span><h2>CAREER</h2><span class="rule"></span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <span>© 2026 IKEDA</span>
+    <div class="shapes"><i></i><i></i><i></i></div>
+  </footer>
+</main>
+
+</body>
+</html>

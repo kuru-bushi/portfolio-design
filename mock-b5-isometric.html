@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-5 アイソメトリック / 3D 幾何型</title>
+<style>
+  :root {
+    --bg: #eef2fb;
+    --text: #232946;
+    --sub: #6b7194;
+    --accent: #7c6cf0;
+    --accent2: #4fd0c0;
+    --card: #ffffff;
+    --shadow: #c9d2ea;
+    --border: #dde3f2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background-color: var(--bg);
+    background-image:
+      repeating-linear-gradient(60deg, rgba(124,108,240,0.06) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(-60deg, rgba(124,108,240,0.06) 0 1px, transparent 1px 34px);
+    color: var(--text); line-height: 1.7;
+    display: flex; min-height: 100vh;
+  }
+
+  aside {
+    width: 280px; background: #fff; border-right: 1px solid var(--border);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto;
+    box-shadow: 6px 0 20px rgba(35, 41, 70, 0.05);
+  }
+  .cube { width: 96px; height: 104px; position: relative; margin-bottom: 24px; }
+  .cube .top {
+    position: absolute; width: 64px; height: 64px; left: 16px; top: 0;
+    background: linear-gradient(135deg, #a99bff, #7c6cf0);
+    transform: rotateX(60deg) rotateZ(45deg); transform-origin: center;
+  }
+  .cube .left {
+    position: absolute; width: 45px; height: 52px; left: 3px; top: 40px;
+    background: #5a4bd4;
+    transform: skewY(26deg);
+  }
+  .cube .right {
+    position: absolute; width: 45px; height: 52px; right: 3px; top: 40px;
+    background: #8f82f5;
+    transform: skewY(-26deg);
+  }
+  aside h1 { font-size: 21px; margin-bottom: 4px; }
+  aside .role { font-size: 13px; color: var(--accent); margin-bottom: 20px; font-weight: 700; }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+  aside nav a {
+    color: var(--text); text-decoration: none; font-size: 14px;
+    padding: 10px 16px; border-radius: 8px; background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: 3px 3px 0 var(--shadow);
+    transition: transform .12s, box-shadow .12s;
+  }
+  aside nav a.active {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+    box-shadow: 3px 3px 0 #4a3cc0; font-weight: 600;
+  }
+  aside nav a:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .side-sec { margin-bottom: 28px; }
+  .side-sec h3 { font-size: 11px; letter-spacing: 2px; color: var(--sub); margin-bottom: 12px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; background: var(--bg); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 6px; color: var(--sub);
+    box-shadow: 2px 2px 0 var(--shadow);
+  }
+  .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: var(--accent); }
+
+  main { margin-left: 280px; flex: 1; padding: 48px 56px; max-width: 1020px; }
+  section { margin-bottom: 64px; }
+  .sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+  .iso-mark { width: 26px; height: 28px; position: relative; flex-shrink: 0; }
+  .iso-mark .t { position: absolute; width: 17px; height: 17px; left: 4.5px; top: 0; background: var(--accent2); transform: rotateX(60deg) rotateZ(45deg); }
+  .iso-mark .l { position: absolute; width: 12px; height: 14px; left: 1px; top: 11px; background: #2fa596; transform: skewY(26deg); }
+  .iso-mark .r { position: absolute; width: 12px; height: 14px; right: 1px; top: 11px; background: #7fe0d4; transform: skewY(-26deg); }
+  .sec-head h2 { font-size: 24px; }
+  .sec-head .rule { flex: 1; height: 3px; background: repeating-linear-gradient(90deg, var(--accent) 0 10px, transparent 10px 18px); opacity: .35; }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .work {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 26px;
+    box-shadow: 8px 8px 0 var(--shadow);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .work:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--shadow); }
+  .work .mini-cube { width: 46px; height: 50px; position: relative; margin-bottom: 16px; }
+  .mini-cube .t { position: absolute; width: 30px; height: 30px; left: 8px; top: 0; transform: rotateX(60deg) rotateZ(45deg); }
+  .mini-cube .l { position: absolute; width: 21px; height: 25px; left: 1.5px; top: 19px; transform: skewY(26deg); }
+  .mini-cube .r { position: absolute; width: 21px; height: 25px; right: 1.5px; top: 19px; transform: skewY(-26deg); }
+  .mc-1 .t { background: #8f82f5; } .mc-1 .l { background: #5a4bd4; } .mc-1 .r { background: #b3a9ff; }
+  .mc-2 .t { background: #4fd0c0; } .mc-2 .l { background: #2fa596; } .mc-2 .r { background: #8ce6da; }
+  .mc-3 .t { background: #f5a623; } .mc-3 .l { background: #d18209; } .mc-3 .r { background: #ffc95e; }
+  .mc-4 .t { background: #f56c9b; } .mc-4 .l { background: #d1417a; } .mc-4 .r { background: #ff9dbf; }
+  .work h3 { font-size: 17px; margin-bottom: 8px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .work .tags span {
+    font-size: 11px; background: #f0edff; color: var(--accent);
+    padding: 3px 10px; border-radius: 6px; font-weight: 600;
+  }
+  .work .links { display: flex; gap: 14px; font-size: 13px; }
+  .work .links a { color: var(--accent); text-decoration: none; font-weight: 700; }
+
+  .article {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 24px; margin-bottom: 14px; text-decoration: none; color: inherit;
+    box-shadow: 5px 5px 0 var(--shadow);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .article:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+  .article .t { font-size: 15px; font-weight: 600; }
+  .article .meta { font-size: 12px; color: var(--sub); white-space: nowrap; }
+
+  .timeline { border-left: 3px solid var(--border); padding-left: 26px; margin-left: 10px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -33px; top: 5px;
+    width: 12px; height: 12px; background: var(--accent);
+    transform: rotate(45deg); box-shadow: 2px 2px 0 var(--shadow);
+  }
+  .tl-item time { font-size: 12px; color: var(--accent); font-weight: 700; }
+  .tl-item h4 { font-size: 15px; margin: 2px 0; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="cube"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <h1>Ikeda</h1>
+  <div class="role">Web Engineer</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active">Works</a>
+    <a href="#articles">Articles</a>
+    <a href="#career">Career</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="side-sec">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>Links</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <div class="sec-head">
+      <div class="iso-mark"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+      <h2>Works</h2><span class="rule"></span>
+    </div>
+    <div class="works">
+      <div class="work">
+        <div class="mini-cube mc-1"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="tags"><span>Next.js</span><span>Supabase</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="mini-cube mc-2"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+        <div class="tags"><span>Python</span><span>Azure</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="mini-cube mc-3"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="tags"><span>React</span><span>PWA</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="mini-cube mc-4"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製・クロスプラットフォーム。</p>
+        <div class="tags"><span>Go</span></div>
+        <div class="links"><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head">
+      <div class="iso-mark"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+      <h2>Articles</h2><span class="rule"></span>
+    </div>
+    <a class="article" href="#">
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">Zenn · 2026-07-10</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">Zenn · 2026-06-28</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">Qiita · 2026-06-05</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head">
+      <div class="iso-mark"><div class="t"></div><div class="l"></div><div class="r"></div></div>
+      <h2>Career</h2><span class="rule"></span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

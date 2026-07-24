@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P-1 ミロ《星座》— 点と線のネットワーク</title>
+<style>
+  :root {
+    --bg: #131a33;
+    --panel: #182142;
+    --text: #eef1fa;
+    --sub: #8b94b0;
+    --blue: #3a86ff;
+    --magenta: #e63946;
+    --line: rgba(120, 140, 255, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8;
+    display: flex; min-height: 100vh; cursor: none;
+  }
+  a { cursor: none; }
+
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--blue), var(--magenta));
+  }
+
+  #cur-dot, #cur-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  #cur-dot { width: 6px; height: 6px; background: var(--magenta); }
+  #cur-ring {
+    width: 34px; height: 34px; border: 1px solid rgba(58, 134, 255, 0.7);
+    transition: width .25s, height .25s, border-color .25s, background .25s;
+  }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--magenta); background: rgba(230, 57, 70, 0.10); }
+  @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
+
+  /* リビール（スクロールで出現） */
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .works .reveal:nth-child(2) { transition-delay: .12s; }
+  .works .reveal:nth-child(3) { transition-delay: .06s; }
+  .works .reveal:nth-child(4) { transition-delay: .18s; }
+
+  aside {
+    width: 280px; background: rgba(12, 17, 32, 0.85); backdrop-filter: blur(6px);
+    border-right: 1px solid rgba(120, 140, 255, 0.25);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+  }
+  .avatar {
+    width: 92px; height: 92px; border-radius: 50%; margin-bottom: 20px;
+    background:
+      radial-gradient(circle at 32% 30%, rgba(230, 57, 70, 0.9), transparent 45%),
+      radial-gradient(circle at 70% 70%, rgba(58, 134, 255, 0.9), transparent 55%),
+      #0c1120;
+    box-shadow: 0 0 34px -6px rgba(58, 134, 255, 0.7);
+  }
+  aside h1 { font-size: 22px; letter-spacing: 3px; font-weight: 800; color: #fff; }
+  aside .role {
+    font-size: 12px; letter-spacing: 3px; margin: 4px 0 20px;
+    background: linear-gradient(90deg, var(--blue), var(--magenta));
+    -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;
+  }
+  aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; gap: 6px; margin-bottom: 34px; }
+  aside nav a {
+    color: var(--sub); text-decoration: none; font-size: 13px; letter-spacing: 2px;
+    padding: 11px 16px; border-radius: 10px; position: relative;
+    transition: color .2s, background .2s, padding-left .25s;
+  }
+  aside nav a::before {
+    content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 0; border-radius: 2px;
+    background: linear-gradient(var(--blue), var(--magenta)); transition: height .25s;
+  }
+  aside nav a:hover, aside nav a.active { color: #fff; background: rgba(58, 134, 255, 0.10); padding-left: 22px; }
+  aside nav a:hover::before, aside nav a.active::before { height: 60%; }
+  .side-sec { margin-bottom: 30px; }
+  .side-sec h3 { font-size: 10px; letter-spacing: 3px; color: #5b6480; margin-bottom: 13px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px solid rgba(120, 140, 255, 0.35); border-radius: 999px;
+    padding: 3px 12px; color: var(--sub); transition: all .2s;
+  }
+  .skill-tags span:hover { color: #fff; border-color: var(--magenta); box-shadow: 0 0 12px rgba(230, 57, 70, 0.4); }
+  .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: var(--blue); }
+
+  main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
+
+  .hero { margin-bottom: 110px; }
+  .hero .eyebrow { font-size: 12px; letter-spacing: 7px; color: var(--blue); margin-bottom: 20px; }
+  .hero h2 { font-size: 62px; line-height: 1.2; font-weight: 900; color: #fff; }
+  .hero h2 .grad {
+    background: linear-gradient(90deg, var(--blue), var(--magenta));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { margin-top: 20px; color: var(--sub); font-size: 14px; max-width: 480px; }
+  .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(230, 57, 70, 0.75); }
+
+  section { margin-bottom: 96px; }
+  .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .sec-head .num {
+    font-size: 40px; font-weight: 900; line-height: 1;
+    background: linear-gradient(180deg, var(--blue), var(--magenta));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 800; color: #fff; }
+  .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(230, 57, 70, 0.7), transparent); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .work {
+    border: 1px solid var(--line); border-radius: 16px; padding: 30px; position: relative;
+    background: linear-gradient(160deg, rgba(20, 27, 48, 0.9), rgba(10, 14, 26, 0.9));
+    transition: transform .25s, border-color .25s, box-shadow .25s; overflow: hidden;
+  }
+  .work .wnum {
+    position: absolute; top: 18px; right: 22px; font-size: 44px; font-weight: 900;
+    color: rgba(120, 140, 255, 0.12); line-height: 1; transition: color .25s;
+  }
+  .work:hover { transform: translateY(-6px); border-color: var(--magenta); box-shadow: 0 22px 50px -14px rgba(230, 57, 70, 0.4); }
+  .work:hover .wnum { color: rgba(230, 57, 70, 0.30); }
+  .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; font-weight: 700; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--blue); font-weight: 700; }
+  .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 1px; }
+  .work .links a {
+    color: #fff; text-decoration: none; padding: 7px 16px; border-radius: 999px;
+    border: 1px solid rgba(120, 140, 255, 0.4); transition: all .2s;
+  }
+  .work .links a:hover { background: linear-gradient(90deg, var(--blue), var(--magenta)); border-color: transparent; }
+
+  .article {
+    display: flex; align-items: baseline; gap: 20px; padding: 22px 18px;
+    border-bottom: 1px solid rgba(120, 140, 255, 0.16);
+    text-decoration: none; color: inherit; transition: background .25s, padding-left .25s;
+  }
+  .article:first-of-type { border-top: 1px solid rgba(120, 140, 255, 0.16); }
+  .article:hover { background: rgba(58, 134, 255, 0.08); padding-left: 30px; }
+  .article time { font-size: 12px; color: var(--magenta); white-space: nowrap; letter-spacing: 1px; }
+  .article .t { font-size: 15px; flex: 1; }
+  .article:hover .t { color: #fff; }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(120, 140, 255, 0.3); border-radius: 999px; padding: 1px 10px; }
+
+  .timeline { border-left: 1px solid rgba(120, 140, 255, 0.25); padding-left: 28px; margin-left: 10px; }
+  .tl-item { position: relative; padding-bottom: 32px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -34px; top: 7px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--magenta));
+    transition: box-shadow .2s;
+  }
+  .tl-item:hover::before { box-shadow: 0 0 14px rgba(230, 57, 70, 0.8); }
+  .tl-item time { font-size: 12px; color: var(--blue); letter-spacing: 2px; font-weight: 700; }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; color: #fff; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    border-top: 1px solid rgba(120, 140, 255, 0.2); padding-top: 24px;
+    display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); letter-spacing: 2px;
+  }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="bg"></canvas>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
+
+<aside>
+  <div class="avatar"></div>
+  <h1>IKEDA</h1>
+  <div class="role">WEB ENGINEER</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active">WORKS</a>
+    <a href="#articles">ARTICLES</a>
+    <a href="#career">CAREER</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+  <div class="side-sec">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>Links</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">AFTER MIRÓ — CONSTELLATIONS</div>
+    <h2>点と線が、<br><span class="grad">星座になる。</span></h2>
+    <p>ミロ《星座》シリーズに着想を得て、赤・黄・青の星と黒い夜空の線で作品と記事をつないだポートフォリオ。</p>
+    <div class="hint">✦ 余白クリックでノードが弾ける / スクロールで星図が回る</div>
+  </div>
+
+  <section id="works">
+    <div class="sec-head reveal"><span class="num">01</span><h2>WORKS</h2><span class="rule"></span></div>
+    <div class="works">
+      <div class="work reveal"><span class="wnum">01</span>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="stack">NEXT.JS / SUPABASE</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal"><span class="wnum">02</span>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+        <div class="stack">PYTHON / AZURE OPENAI</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal"><span class="wnum">03</span>
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="stack">REACT / PWA</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal"><span class="wnum">04</span>
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+        <div class="stack">GO</div>
+        <div class="links"><a href="#">GITHUB</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head reveal"><span class="num">02</span><h2>ARTICLES</h2><span class="rule"></span></div>
+    <a class="article reveal" href="#">
+      <time>2026.07.10</time>
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="src">Zenn</span>
+    </a>
+    <a class="article reveal" href="#">
+      <time>2026.06.28</time>
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="src">Zenn</span>
+    </a>
+    <a class="article reveal" href="#">
+      <time>2026.06.05</time>
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="src">Qiita</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head reveal"><span class="num">03</span><h2>CAREER</h2><span class="rule"></span></div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <span>© 2026 IKEDA</span>
+    <span>GEOMETRIA IN MOTU</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const BASE = 75, MAX = 160, LINK = 140;
+  const nodes = [];
+  function addNode(x, y, vx, vy, accent) {
+    nodes.push({
+      x, y,
+      vx: vx !== undefined ? vx : (Math.random() - 0.5) * 0.4,
+      vy: vy !== undefined ? vy : (Math.random() - 0.5) * 0.4,
+      r: 1.2 + Math.random() * 1.9,
+      accent: accent !== undefined ? accent : Math.random() < 0.16
+    });
+  }
+  for (let i = 0; i < BASE; i++) addNode(Math.random() * 1920, Math.random() * 1080);
+
+  const polys = [
+    { cx: 0.58, cy: 0.22, r: 190, n: 6, a: 0, va: 0.0011 },
+    { cx: 0.90, cy: 0.62, r: 250, n: 3, a: 0.7, va: -0.0007 },
+    { cx: 0.44, cy: 0.90, r: 150, n: 4, a: 0.3, va: 0.0009 }
+  ];
+  const ripples = [];
+  const mouse = { x: -9999, y: -9999 };
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  // スクロール量 → 星座全体の回転・進捗バー
+  let scrollRot = 0, lastY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const dy = window.scrollY - lastY;
+    lastY = window.scrollY;
+    scrollRot += dy * 0.0007;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  });
+
+  window.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    for (let i = 0; i < 9; i++) {
+      const th = (i / 9) * Math.PI * 2 + Math.random() * 0.5;
+      const sp = 1.2 + Math.random() * 1.8;
+      addNode(e.clientX, e.clientY, Math.cos(th) * sp, Math.sin(th) * sp, i % 4 === 0);
+    }
+    while (nodes.length > MAX) nodes.shift();
+    ripples.push({ x: e.clientX, y: e.clientY, r: 0, a: 0.8 });
+  });
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (const p of polys) {
+      if (!reduced) p.a += p.va;
+      const A = p.a + scrollRot * (p.n % 2 ? 1 : -1); // スクロールで回転
+      ctx.beginPath();
+      for (let i = 0; i <= p.n; i++) {
+        const th = A + (i / p.n) * Math.PI * 2;
+        i === 0
+          ? ctx.moveTo(p.cx * W + Math.cos(th) * p.r, p.cy * H + Math.sin(th) * p.r)
+          : ctx.lineTo(p.cx * W + Math.cos(th) * p.r, p.cy * H + Math.sin(th) * p.r);
+      }
+      ctx.strokeStyle = 'rgba(120, 140, 255, 0.14)';
+      ctx.stroke();
+    }
+
+    for (const n of nodes) {
+      if (!reduced) {
+        n.vx *= 0.995; n.vy *= 0.995;
+        n.x += n.vx; n.y += n.vy;
+        const dxm = mouse.x - n.x, dym = mouse.y - n.y;
+        const dm2 = dxm * dxm + dym * dym;
+        if (dm2 < 170 * 170 && dm2 > 1) { n.x += dxm * 0.002; n.y += dym * 0.002; }
+        if (n.x < -20) n.x = W + 20; if (n.x > W + 20) n.x = -20;
+        if (n.y < -20) n.y = H + 20; if (n.y > H + 20) n.y = -20;
+      }
+    }
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < LINK) {
+          const alpha = (1 - d / LINK) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = (a.accent || b.accent)
+            ? 'rgba(230, 57, 70, ' + alpha + ')'
+            : 'rgba(58, 134, 255, ' + alpha * 0.8 + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = n.accent ? (n.r > 2 ? 'rgba(255, 210, 63, 0.95)' : 'rgba(230, 57, 70, 0.95)') : 'rgba(244, 246, 255, 0.9)';
+      ctx.fill();
+    }
+
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i];
+      rp.r += 3.4; rp.a *= 0.964;
+      ctx.beginPath();
+      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(230, 57, 70, ' + rp.a + ')';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      if (rp.a < 0.02) ripples.splice(i, 1);
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // リビール
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // カスタムカーソル
+  const dot = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  let rx = 0, ry = 0;
+  window.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+  });
+  (function curLoop() {
+    rx += (mouse.x - rx) * 0.16; ry += (mouse.y - ry) * 0.16;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(curLoop);
+  })();
+  document.querySelectorAll('a, .work').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('on'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('on'));
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P-6 エッシャー《星》— 多面体の宇宙</title>
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --panel: #131316;
+    --text: #e8e8ec;
+    --sub: #8e8e99;
+    --silver: #d4d8e0;
+    --amber: #ffb02e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: radial-gradient(circle at 60% 30%, #141419, var(--bg) 70%);
+    color: var(--text); line-height: 1.8;
+    display: flex; min-height: 100vh; cursor: none;
+  }
+  a { cursor: none; }
+  .mono { font-family: ui-monospace, "Cascadia Code", monospace; }
+
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--silver), var(--amber));
+  }
+
+  #cur-dot, #cur-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  #cur-dot { width: 5px; height: 5px; background: #fff; }
+  #cur-ring {
+    width: 34px; height: 34px; border: 1px solid rgba(212, 216, 224, 0.6);
+    transition: width .25s, height .25s, border-color .25s, background .25s;
+  }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--amber); background: rgba(255, 176, 46, 0.10); }
+  @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
+
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .works .reveal:nth-child(2) { transition-delay: .12s; }
+  .works .reveal:nth-child(3) { transition-delay: .06s; }
+  .works .reveal:nth-child(4) { transition-delay: .18s; }
+
+  aside {
+    width: 280px; background: rgba(16, 16, 19, 0.92);
+    border-right: 1px solid rgba(212, 216, 224, 0.2);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+  }
+  .avatar { width: 92px; height: 92px; margin-bottom: 20px; }
+  .avatar svg { width: 100%; height: 100%; }
+  .spin { animation: spin 60s linear infinite; transform-origin: 50% 50%; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  aside h1 { font-size: 22px; letter-spacing: 4px; font-weight: 700; color: #fff; }
+  aside .role { font-size: 11px; letter-spacing: 4px; margin: 5px 0 20px; color: var(--amber); }
+  aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 34px; }
+  aside nav a {
+    color: var(--sub); text-decoration: none; font-size: 12px; letter-spacing: 4px;
+    padding: 13px 4px; border-bottom: 1px solid rgba(212, 216, 224, 0.14);
+    display: flex; justify-content: space-between; align-items: center;
+    transition: color .2s, letter-spacing .25s;
+  }
+  aside nav a::after { content: "◇"; font-size: 10px; color: rgba(212, 216, 224, 0.35); transition: all .25s; }
+  aside nav a:hover, aside nav a.active { color: #fff; letter-spacing: 6px; }
+  aside nav a:hover::after, aside nav a.active::after { color: var(--amber); transform: rotate(45deg); }
+  .side-sec { margin-bottom: 30px; }
+  .side-sec h3 { font-size: 10px; letter-spacing: 3px; color: #5e5e68; margin-bottom: 13px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px solid rgba(212, 216, 224, 0.3);
+    padding: 3px 12px; color: var(--sub); transition: all .2s;
+  }
+  .skill-tags span:hover { color: var(--amber); border-color: var(--amber); }
+  .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: var(--silver); }
+
+  main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
+
+  .hero { margin-bottom: 110px; }
+  .hero .eyebrow { font-size: 11px; letter-spacing: 8px; color: var(--sub); margin-bottom: 20px; }
+  .hero h2 { font-size: 58px; line-height: 1.22; font-weight: 800; color: #fff; letter-spacing: 2px; }
+  .hero h2 em { font-style: normal; color: var(--amber); }
+  .hero p { margin-top: 20px; color: var(--sub); font-size: 14px; max-width: 500px; }
+  .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(255, 176, 46, 0.7); }
+
+  section { margin-bottom: 96px; }
+  .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .sec-head .poly { width: 24px; height: 24px; flex-shrink: 0; }
+  .sec-head h2 { font-size: 24px; letter-spacing: 7px; font-weight: 700; color: #fff; }
+  .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(212, 216, 224, 0.5), transparent); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .work {
+    border: 1px solid rgba(212, 216, 224, 0.22); padding: 30px; position: relative;
+    background: rgba(19, 19, 22, 0.9);
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+  }
+  .work::before, .work::after {
+    content: ""; position: absolute; width: 9px; height: 9px;
+    border: 1px solid rgba(212, 216, 224, 0.5); transition: border-color .25s, transform .25s;
+  }
+  .work::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .work::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+  .work:hover { transform: translateY(-6px); border-color: var(--amber); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.7); }
+  .work:hover::before, .work:hover::after { border-color: var(--amber); transform: scale(1.4); }
+  .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; font-weight: 700; letter-spacing: 1px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .stack { font-size: 11px; letter-spacing: 3px; margin-bottom: 16px; color: var(--silver); }
+  .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
+  .work .links a {
+    color: var(--text); text-decoration: none; padding: 6px 14px;
+    border: 1px solid rgba(212, 216, 224, 0.35); transition: all .2s;
+  }
+  .work .links a:hover { border-color: var(--amber); color: var(--amber); }
+
+  .article {
+    display: flex; align-items: baseline; gap: 20px; padding: 22px 18px;
+    border-bottom: 1px solid rgba(212, 216, 224, 0.15);
+    text-decoration: none; color: inherit; transition: background .25s, padding-left .25s;
+  }
+  .article:first-of-type { border-top: 1px solid rgba(212, 216, 224, 0.15); }
+  .article:hover { background: rgba(212, 216, 224, 0.05); padding-left: 30px; }
+  .article time { font-size: 12px; color: var(--amber); white-space: nowrap; letter-spacing: 1px; }
+  .article .t { font-size: 15px; flex: 1; }
+  .article:hover .t { color: #fff; }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(212, 216, 224, 0.25); border-radius: 999px; padding: 1px 10px; }
+
+  .timeline { border-left: 1px solid rgba(212, 216, 224, 0.25); padding-left: 28px; margin-left: 10px; }
+  .tl-item { position: relative; padding-bottom: 32px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -33px; top: 8px;
+    width: 9px; height: 9px; border: 1px solid var(--silver);
+    transform: rotate(45deg); background: var(--bg); transition: all .25s;
+  }
+  .tl-item:hover::before { border-color: var(--amber); background: var(--amber); transform: rotate(225deg); }
+  .tl-item time { font-size: 12px; color: var(--silver); letter-spacing: 3px; }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; color: #fff; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    border-top: 1px solid rgba(212, 216, 224, 0.2); padding-top: 24px;
+    display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); letter-spacing: 3px;
+  }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="bg"></canvas>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
+
+<aside>
+  <div class="avatar">
+    <svg viewBox="0 0 100 100" fill="none" stroke="#d4d8e0" stroke-width="0.8">
+      <g class="spin">
+        <polygon points="50,8 86,30 86,70 50,92 14,70 14,30"/>
+        <polygon points="50,8 86,70 14,70" />
+        <polygon points="50,92 86,30 14,30" />
+        <circle cx="50" cy="50" r="16" stroke="#ffb02e"/>
+      </g>
+    </svg>
+  </div>
+  <h1>IKEDA</h1>
+  <div class="role">WEB ENGINEER</div>
+  <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <nav>
+    <a href="#works" class="active">WORKS</a>
+    <a href="#articles">ARTICLES</a>
+    <a href="#career">CAREER</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+  <div class="side-sec">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns">
+    <h3>Links</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">AFTER ESCHER — STARS (1948)</div>
+    <h2>多面体の宇宙を、<br><em>泳ぐ</em>。</h2>
+    <p>エッシャーの木口木版《星》に着想を得たポートフォリオ。銀色の骨格だけの多面体が、暗い宇宙をゆっくりと回り続けます。</p>
+    <div class="hint">✦ 余白をクリックすると多面体が生まれます / スクロールで宇宙が回転します</div>
+  </div>
+
+  <section id="works">
+    <div class="sec-head reveal">
+      <svg class="poly" viewBox="0 0 24 24" fill="none" stroke="#d4d8e0" stroke-width="1"><polygon points="12,2 22,8 22,16 12,22 2,16 2,8"/><polygon points="12,2 22,16 2,16" stroke="#ffb02e"/></svg>
+      <h2>WORKS</h2><span class="rule"></span>
+    </div>
+    <div class="works">
+      <div class="work reveal">
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="stack mono">NEXT.JS / SUPABASE</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal">
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+        <div class="stack mono">PYTHON / AZURE OPENAI</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal">
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="stack mono">REACT / PWA</div>
+        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work reveal">
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+        <div class="stack mono">GO</div>
+        <div class="links"><a href="#">GITHUB</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head reveal">
+      <svg class="poly" viewBox="0 0 24 24" fill="none" stroke="#d4d8e0" stroke-width="1"><rect x="4" y="4" width="16" height="16" transform="rotate(45 12 12)"/><circle cx="12" cy="12" r="5" stroke="#ffb02e"/></svg>
+      <h2>ARTICLES</h2><span class="rule"></span>
+    </div>
+    <a class="article reveal" href="#">
+      <time class="mono">2026.07.10</time>
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="src">Zenn</span>
+    </a>
+    <a class="article reveal" href="#">
+      <time class="mono">2026.06.28</time>
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="src">Zenn</span>
+    </a>
+    <a class="article reveal" href="#">
+      <time class="mono">2026.06.05</time>
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="src">Qiita</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head reveal">
+      <svg class="poly" viewBox="0 0 24 24" fill="none" stroke="#d4d8e0" stroke-width="1"><polygon points="12,2 21,19 3,19"/><polygon points="12,22 3,5 21,5" stroke="#ffb02e"/></svg>
+      <h2>CAREER</h2><span class="rule"></span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <time class="mono">2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time class="mono">2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <span>© 2026 IKEDA</span>
+    <span class="mono">STELLA · M.C.E.</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function edgesFromVerts(verts, edgeLen) {
+    const edges = [];
+    for (let i = 0; i < verts.length; i++) {
+      for (let j = i + 1; j < verts.length; j++) {
+        const d = Math.hypot(
+          verts[i][0] - verts[j][0], verts[i][1] - verts[j][1], verts[i][2] - verts[j][2]);
+        if (Math.abs(d - edgeLen) < 0.01) edges.push([i, j]);
+      }
+    }
+    return edges;
+  }
+
+  const phi = (1 + Math.sqrt(5)) / 2;
+  const icoV = [
+    [0, 1, phi], [0, 1, -phi], [0, -1, phi], [0, -1, -phi],
+    [1, phi, 0], [1, -phi, 0], [-1, phi, 0], [-1, -phi, 0],
+    [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1]
+  ];
+  const icoE = edgesFromVerts(icoV, 2);
+  const cubeV = [];
+  for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) cubeV.push([x, y, z]);
+  const cubeE = edgesFromVerts(cubeV, 2);
+  const octV = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+  const octE = edgesFromVerts(octV, Math.SQRT2);
+  // エッシャー《星》の主役：八面体の複合（2 つの八面体を 45 度ずらして重ねる）
+  const TYPES = [
+    { v: icoV, e: icoE }, { v: cubeV, e: cubeE }, { v: octV, e: octE }
+  ];
+
+  // 白銀の主モチーフ + アンバー 1 体（エッシャーのカメレオンの代わりの差し色）
+  const shapes = [
+    { v: icoV, e: icoE, cx: 0.60, cy: 0.30, size: 190, rx: 0.0026, ry: 0.0018, ax: 0.3, ay: 0.2, amber: false, ttl: Infinity, compound: true },
+    { v: cubeV, e: cubeE, cx: 0.87, cy: 0.66, size: 110, rx: -0.0016, ry: 0.0027, ax: 0.5, ay: 1.0, amber: false, ttl: Infinity, compound: false },
+    { v: octV, e: octE, cx: 0.44, cy: 0.80, size: 96, rx: 0.0022, ry: -0.0024, ax: 1.2, ay: 0.4, amber: true, ttl: Infinity, compound: true },
+    { v: icoV, e: icoE, cx: 0.36, cy: 0.10, size: 52, rx: -0.0025, ry: 0.0033, ax: 2.0, ay: 0.8, amber: false, ttl: Infinity, compound: false },
+    { v: octV, e: octE, cx: 0.78, cy: 0.12, size: 40, rx: 0.003, ry: 0.002, ax: 0.9, ay: 2.1, amber: false, ttl: Infinity, compound: false }
+  ];
+
+  // 背景の小さな星（エッシャーの版画の小さな星々）
+  const dots = [];
+  for (let i = 0; i < 60; i++) {
+    dots.push({ x: Math.random(), y: Math.random(), r: 0.4 + Math.random() * 1.1, tw: Math.random() * 6.28 });
+  }
+
+  const FOV = 5.5, TTL0 = 620;
+
+  window.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const type = TYPES[Math.floor(Math.random() * TYPES.length)];
+    shapes.push({
+      v: type.v, e: type.e,
+      cx: e.clientX / W, cy: e.clientY / H,
+      size: 46 + Math.random() * 76,
+      rx: (Math.random() - 0.5) * 0.018,
+      ry: (Math.random() - 0.5) * 0.018,
+      ax: Math.random() * 3, ay: Math.random() * 3,
+      amber: Math.random() < 0.3,
+      ttl: TTL0, compound: Math.random() < 0.5
+    });
+    const extra = shapes.filter(s => s.ttl !== Infinity);
+    if (extra.length > 7) shapes.splice(shapes.indexOf(extra[0]), 1);
+  });
+
+  // スクロール → 宇宙全体が回る
+  let lastY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const dy = window.scrollY - lastY;
+    lastY = window.scrollY;
+    for (const s of shapes) { s.ay += dy * 0.0016; s.ax += dy * 0.0006; }
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  });
+
+  let t = 0;
+
+  function project(s, verts, extraRot) {
+    const ax = s.ax, ay = s.ay + (extraRot || 0);
+    const cosX = Math.cos(ax), sinX = Math.sin(ax);
+    const cosY = Math.cos(ay), sinY = Math.sin(ay);
+    const cx = s.cx * W, cy = s.cy * H;
+    return verts.map(v => {
+      let x = v[0] * cosY + v[2] * sinY;
+      let z = -v[0] * sinY + v[2] * cosY;
+      let y = v[1] * cosX - z * sinX;
+      z = v[1] * sinX + z * cosX;
+      const k = FOV / (FOV + z);
+      return { x: cx + x * k * s.size / 2, y: cy + y * k * s.size / 2, z };
+    });
+  }
+
+  function strokeEdges(s, proj, colorFn) {
+    for (const [a, b] of s.e) {
+      const pa = proj[a], pb = proj[b];
+      const depth = (pa.z + pb.z) / 2;
+      const near = 1 - (depth + 2) / 4;
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = colorFn(0.10 + 0.34 * near);
+      ctx.lineWidth = 0.9;
+      ctx.stroke();
+    }
+    for (const p of proj) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2);
+      ctx.fillStyle = colorFn(0.55);
+      ctx.fill();
+    }
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.016;
+
+    // 小さな星（またたく）
+    for (const d of dots) {
+      const a = 0.25 + 0.25 * Math.sin(t * 1.4 + d.tw);
+      ctx.beginPath();
+      ctx.arc(d.x * W, d.y * H, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212, 216, 224, ' + a + ')';
+      ctx.fill();
+    }
+
+    for (let i = shapes.length - 1; i >= 0; i--) {
+      const s = shapes[i];
+      if (!reduced) { s.ax += s.rx; s.ay += s.ry; }
+      if (s.ttl !== Infinity) {
+        s.ttl--;
+        if (s.ttl <= 0) { shapes.splice(i, 1); continue; }
+      }
+      const fade = s.ttl === Infinity ? 1 : Math.min(1, s.ttl / 140);
+      const col = s.amber
+        ? a => 'rgba(255, 176, 46, ' + a * fade + ')'
+        : a => 'rgba(212, 216, 224, ' + a * fade + ')';
+      strokeEdges(s, project(s, s.v), col);
+      // 複合多面体：同じ立体を 45° ずらしてもう一度（エッシャー的な複合星）
+      if (s.compound) strokeEdges(s, project(s, s.v, Math.PI / 4), a => col(a * 0.6));
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // リビール
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // カスタムカーソル
+  const dot = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  const mouse = { x: -100, y: -100 };
+  let rx = 0, ry = 0;
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+  });
+  (function curLoop() {
+    rx += (mouse.x - rx) * 0.16; ry += (mouse.y - ry) * 0.16;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(curLoop);
+  })();
+  document.querySelectorAll('a, .work').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('on'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('on'));
+  });
+})();
+</script>
+
+</body>
+</html>

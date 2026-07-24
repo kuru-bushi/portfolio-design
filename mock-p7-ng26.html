@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P-7 カンディンスキー《コンポジション VIII》× Ng 26 — 油彩の構成</title>
+<style>
+  :root {
+    --wall: #191713;
+    --canvas: #d8cdb0;
+    --ink: #241f17;
+    --sub: #6e6555;
+    --gold: #c9a227;
+    --red: #c22f1e;
+    --blue: #16355c;
+    --yellow: #e0a51c;
+    --green: #1e5c47;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", "Hiragino Sans", serif;
+    background: var(--canvas); color: var(--ink); line-height: 1.9;
+    display: flex; min-height: 100vh; cursor: none;
+  }
+  a { cursor: none; }
+  .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--red), var(--yellow), var(--blue));
+  }
+
+  #cur-dot, #cur-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  #cur-dot { width: 7px; height: 7px; background: var(--red); }
+  #cur-ring {
+    width: 34px; height: 34px; border: 1.5px solid rgba(36, 31, 23, 0.6);
+    transition: width .25s, height .25s, border-color .25s, background .25s;
+  }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--red); background: rgba(194, 47, 30, 0.10); }
+  @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
+
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .works .reveal:nth-child(2) { transition-delay: .12s; }
+  .works .reveal:nth-child(3) { transition-delay: .06s; }
+  .works .reveal:nth-child(4) { transition-delay: .18s; }
+
+  /* ===== サイドバー：美術館の暗い壁 + 金の額 ===== */
+  aside {
+    width: 280px; background: var(--wall); color: #e8e0cf;
+    border-right: 3px solid var(--gold);
+    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+  }
+  .avatar {
+    width: 96px; height: 96px; margin-bottom: 22px;
+    border: 3px solid var(--gold); padding: 5px; background: #23201a;
+  }
+  .avatar .inner {
+    width: 100%; height: 100%; position: relative; background: #d8cdb0; overflow: hidden;
+  }
+  .avatar .inner i { position: absolute; }
+  aside h1 { font-size: 22px; letter-spacing: 4px; font-weight: 600; color: #fff; }
+  aside .role { font-size: 11px; letter-spacing: 4px; margin: 5px 0 20px; color: var(--gold); }
+  .caption {
+    border: 1px solid rgba(201, 162, 39, 0.5); padding: 14px 16px; margin-bottom: 30px;
+    background: rgba(35, 32, 26, 0.7); font-size: 11px; line-height: 1.9; color: #b3a88f;
+  }
+  .caption .title { font-size: 13px; color: #fff; font-weight: 600; letter-spacing: 1px; }
+  .caption .em { color: var(--gold); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 32px; }
+  aside nav a {
+    color: #b3a88f; text-decoration: none; font-size: 12px; letter-spacing: 4px;
+    padding: 13px 4px; border-bottom: 1px solid rgba(201, 162, 39, 0.3);
+    display: flex; align-items: center; gap: 12px;
+    transition: color .2s, padding-left .25s;
+  }
+  aside nav a .brush { width: 14px; height: 6px; border-radius: 3px; flex-shrink: 0; transform: rotate(-6deg); transition: transform .3s, width .3s; }
+  aside nav a:nth-child(1) .brush { background: var(--red); }
+  aside nav a:nth-child(2) .brush { background: var(--yellow); }
+  aside nav a:nth-child(3) .brush { background: var(--blue); }
+  aside nav a:nth-child(4) .brush { background: var(--green); }
+  aside nav a:hover, aside nav a.active { color: #fff; padding-left: 8px; }
+  aside nav a:hover .brush, aside nav a.active .brush { transform: rotate(6deg); width: 22px; }
+  .side-sec { margin-bottom: 30px; }
+  .side-sec h3 { font-size: 10px; letter-spacing: 4px; color: #7d7460; margin-bottom: 13px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-tags span {
+    font-size: 11px; border: 1px solid rgba(201, 162, 39, 0.45);
+    padding: 3px 12px; color: #b3a88f; transition: all .2s;
+  }
+  .skill-tags span:hover { color: var(--wall); background: var(--gold); }
+  .sns a { color: #b3a88f; font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: var(--gold); }
+
+  main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
+
+  .hero { margin-bottom: 110px; position: relative; }
+  .hero::before {
+    content: ""; position: absolute; inset: -52px -60px; z-index: -1;
+    background: radial-gradient(ellipse at 32% 42%,
+      rgba(216, 205, 176, 0.94) 0%, rgba(216, 205, 176, 0.6) 56%, transparent 80%);
+  }
+  .hero .eyebrow { font-size: 12px; letter-spacing: 7px; color: var(--blue); margin-bottom: 20px; font-weight: 600; }
+  .hero h2 { font-size: 56px; line-height: 1.28; font-weight: 600; letter-spacing: 2px; }
+  .hero h2 em { font-style: normal; color: var(--red); }
+  .hero p { margin-top: 18px; color: var(--sub); font-size: 14px; max-width: 520px; }
+  .hero .hint { margin-top: 26px; font-size: 11px; letter-spacing: 2px; color: var(--green); font-weight: 600; }
+
+  section { margin-bottom: 96px; }
+  .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .sec-head .daub { width: 30px; height: 14px; border-radius: 7px 9px 6px 8px; flex-shrink: 0; transform: rotate(-4deg); }
+  .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; }
+  .sec-head .rule { flex: 1; height: 2px; background: linear-gradient(90deg, var(--ink), transparent); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .work {
+    background: #f6f1e3; border: 2px solid var(--ink); position: relative;
+    box-shadow: 0 10px 26px rgba(36, 31, 23, 0.25);
+    transition: transform .22s, box-shadow .22s;
+  }
+  .work:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: 0 22px 44px rgba(36, 31, 23, 0.35); }
+  .work .stripe { height: 12px; border-bottom: 2px solid var(--ink); }
+  .work .body { padding: 24px; }
+  .work h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: 1px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; font-weight: 700; }
+  .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
+  .work .links a {
+    color: #f6f1e3; background: var(--ink); text-decoration: none; padding: 6px 15px;
+    transition: background .2s;
+  }
+  .work .links a:hover { background: var(--red); }
+
+  .article {
+    display: flex; align-items: baseline; gap: 20px; padding: 20px 16px;
+    border-bottom: 1px solid rgba(36, 31, 23, 0.3);
+    text-decoration: none; color: inherit; background: rgba(246, 241, 227, 0.82);
+    transition: background .25s, padding-left .25s;
+  }
+  .article:first-of-type { border-top: 2px solid var(--ink); }
+  .article:last-of-type { border-bottom: 2px solid var(--ink); }
+  .article:hover { background: #f6f1e3; padding-left: 28px; }
+  .article time { font-size: 12px; color: var(--blue); white-space: nowrap; letter-spacing: 1px; font-weight: 700; }
+  .article .t { font-size: 15px; flex: 1; }
+  .article:hover .t { color: var(--red); }
+  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(36, 31, 23, 0.35); border-radius: 999px; padding: 1px 10px; }
+
+  .timeline { border-left: 2px solid var(--ink); padding-left: 28px; margin-left: 10px; }
+  .tl-item { position: relative; padding-bottom: 32px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -35px; top: 8px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #e56a54, var(--red));
+    border: 2px solid var(--ink); transition: transform .25s;
+  }
+  .tl-item:nth-child(2)::before { background: radial-gradient(circle at 35% 35%, #f0c96a, var(--yellow)); }
+  .tl-item:hover::before { transform: scale(1.3); }
+  .tl-item time { font-size: 12px; color: var(--red); letter-spacing: 2px; font-weight: 700; }
+  .tl-item h4 { font-size: 16px; margin: 2px 0; letter-spacing: 1px; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  footer {
+    border-top: 2px solid var(--ink); padding-top: 24px;
+    display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); letter-spacing: 2px;
+  }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="bg"></canvas>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
+
+<aside>
+  <div class="avatar">
+    <div class="inner">
+      <i style="background:#c22f1e; width:56%; height:56%; border-radius:50%; left:6%; top:8%"></i>
+      <i style="background:#16355c; width:70%; height:14%; left:16%; top:64%; transform:rotate(-14deg)"></i>
+      <i style="background:#e0a51c; width:0; height:0; border-left:16px solid transparent; border-right:16px solid transparent; border-bottom:28px solid #e0a51c; right:4%; top:6%"></i>
+      <i style="background:#1e5c47; width:22%; height:22%; right:10%; bottom:8%"></i>
+    </div>
+  </div>
+  <h1>IKEDA</h1>
+  <div class="role sans">WEB ENGINEER</div>
+
+  <div class="caption sans">
+    <div class="title">Composition in Motion</div>
+    2026 ── スクリーンに油彩とコード<br>
+    <span class="em">カンディンスキー《コンポジション VIII》</span>(1923) と
+    <span class="em">ルイス・メディナ《Ng 26》</span>(2021) に着想。筆致はすべてプログラムで描画。
+  </div>
+
+  <nav class="sans">
+    <a href="#works" class="active"><span class="brush"></span>WORKS</a>
+    <a href="#articles"><span class="brush"></span>ARTICLES</a>
+    <a href="#career"><span class="brush"></span>CAREER</a>
+    <a href="#contact"><span class="brush"></span>CONTACT</a>
+  </nav>
+  <div class="side-sec sans">
+    <h3>Skills</h3>
+    <div class="skill-tags">
+      <span>TypeScript</span><span>React</span><span>Next.js</span>
+      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+    </div>
+  </div>
+  <div class="side-sec sns sans">
+    <h3>Links</h3>
+    <a href="#">GitHub</a>
+    <a href="#">Zenn</a>
+    <a href="#">X (Twitter)</a>
+  </div>
+</aside>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow sans">AFTER KANDINSKY — COMPOSITION VIII</div>
+    <h2>油彩の筆致が、<br><em>構図</em>を奏でる。</h2>
+    <p class="sans">円・三角・線分——カンディンスキーの造形言語を、油絵具のかすれとムラごとコードで再現したポートフォリオ。クリックのたびに、新しい一枚が描き直されます。</p>
+    <div class="hint sans">✦ 余白をクリックすると構図が描き直されます / スクロールとマウスで絵に視差がつきます</div>
+  </div>
+
+  <section id="works">
+    <div class="sec-head reveal"><span class="daub" style="background:var(--red)"></span><h2>WORKS</h2><span class="rule"></span></div>
+    <div class="works sans">
+      <div class="work reveal">
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #c22f1e 0 34px, #a82717 34px 40px, #c22f1e 40px 78px, #d4472f 78px 84px)"></div>
+        <div class="body">
+          <h3>タスク管理アプリ</h3>
+          <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+          <div class="stack" style="color:var(--red)">NEXT.JS / SUPABASE</div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #16355c 0 30px, #102845 30px 37px, #16355c 37px 70px, #1f4674 70px 76px)"></div>
+        <div class="body">
+          <h3>RAG チャットボット</h3>
+          <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+          <div class="stack" style="color:var(--blue)">PYTHON / AZURE OPENAI</div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #e0a51c 0 32px, #c89010 32px 38px, #e0a51c 38px 72px, #f0bc45 72px 78px)"></div>
+        <div class="body">
+          <h3>家計簿 PWA</h3>
+          <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+          <div class="stack" style="color:#a87b0e">REACT / PWA</div>
+          <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+      <div class="work reveal">
+        <div class="stripe" style="background:repeating-linear-gradient(95deg, #1e5c47 0 36px, #164a38 36px 42px, #1e5c47 42px 80px, #2a7a5e 80px 86px)"></div>
+        <div class="body">
+          <h3>CLI ツール集</h3>
+          <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
+          <div class="stack" style="color:var(--green)">GO</div>
+          <div class="links"><a href="#">GITHUB</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head reveal"><span class="daub" style="background:var(--blue)"></span><h2>ARTICLES</h2><span class="rule"></span></div>
+    <div class="sans">
+      <a class="article reveal" href="#">
+        <time>2026.07.10</time>
+        <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+        <span class="src">Zenn</span>
+      </a>
+      <a class="article reveal" href="#">
+        <time>2026.06.28</time>
+        <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+        <span class="src">Zenn</span>
+      </a>
+      <a class="article reveal" href="#">
+        <time>2026.06.05</time>
+        <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+        <span class="src">Qiita</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="career">
+    <div class="sec-head reveal"><span class="daub" style="background:var(--yellow)"></span><h2>CAREER</h2><span class="rule"></span></div>
+    <div class="timeline sans">
+      <div class="tl-item reveal">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact" class="sans">
+    <span>© 2026 IKEDA</span>
+    <span>OIL ON SCREEN</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  // ---- 絵の具（ベース色 [r,g,b]）----
+  const OIL = {
+    red:    [194, 47, 30],
+    blue:   [22, 53, 92],
+    yellow: [224, 165, 28],
+    green:  [30, 92, 71],
+    black:  [30, 26, 20],
+    white:  [236, 228, 208],
+    sienna: [138, 75, 42]
+  };
+  const NAMES = Object.keys(OIL);
+
+  function jit(c, amt, a) {
+    const j = () => Math.round(rnd(-amt, amt));
+    return 'rgba(' + Math.max(0, Math.min(255, c[0] + j())) + ',' +
+      Math.max(0, Math.min(255, c[1] + j())) + ',' +
+      Math.max(0, Math.min(255, c[2] + j())) + ',' + a + ')';
+  }
+
+  // ---- 筆ストローク（毛のばらつき付き）----
+  function brush(o, x1, y1, x2, y2, w, col, alpha) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len, ny = dx / len;
+    o.lineCap = 'round';
+    for (let k = 0; k < 3; k++) {
+      const off = (k - 1) * w * 0.3;
+      const ww = k === 1 ? w * 0.7 : w * 0.35;
+      o.beginPath();
+      o.moveTo(x1 + nx * off + rnd(-1, 1), y1 + ny * off + rnd(-1, 1));
+      const steps = Math.max(2, Math.floor(len / 7));
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps;
+        o.lineTo(
+          x1 + dx * t + nx * (off + rnd(-1.4, 1.4)),
+          y1 + dy * t + ny * (off + rnd(-1.4, 1.4))
+        );
+      }
+      o.strokeStyle = jit(col, 16, alpha * (k === 1 ? 1 : 0.55));
+      o.lineWidth = ww;
+      o.stroke();
+    }
+  }
+
+  // ---- 地（キャンバス）を描く ----
+  let ground = null;
+  function paintGround() {
+    ground = document.createElement('canvas');
+    ground.width = W; ground.height = H;
+    const g = ground.getContext('2d');
+    g.fillStyle = '#d8cdb0';
+    g.fillRect(0, 0, W, H);
+    // 大きな下塗りのムラ
+    for (let i = 0; i < 420; i++) {
+      const x = rnd(0, W), y = rnd(0, H);
+      const len = rnd(40, 130), ang = rnd(-0.25, 0.25);
+      brush(g, x, y, x + Math.cos(ang) * len, y + Math.sin(ang) * len,
+            rnd(8, 22), OIL.white, 0.05);
+    }
+    for (let i = 0; i < 130; i++) {
+      const x = rnd(0, W), y = rnd(0, H);
+      const len = rnd(30, 90), ang = rnd(-0.3, 0.3);
+      brush(g, x, y, x + Math.cos(ang) * len, y + Math.sin(ang) * len,
+            rnd(6, 14), OIL.sienna, 0.03);
+    }
+    // 織り目
+    g.globalAlpha = 0.05;
+    g.strokeStyle = '#5c5240';
+    g.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 3) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+    for (let y = 0; y < H; y += 3) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+    g.globalAlpha = 1;
+  }
+
+  // ---- モチーフを油彩で offscreen に描く ----
+  function paintMotif(type, col, col2, R) {
+    const m = 26;
+    const cv = document.createElement('canvas');
+    cv.width = R * 2 + m * 2; cv.height = R * 2 + m * 2;
+    const o = cv.getContext('2d');
+    const c = R + m;
+
+    if (type === 'disc') {
+      // 同心円状のストロークで塗った円 + 暈（カンディンスキーの円）
+      for (let rr = R; rr > 2; rr -= 3) {
+        const segs = Math.max(4, Math.floor(rr / 9));
+        for (let s = 0; s < segs; s++) {
+          const a0 = (s / segs) * Math.PI * 2 + rnd(-0.1, 0.1);
+          const a1 = a0 + (Math.PI * 2 / segs) * rnd(0.8, 1.15);
+          o.beginPath();
+          o.arc(c, c, rr + rnd(-1.2, 1.2), a0, a1);
+          const mix = rr / R;
+          o.strokeStyle = jit(mix > 0.72 ? col2 : col, 18, rnd(0.5, 0.85));
+          o.lineWidth = rnd(2.4, 4.2);
+          o.stroke();
+        }
+      }
+    } else if (type === 'ring') {
+      for (let k = 0; k < 3; k++) {
+        const rr = R - k * 5;
+        for (let s = 0; s < 14; s++) {
+          const a0 = (s / 14) * Math.PI * 2 + rnd(-0.08, 0.08);
+          o.beginPath();
+          o.arc(c, c, rr + rnd(-1, 1), a0, a0 + 0.55);
+          o.strokeStyle = jit(col, 14, rnd(0.5, 0.8));
+          o.lineWidth = rnd(2.5, 4.5);
+          o.stroke();
+        }
+      }
+    } else if (type === 'tri') {
+      const p = [[c, c - R], [c + R * 0.9, c + R * 0.72], [c - R * 0.9, c + R * 0.72]];
+      o.save();
+      o.beginPath();
+      o.moveTo(p[0][0], p[0][1]); o.lineTo(p[1][0], p[1][1]); o.lineTo(p[2][0], p[2][1]);
+      o.closePath(); o.clip();
+      for (let y = c - R; y < c + R * 0.8; y += 4) {
+        brush(o, c - R, y + rnd(-1, 1), c + R, y + rnd(-1, 1), rnd(2.6, 4.6), col, rnd(0.5, 0.8));
+      }
+      o.restore();
+      // 荒い輪郭線
+      for (let i = 0; i < 3; i++) {
+        brush(o, p[i][0], p[i][1], p[(i + 1) % 3][0], p[(i + 1) % 3][1], 2.4, OIL.black, 0.55);
+      }
+    } else if (type === 'beam') {
+      // 細長い帯（コンポジションの直線群）
+      for (let y = -R * 0.14; y < R * 0.14; y += 3) {
+        brush(o, c - R, c + y + rnd(-1, 1), c + R, c + y + rnd(-1, 1), rnd(2.2, 3.6), col, rnd(0.55, 0.85));
+      }
+    } else if (type === 'checker') {
+      const n = 4, s = (R * 2) / n;
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          const cc = (i + j) % 2 === 0 ? col : col2;
+          const x0 = c - R + i * s, y0 = c - R + j * s;
+          for (let y = y0; y < y0 + s; y += 3.4) {
+            brush(o, x0 + rnd(0, 2), y, x0 + s - rnd(0, 2), y, rnd(2, 3.4), cc, rnd(0.55, 0.85));
+          }
+        }
+      }
+    } else { // arc（欠けた月・弧）
+      for (let rr = R; rr > R * 0.55; rr -= 3) {
+        o.beginPath();
+        o.arc(c, c, rr + rnd(-1, 1), rnd(-0.15, 0), Math.PI * rnd(0.9, 1.05));
+        o.strokeStyle = jit(col, 16, rnd(0.5, 0.8));
+        o.lineWidth = rnd(2.4, 4);
+        o.stroke();
+      }
+    }
+    return cv;
+  }
+
+  // ---- 構図 ----
+  const TYPES = ['disc', 'ring', 'tri', 'beam', 'checker', 'arc'];
+  let shapes = [];
+  function buildShapes() {
+    shapes = [];
+    const combos = [
+      ['disc', OIL.red, OIL.blue, rnd(90, 130)],
+      ['disc', OIL.blue, OIL.black, rnd(55, 85)],
+      ['ring', OIL.black, null, rnd(40, 60)],
+      ['tri', OIL.yellow, null, rnd(70, 110)],
+      ['tri', OIL.green, null, rnd(50, 80)],
+      ['beam', OIL.black, null, rnd(120, 180)],
+      ['beam', OIL.red, null, rnd(90, 140)],
+      ['checker', OIL.black, OIL.white, rnd(38, 56)],
+      ['arc', OIL.sienna, null, rnd(60, 90)],
+      ['disc', OIL.yellow, OIL.red, rnd(34, 50)]
+    ];
+    for (const [type, c1, c2, R] of combos) {
+      shapes.push({
+        img: paintMotif(type, c1, c2 || c1, R),
+        R,
+        cur: newPose(), tgt: null, prog: 1,
+        depth: rnd(0.25, 1),
+        drift: rnd(0, 6.28)
+      });
+    }
+  }
+  function newPose() {
+    return { x: rnd(0.30, 0.96), y: rnd(0.04, 0.96), rot: rnd(-0.5, 0.5), sc: rnd(0.8, 1.25) };
+  }
+
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+    paintGround();
+    if (!shapes.length) buildShapes();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // クリック → 描き直し（新しい構図へ、筆致も引き直す）
+  window.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    for (const s of shapes) {
+      s.tgt = newPose();
+      if (Math.random() < 0.3) {
+        s.tgt.x = e.clientX / W + rnd(-0.05, 0.05);
+        s.tgt.y = e.clientY / H + rnd(-0.05, 0.05);
+      }
+      s.prog = 0;
+    }
+  });
+
+  const mouse = { x: 0.5, y: 0.5 };
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX / W; mouse.y = e.clientY / H; });
+
+  let scrollY0 = 0;
+  window.addEventListener('scroll', () => {
+    scrollY0 = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+  });
+
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  let time = 0;
+  function frame() {
+    time += 0.016;
+    ctx.drawImage(ground, 0, 0);
+
+    for (const s of shapes) {
+      let p = s.cur;
+      if (s.tgt) {
+        s.prog = Math.min(1, s.prog + 0.014);
+        const t = ease(s.prog);
+        p = {
+          x: lerp(s.cur.x, s.tgt.x, t),
+          y: lerp(s.cur.y, s.tgt.y, t),
+          rot: lerp(s.cur.rot, s.tgt.rot, t),
+          sc: lerp(s.cur.sc, s.tgt.sc, t)
+        };
+        if (s.prog >= 1) { s.cur = s.tgt; s.tgt = null; }
+      }
+      const px = (mouse.x - 0.5) * 40 * s.depth;
+      const py = (mouse.y - 0.5) * 26 * s.depth - scrollY0 * 0.05 * s.depth;
+      const wob = reduced ? 0 : Math.sin(time * 0.4 + s.drift) * 3 * s.depth;
+
+      ctx.save();
+      ctx.translate(p.x * W + px, p.y * H + py + wob);
+      ctx.rotate(p.rot + (reduced ? 0 : Math.sin(time * 0.2 + s.drift) * 0.015));
+      ctx.scale(p.sc, p.sc);
+      ctx.drawImage(s.img, -s.img.width / 2, -s.img.height / 2);
+      ctx.restore();
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // リビール
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  }), { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // カスタムカーソル
+  const dot = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  const m2 = { x: -100, y: -100 };
+  let rx = 0, ry = 0;
+  window.addEventListener('mousemove', e => {
+    m2.x = e.clientX; m2.y = e.clientY;
+    dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+  });
+  (function curLoop() {
+    rx += (m2.x - rx) * 0.16; ry += (m2.y - ry) * 0.16;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(curLoop);
+  })();
+  document.querySelectorAll('a, .work').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('on'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('on'));
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-3 ポリゴン / デローネ三角形型</title>
+<style>
+  :root {
+    --bg: #f2f5f9;
+    --text: #17233a;
+    --sub: #5d6b82;
+    --accent: #0ea5a4;
+    --accent2: #6d5ce8;
+    --card: #ffffff;
+    --border: #dde4ee;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    display: flex; min-height: 100vh;
+  }
+
+  aside {
+    width: 280px; padding: 40px 28px; position: fixed; top: 0; bottom: 0;
+    overflow-y: auto; color: #e6ecf5;
+    background: #17233a;
+  }
+  aside .mesh {
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0;
+  }
+  aside .inner { position: relative; z-index: 1; }
+  .avatar {
+    width: 92px; height: 92px; margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  }
+  aside h1 { color: #fff; font-size: 21px; margin-bottom: 4px; }
+  aside .role {
+    font-size: 13px; margin-bottom: 20px;
+    background: linear-gradient(90deg, #4fd1c5, #a78bfa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-weight: 700;
+  }
+  aside .bio { font-size: 13px; margin-bottom: 32px; color: #9fb0c8; }
+  aside nav { display: flex; flex-direction: column; gap: 6px; margin-bottom: 32px; }
+  aside nav a {
+    color: #cdd8e8; text-decoration: none; font-size: 14px;
+    padding: 10px 16px;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+    background: rgba(255,255,255,0.05);
+  }
+  aside nav a.active {
+    background: linear-gradient(90deg, rgba(14,165,164,0.35), rgba(109,92,232,0.35));
+    color: #fff; font-weight: 600;
+  }
+  aside nav a:hover { background: rgba(255,255,255,0.12); }
+  .side-sec { margin-bottom: 28px; }
+  .side-sec h3 { font-size: 11px; letter-spacing: 2px; color: #7d8fa9; margin-bottom: 12px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tags span {
+    font-size: 11px; padding: 3px 12px; color: #cdd8e8;
+    background: rgba(255,255,255,0.08);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .sns a { color: #9fb0c8; font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: #4fd1c5; }
+
+  main { margin-left: 280px; flex: 1; padding: 48px 56px; max-width: 1020px; }
+  section { margin-bottom: 64px; }
+  .sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .sec-head .poly {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+  .sec-head h2 { font-size: 24px; }
+  .sec-head .rule { flex: 1; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .work {
+    background: var(--card); border: 1px solid var(--border);
+    clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
+    padding: 26px; position: relative; transition: box-shadow .2s;
+  }
+  .work::before {
+    content: ""; position: absolute; top: 0; right: 0;
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+  }
+  .work:hover { box-shadow: 0 10px 26px rgba(23, 35, 58, 0.12); }
+  .work .icon {
+    width: 44px; height: 44px; margin-bottom: 14px;
+  }
+  .icon-1 { background: linear-gradient(135deg, #0ea5a4, #34d399); clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+  .icon-2 { background: linear-gradient(135deg, #6d5ce8, #a78bfa); clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); }
+  .icon-3 { background: linear-gradient(135deg, #0284c7, #38bdf8); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+  .icon-4 { background: linear-gradient(135deg, #db2777, #f472b6); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+  .work h3 { font-size: 17px; margin-bottom: 8px; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
+  .work .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .work .tags span {
+    font-size: 11px; color: var(--accent2); background: #efedfd;
+    padding: 3px 12px;
+    clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  }
+  .work .links { display: flex; gap: 16px; font-size: 13px; }
+  .work .links a { color: var(--accent); text-decoration: none; font-weight: 700; }
+
+  .article {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 18px 24px; margin-bottom: 12px; text-decoration: none; color: inherit;
+    clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  }
+  .article:hover { background: #eafaf9; }
+  .article .t { font-size: 15px; font-weight: 600; }
+  .article .meta { font-size: 12px; color: var(--sub); white-space: nowrap; }
+
+  .timeline { border-left: 2px solid var(--border); padding-left: 26px; margin-left: 8px; }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -33px; top: 5px;
+    width: 12px; height: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+  .tl-item time { font-size: 12px; color: var(--accent2); font-weight: 700; }
+  .tl-item h4 { font-size: 15px; margin: 2px 0; }
+  .tl-item p { font-size: 13px; color: var(--sub); }
+
+  @media (max-width: 900px) {
+    aside { position: static; width: 100%; }
+    body { flex-direction: column; }
+    main { margin-left: 0; padding: 32px 20px; }
+    .works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <svg class="mesh" viewBox="0 0 280 900" preserveAspectRatio="xMidYMid slice">
+    <polygon points="0,0 140,0 60,110" fill="#1b2a45"/>
+    <polygon points="140,0 280,0 220,90 60,110" fill="#20304e"/>
+    <polygon points="280,0 280,160 220,90" fill="#253757"/>
+    <polygon points="0,0 60,110 0,200" fill="#1e2d49"/>
+    <polygon points="60,110 220,90 160,230 0,200" fill="#182741"/>
+    <polygon points="220,90 280,160 280,300 160,230" fill="#213152"/>
+    <polygon points="0,200 160,230 90,360 0,380" fill="#1c2c48"/>
+    <polygon points="160,230 280,300 230,420 90,360" fill="#16243d"/>
+    <polygon points="280,300 280,480 230,420" fill="#26385a"/>
+    <polygon points="0,380 90,360 130,520 0,560" fill="#203050"/>
+    <polygon points="90,360 230,420 130,520" fill="#1a2944"/>
+    <polygon points="230,420 280,480 280,640 130,520" fill="#1d2d4a"/>
+    <polygon points="0,560 130,520 100,700 0,720" fill="#182640"/>
+    <polygon points="130,520 280,640 220,760 100,700" fill="#223354"/>
+    <polygon points="280,640 280,820 220,760" fill="#1b2a45"/>
+    <polygon points="0,720 100,700 140,900 0,900" fill="#1f2f4e"/>
+    <polygon points="100,700 220,760 140,900" fill="#172540"/>
+    <polygon points="220,760 280,820 280,900 140,900" fill="#243658"/>
+  </svg>
+  <div class="inner">
+    <div class="avatar"></div>
+    <h1>Ikeda</h1>
+    <div class="role">Web Engineer</div>
+    <p class="bio">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+    <nav>
+      <a href="#works" class="active">Works</a>
+      <a href="#articles">Articles</a>
+      <a href="#career">Career</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="side-sec">
+      <h3>Skills</h3>
+      <div class="skill-tags">
+        <span>TypeScript</span><span>React</span><span>Next.js</span>
+        <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+      </div>
+    </div>
+    <div class="side-sec sns">
+      <h3>Links</h3>
+      <a href="#">GitHub</a>
+      <a href="#">Zenn</a>
+      <a href="#">X (Twitter)</a>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <section id="works">
+    <div class="sec-head"><span class="poly"></span><h2>Works</h2><span class="rule"></span></div>
+    <div class="works">
+      <div class="work">
+        <div class="icon icon-1"></div>
+        <h3>タスク管理アプリ</h3>
+        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
+        <div class="tags"><span>Next.js</span><span>Supabase</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="icon icon-2"></div>
+        <h3>RAG チャットボット</h3>
+        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
+        <div class="tags"><span>Python</span><span>Azure</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="icon icon-3"></div>
+        <h3>家計簿 PWA</h3>
+        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
+        <div class="tags"><span>React</span><span>PWA</span></div>
+        <div class="links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+      <div class="work">
+        <div class="icon icon-4"></div>
+        <h3>CLI ツール集</h3>
+        <p>開発を効率化する小さな CLI ツール群。Go 製・クロスプラットフォーム。</p>
+        <div class="tags"><span>Go</span></div>
+        <div class="links"><a href="#">GitHub ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles">
+    <div class="sec-head"><span class="poly"></span><h2>Articles</h2><span class="rule"></span></div>
+    <a class="article" href="#">
+      <span class="t">WSL2 + Claude Code で開発環境を整える</span>
+      <span class="meta">Zenn · 2026-07-10</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">Terraform で AWS 環境をコード管理する入門</span>
+      <span class="meta">Zenn · 2026-06-28</span>
+    </a>
+    <a class="article" href="#">
+      <span class="t">RAG の精度を上げるチャンク分割戦略</span>
+      <span class="meta">Qiita · 2026-06-05</span>
+    </a>
+  </section>
+
+  <section id="career">
+    <div class="sec-head"><span class="poly"></span><h2>Career</h2><span class="rule"></span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <time>2024 —</time>
+        <h4>Web エンジニア</h4>
+        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+      </div>
+      <div class="tl-item">
+        <time>2022 — 2024</time>
+        <h4>システムエンジニア</h4>
+        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
