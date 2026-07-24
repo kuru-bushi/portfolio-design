@@ -205,7 +205,7 @@
     <div class="eyebrow">AFTER ESCHER — STARS (1948)</div>
     <h2>多面体の宇宙を、<br><em>泳ぐ</em>。</h2>
     <p>エッシャーの木口木版《星》に着想を得たポートフォリオ。銀色の骨格だけの多面体が、暗い宇宙をゆっくりと回り続けます。</p>
-    <div class="hint">✦ 余白をクリックすると多面体が生まれます / スクロールで宇宙が回転します</div>
+    <div class="hint">✦ クリックで多面体がゆっくり生まれ、漂う多面体同士がぶつかると砕け散ります / スクロールで宇宙が回転します</div>
   </div>
 
   <section id="works">
@@ -330,43 +330,68 @@
   const cubeE = edgesFromVerts(cubeV, 2);
   const octV = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
   const octE = edgesFromVerts(octV, Math.SQRT2);
-  // エッシャー《星》の主役：八面体の複合（2 つの八面体を 45 度ずらして重ねる）
   const TYPES = [
     { v: icoV, e: icoE }, { v: cubeV, e: cubeE }, { v: octV, e: octE }
   ];
 
-  // 白銀の主モチーフ + アンバー 1 体（エッシャーのカメレオンの代わりの差し色）
-  const shapes = [
-    { v: icoV, e: icoE, cx: 0.60, cy: 0.30, size: 190, rx: 0.0026, ry: 0.0018, ax: 0.3, ay: 0.2, amber: false, ttl: Infinity, compound: true },
-    { v: cubeV, e: cubeE, cx: 0.87, cy: 0.66, size: 110, rx: -0.0016, ry: 0.0027, ax: 0.5, ay: 1.0, amber: false, ttl: Infinity, compound: false },
-    { v: octV, e: octE, cx: 0.44, cy: 0.80, size: 96, rx: 0.0022, ry: -0.0024, ax: 1.2, ay: 0.4, amber: true, ttl: Infinity, compound: true },
-    { v: icoV, e: icoE, cx: 0.36, cy: 0.10, size: 52, rx: -0.0025, ry: 0.0033, ax: 2.0, ay: 0.8, amber: false, ttl: Infinity, compound: false },
-    { v: octV, e: octE, cx: 0.78, cy: 0.12, size: 40, rx: 0.003, ry: 0.002, ax: 0.9, ay: 2.1, amber: false, ttl: Infinity, compound: false }
-  ];
+  const FOV = 5.5;
+  const N0 = 13; // 常に維持する多面体の数（ごちゃごちゃ度）
 
-  // 背景の小さな星（エッシャーの版画の小さな星々）
-  const dots = [];
-  for (let i = 0; i < 60; i++) {
-    dots.push({ x: Math.random(), y: Math.random(), r: 0.4 + Math.random() * 1.1, tw: Math.random() * 6.28 });
+  function makeShape(cx, cy, size) {
+    const type = TYPES[Math.floor(Math.random() * TYPES.length)];
+    return {
+      v: type.v, e: type.e,
+      cx, cy, size,
+      vx: (Math.random() - 0.5) * 0.00042,   // 漂う速度（衝突の源）
+      vy: (Math.random() - 0.5) * 0.00042,
+      rx: (Math.random() - 0.5) * 0.012,
+      ry: (Math.random() - 0.5) * 0.012,
+      ax: Math.random() * 3, ay: Math.random() * 3,
+      amber: Math.random() < 0.22,
+      compound: Math.random() < 0.45,
+      grow: 0   // 0→1 でゆっくり膨らんで現れる
+    };
   }
 
-  const FOV = 5.5, TTL0 = 620;
+  const shapes = [];
+  for (let i = 0; i < N0; i++) {
+    const sh = makeShape(0.30 + Math.random() * 0.66, Math.random() * 0.96 + 0.02, 34 + Math.random() * 140);
+    sh.grow = 1; // 初期配置は最初から表示
+    shapes.push(sh);
+  }
 
+  // 背景の小さな星（数を増やしてにぎやかに）
+  const dots = [];
+  for (let i = 0; i < 110; i++) {
+    dots.push({ x: Math.random(), y: Math.random(), r: 0.4 + Math.random() * 1.2, tw: Math.random() * 6.28 });
+  }
+
+  // 衝突の破片
+  const frags = [];
+  function burst(sh) {
+    const cx = sh.cx * W, cy = sh.cy * H;
+    const n = 12 + Math.floor(sh.size / 10);
+    for (let i = 0; i < n; i++) {
+      const th = Math.random() * Math.PI * 2;
+      const sp = 0.8 + Math.random() * 2.8;
+      frags.push({
+        x: cx + (Math.random() - 0.5) * sh.size * 0.4,
+        y: cy + (Math.random() - 0.5) * sh.size * 0.4,
+        vx: Math.cos(th) * sp, vy: Math.sin(th) * sp,
+        ang: Math.random() * Math.PI, va: (Math.random() - 0.5) * 0.25,
+        len: 4 + Math.random() * sh.size * 0.24,
+        life: 1, amber: sh.amber
+      });
+    }
+  }
+
+  let respawnT = 0;
+
+  // クリック → ゆっくり膨らみながら多面体が生まれる（ぱっと出ない）
   window.addEventListener('click', e => {
     if (e.target.closest('a')) return;
-    const type = TYPES[Math.floor(Math.random() * TYPES.length)];
-    shapes.push({
-      v: type.v, e: type.e,
-      cx: e.clientX / W, cy: e.clientY / H,
-      size: 46 + Math.random() * 76,
-      rx: (Math.random() - 0.5) * 0.018,
-      ry: (Math.random() - 0.5) * 0.018,
-      ax: Math.random() * 3, ay: Math.random() * 3,
-      amber: Math.random() < 0.3,
-      ttl: TTL0, compound: Math.random() < 0.5
-    });
-    const extra = shapes.filter(s => s.ttl !== Infinity);
-    if (extra.length > 7) shapes.splice(shapes.indexOf(extra[0]), 1);
+    if (shapes.length >= 19) { burst(shapes[0]); shapes.shift(); }
+    shapes.push(makeShape(e.clientX / W, e.clientY / H, 44 + Math.random() * 90));
   });
 
   // スクロール → 宇宙全体が回る
@@ -374,30 +399,31 @@
   window.addEventListener('scroll', () => {
     const dy = window.scrollY - lastY;
     lastY = window.scrollY;
-    for (const s of shapes) { s.ay += dy * 0.0016; s.ax += dy * 0.0006; }
+    for (const sh of shapes) { sh.ay += dy * 0.0016; sh.ax += dy * 0.0006; }
     const max = document.documentElement.scrollHeight - window.innerHeight;
     document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
   });
 
   let t = 0;
 
-  function project(s, verts, extraRot) {
-    const ax = s.ax, ay = s.ay + (extraRot || 0);
+  function project(sh, verts, extraRot) {
+    const ax = sh.ax, ay = sh.ay + (extraRot || 0);
     const cosX = Math.cos(ax), sinX = Math.sin(ax);
     const cosY = Math.cos(ay), sinY = Math.sin(ay);
-    const cx = s.cx * W, cy = s.cy * H;
+    const cx = sh.cx * W, cy = sh.cy * H;
+    const size = sh.size * (sh.grow < 1 ? 1 - Math.pow(1 - sh.grow, 3) : 1);
     return verts.map(v => {
       let x = v[0] * cosY + v[2] * sinY;
       let z = -v[0] * sinY + v[2] * cosY;
       let y = v[1] * cosX - z * sinX;
       z = v[1] * sinX + z * cosX;
       const k = FOV / (FOV + z);
-      return { x: cx + x * k * s.size / 2, y: cy + y * k * s.size / 2, z };
+      return { x: cx + x * k * size / 2, y: cy + y * k * size / 2, z };
     });
   }
 
-  function strokeEdges(s, proj, colorFn) {
-    for (const [a, b] of s.e) {
+  function strokeEdges(sh, proj, colorFn) {
+    for (const [a, b] of sh.e) {
       const pa = proj[a], pb = proj[b];
       const depth = (pa.z + pb.z) / 2;
       const near = 1 - (depth + 2) / 4;
@@ -420,7 +446,6 @@
     ctx.clearRect(0, 0, W, H);
     t += 0.016;
 
-    // 小さな星（またたく）
     for (const d of dots) {
       const a = 0.25 + 0.25 * Math.sin(t * 1.4 + d.tw);
       ctx.beginPath();
@@ -429,20 +454,66 @@
       ctx.fill();
     }
 
-    for (let i = shapes.length - 1; i >= 0; i--) {
-      const s = shapes[i];
-      if (!reduced) { s.ax += s.rx; s.ay += s.ry; }
-      if (s.ttl !== Infinity) {
-        s.ttl--;
-        if (s.ttl <= 0) { shapes.splice(i, 1); continue; }
+    // 移動・回転・出現
+    for (const sh of shapes) {
+      if (!reduced) {
+        sh.ax += sh.rx; sh.ay += sh.ry;
+        sh.cx += sh.vx; sh.cy += sh.vy;
+        if (sh.cx < 0.28 || sh.cx > 0.99) sh.vx *= -1;
+        if (sh.cy < 0.01 || sh.cy > 0.99) sh.vy *= -1;
       }
-      const fade = s.ttl === Infinity ? 1 : Math.min(1, s.ttl / 140);
-      const col = s.amber
-        ? a => 'rgba(255, 176, 46, ' + a * fade + ')'
-        : a => 'rgba(212, 216, 224, ' + a * fade + ')';
-      strokeEdges(s, project(s, s.v), col);
-      // 複合多面体：同じ立体を 45° ずらしてもう一度（エッシャー的な複合星）
-      if (s.compound) strokeEdges(s, project(s, s.v, Math.PI / 4), a => col(a * 0.6));
+      if (sh.grow < 1) sh.grow = Math.min(1, sh.grow + 0.015);
+    }
+
+    // 衝突判定：近づきすぎた 2 体は砕けて破片になる
+    for (let i = shapes.length - 1; i >= 0; i--) {
+      for (let j = i - 1; j >= 0; j--) {
+        const A = shapes[i], B = shapes[j];
+        if (A.grow < 1 || B.grow < 1) continue;
+        const d = Math.hypot((A.cx - B.cx) * W, (A.cy - B.cy) * H);
+        if (d < (A.size + B.size) * 0.26) {
+          burst(A); burst(B);
+          shapes.splice(i, 1); shapes.splice(j, 1);
+          i--; // A を消したぶん詰める
+          break;
+        }
+      }
+    }
+
+    // 数が減ったら少し間を置いて補充（にぎやかさを維持）
+    if (shapes.length < N0) {
+      respawnT--;
+      if (respawnT <= 0) {
+        shapes.push(makeShape(0.30 + Math.random() * 0.66, Math.random() * 0.96 + 0.02, 34 + Math.random() * 140));
+        respawnT = 30;
+      }
+    }
+
+    for (const sh of shapes) {
+      const col = sh.amber
+        ? a => 'rgba(255, 176, 46, ' + a * sh.grow + ')'
+        : a => 'rgba(212, 216, 224, ' + a * sh.grow + ')';
+      strokeEdges(sh, project(sh, sh.v), col);
+      if (sh.compound) strokeEdges(sh, project(sh, sh.v, Math.PI / 4), a => col(a * 0.6));
+    }
+
+    // 破片：飛び散って回転しながら消える
+    for (let i = frags.length - 1; i >= 0; i--) {
+      const f = frags[i];
+      f.x += f.vx; f.y += f.vy;
+      f.vx *= 0.985; f.vy *= 0.985;
+      f.ang += f.va;
+      f.life -= 0.016;
+      if (f.life <= 0) { frags.splice(i, 1); continue; }
+      const hl = f.len / 2;
+      ctx.beginPath();
+      ctx.moveTo(f.x - Math.cos(f.ang) * hl, f.y - Math.sin(f.ang) * hl);
+      ctx.lineTo(f.x + Math.cos(f.ang) * hl, f.y + Math.sin(f.ang) * hl);
+      ctx.strokeStyle = f.amber
+        ? 'rgba(255, 176, 46, ' + f.life * 0.8 + ')'
+        : 'rgba(212, 216, 224, ' + f.life * 0.7 + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
     requestAnimationFrame(frame);

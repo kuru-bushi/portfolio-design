@@ -318,13 +318,10 @@
   ];
   function starPx(s) { return { x: s.x * W, y: s.y * H }; }
 
-  // 筆致の色：淡青・白・水色、まれに黄
+  // 筆致の色（ベース RGB）：淡青・白・群青・藍
   const STROKES = [
-    'rgba(126, 168, 232, 0.30)',
-    'rgba(180, 205, 245, 0.26)',
-    'rgba(90, 130, 205, 0.30)',
-    'rgba(230, 240, 255, 0.20)',
-    'rgba(255, 215, 106, 0.16)'
+    [126, 168, 232], [186, 208, 246], [80, 120, 200],
+    [226, 236, 252], [52, 84, 156]
   ];
 
   let t = 0;
@@ -356,14 +353,16 @@
     return a;
   }
 
-  const N = 420;
+  const N = 300;
   const particles = [];
   function spawn(p, x, y) {
     p.x = x !== undefined ? x : Math.random() * 1920;
     p.y = y !== undefined ? y : Math.random() * 1080;
     p.life = 90 + Math.random() * 220;
-    p.c = STROKES[Math.floor(Math.random() * STROKES.length)];
-    p.w = 0.9 + Math.random() * 1.5;  // 筆の太さ
+    p.col = STROKES[Math.floor(Math.random() * STROKES.length)];
+    p.w = 2.4 + Math.random() * 2.6;             // 太い筆
+    p.dab = 6 + Math.floor(Math.random() * 10);  // ひと筆の長さ
+    p.gap = 0;                                   // 筆を離す間（軌跡の途切れ）
   }
   for (let i = 0; i < N; i++) { const p = {}; spawn(p); particles.push(p); }
 
@@ -423,7 +422,7 @@
   }
 
   function step() {
-    ctx.fillStyle = 'rgba(13, 27, 62, 0.05)';
+    ctx.fillStyle = 'rgba(13, 27, 62, 0.04)';
     ctx.fillRect(0, 0, W, H);
 
     const speed = 1.4 + flowBoost;
@@ -434,12 +433,47 @@
       const a = fieldAngle(p.x, p.y);
       const nx = p.x + Math.cos(a) * speed;
       const ny = p.y + Math.sin(a) * speed;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(nx, ny);
-      ctx.strokeStyle = p.c;
-      ctx.lineWidth = p.w;
-      ctx.stroke();
+
+      if (p.gap > 0) {
+        // 筆がキャンバスから離れている間は描かない → 短いタッチの連なりになる
+        p.gap--;
+        if (p.gap === 0) {
+          p.dab = 6 + Math.floor(Math.random() * 10);
+          p.w = 2.4 + Math.random() * 2.6;
+        }
+      } else {
+        // 星の近くほど金色に染まる（ゴッホの光輪）
+        let glow = 0;
+        for (const st of stars) {
+          const sp2 = starPx(st);
+          const dd = Math.hypot(p.x - sp2.x, p.y - sp2.y);
+          const R = st.r * 22;
+          if (dd < R) glow = Math.max(glow, 1 - dd / R);
+        }
+        const c = p.col;
+        const rr = Math.round(c[0] + (255 - c[0]) * glow);
+        const gg = Math.round(c[1] + (215 - c[1]) * glow);
+        const bb = Math.round(c[2] + (120 - c[2]) * glow);
+
+        // 暗い下塗り + 明るい本塗りの二度描きで厚塗り（インパスト）に
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = 'rgba(' + Math.round(rr * 0.4) + ',' + Math.round(gg * 0.45) + ',' + Math.round(bb * 0.6) + ', 0.32)';
+        ctx.lineWidth = p.w + 1.8;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = 'rgba(' + rr + ',' + gg + ',' + bb + ', 0.5)';
+        ctx.lineWidth = p.w;
+        ctx.stroke();
+
+        p.dab--;
+        if (p.dab <= 0) p.gap = 2 + Math.floor(Math.random() * 5);
+      }
+
       p.x = nx; p.y = ny;
       p.life--;
       if (p.life <= 0 || p.x < -30 || p.x > W + 30 || p.y < -30 || p.y > H + 30) spawn(p);

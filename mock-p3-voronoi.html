@@ -3,164 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P-3 クレー《魔方陣》— 呼吸する色のパッチワーク</title>
+<title>P-3 ホイッスラー《ノクターン》— 夜の青のボロノイ</title>
 <style>
   :root {
-    --bg: #241d16;
-    --panel: #2e2620;
-    --text: #f1e9dc;
-    --sub: #a89a87;
-    --ochre: #c87e3a;
-    --sienna: #a4452c;
-    --olive: #7a8c4f;
-    --slate: #4f6d8c;
+    --bg: #0a1220;
+    --panel: #101b30;
+    --text: #dfe6f0;
+    --sub: #7e8ca3;
+    --silver: #aebfd6;
+    --gold: #d4b25e;
+    --hair: rgba(174, 191, 214, 0.22);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     font-family: "Hiragino Mincho ProN", "Yu Mincho", "Hiragino Sans", serif;
-    background: var(--bg); color: var(--text); line-height: 1.9;
+    background: var(--bg); color: var(--text); line-height: 2.0;
     display: flex; min-height: 100vh; cursor: none;
   }
   a { cursor: none; }
   .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
 
-  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.9; }
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
   #progress {
-    position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
-    background: linear-gradient(90deg, var(--sienna), var(--ochre));
+    position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--silver), var(--gold));
   }
 
   #cur-dot, #cur-ring {
     position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99;
     border-radius: 50%; transform: translate(-50%, -50%);
   }
-  #cur-dot { width: 6px; height: 6px; background: var(--ochre); }
+  #cur-dot { width: 5px; height: 5px; background: var(--gold); }
   #cur-ring {
-    width: 34px; height: 34px; border: 1px solid rgba(200, 126, 58, 0.6);
-    transition: width .25s, height .25s, border-color .25s, background .25s;
+    width: 34px; height: 34px; border: 1px solid rgba(174, 191, 214, 0.5);
+    transition: width .3s, height .3s, border-color .3s, background .3s;
   }
-  #cur-ring.on { width: 58px; height: 58px; border-color: var(--sienna); background: rgba(164, 69, 44, 0.14); }
+  #cur-ring.on { width: 58px; height: 58px; border-color: var(--gold); background: rgba(212, 178, 94, 0.08); }
   @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
 
-  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .85s ease, transform .85s ease; }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1.1s ease, transform 1.1s ease; }
   .reveal.in { opacity: 1; transform: none; }
-  .works .reveal:nth-child(2) { transition-delay: .12s; }
-  .works .reveal:nth-child(3) { transition-delay: .06s; }
-  .works .reveal:nth-child(4) { transition-delay: .18s; }
+  .works .reveal:nth-child(2) { transition-delay: .15s; }
+  .works .reveal:nth-child(3) { transition-delay: .08s; }
+  .works .reveal:nth-child(4) { transition-delay: .22s; }
 
   aside {
-    width: 280px; background: #1d1712;
-    border-right: 1px solid rgba(200, 126, 58, 0.35);
-    padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+    width: 280px; background: rgba(8, 14, 25, 0.92);
+    border-right: 1px solid var(--hair);
+    padding: 44px 30px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
   }
   .avatar {
-    width: 92px; height: 92px; margin-bottom: 20px; border-radius: 4px; overflow: hidden;
-    display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+    width: 88px; height: 88px; border-radius: 50%; margin-bottom: 24px;
+    background:
+      radial-gradient(circle at 66% 30%, rgba(212, 178, 94, 0.55), transparent 34%),
+      radial-gradient(circle at 40% 60%, #1c3050, #0d1728 70%);
+    border: 1px solid var(--hair);
   }
-  .avatar i { display: block; }
-  aside h1 { font-size: 22px; letter-spacing: 3px; font-weight: 600; color: #fff; }
-  aside .role { font-size: 12px; letter-spacing: 3px; margin: 4px 0 20px; color: var(--ochre); }
-  aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
-  aside nav { display: flex; flex-direction: column; margin-bottom: 34px; }
+  aside h1 { font-size: 20px; letter-spacing: 6px; font-weight: 500; color: #fff; }
+  aside .role { font-size: 10px; letter-spacing: 5px; margin: 6px 0 22px; color: var(--gold); }
+  aside .bio { font-size: 13px; margin-bottom: 36px; color: var(--sub); }
+  aside nav { display: flex; flex-direction: column; margin-bottom: 36px; }
   aside nav a {
-    color: var(--sub); text-decoration: none; font-size: 13px; letter-spacing: 3px;
-    padding: 12px 4px; border-bottom: 1px solid rgba(200, 126, 58, 0.2);
-    display: flex; align-items: center; gap: 12px;
-    transition: color .2s, padding-left .25s;
+    color: var(--sub); text-decoration: none; font-size: 11px; letter-spacing: 5px;
+    padding: 14px 2px; border-bottom: 1px solid rgba(174, 191, 214, 0.14);
+    display: flex; align-items: baseline; gap: 14px;
+    transition: color .3s, letter-spacing .3s;
   }
-  aside nav a .sq { width: 9px; height: 9px; flex-shrink: 0; transition: transform .3s; }
-  aside nav a:nth-child(1) .sq { background: var(--sienna); }
-  aside nav a:nth-child(2) .sq { background: var(--ochre); }
-  aside nav a:nth-child(3) .sq { background: var(--olive); }
-  aside nav a:nth-child(4) .sq { background: var(--slate); }
-  aside nav a:hover, aside nav a.active { color: #fff; padding-left: 10px; }
-  aside nav a:hover .sq, aside nav a.active .sq { transform: rotate(45deg) scale(1.3); }
-  .side-sec { margin-bottom: 30px; }
-  .side-sec h3 { font-size: 10px; letter-spacing: 3px; color: #6e6252; margin-bottom: 13px; text-transform: uppercase; }
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  aside nav a .rn { font-size: 10px; color: rgba(212, 178, 94, 0.55); width: 20px; transition: color .3s; }
+  aside nav a:hover, aside nav a.active { color: #fff; letter-spacing: 7px; }
+  aside nav a:hover .rn, aside nav a.active .rn { color: var(--gold); }
+  .side-sec { margin-bottom: 34px; }
+  .side-sec h3 { font-size: 9px; letter-spacing: 4px; color: #56637a; margin-bottom: 14px; text-transform: uppercase; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
   .skill-tags span {
-    font-size: 11px; border: 1px solid rgba(200, 126, 58, 0.4);
-    padding: 3px 12px; color: var(--sub); transition: all .2s;
+    font-size: 11px; border-bottom: 1px solid var(--hair);
+    padding: 2px 2px; color: var(--sub); transition: all .3s;
   }
-  .skill-tags span:hover { color: #1d1712; background: var(--ochre); }
-  .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
-  .sns a:hover { color: var(--ochre); }
+  .skill-tags span:hover { color: var(--gold); border-color: var(--gold); }
+  .sns a { color: var(--sub); font-size: 12px; letter-spacing: 2px; text-decoration: none; display: block; padding: 4px 0; }
+  .sns a:hover { color: var(--silver); }
 
-  main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
+  main { margin-left: 280px; flex: 1; padding: 88px 72px 56px; max-width: 1060px; position: relative; z-index: 1; }
 
-  .hero { margin-bottom: 110px; }
-  .hero .eyebrow { font-size: 12px; letter-spacing: 7px; color: var(--olive); margin-bottom: 20px; }
-  .hero h2 { font-size: 58px; line-height: 1.25; font-weight: 600; color: #fff; letter-spacing: 2px; }
-  .hero h2 em { font-style: normal; color: var(--ochre); }
-  .hero p { margin-top: 20px; color: var(--sub); font-size: 14px; max-width: 500px; }
-  .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(200, 126, 58, 0.8); }
+  .hero { margin-bottom: 130px; }
+  .hero .eyebrow { font-size: 11px; letter-spacing: 9px; color: var(--sub); margin-bottom: 26px; }
+  .hero h2 { font-size: 52px; line-height: 1.5; font-weight: 500; color: #fff; letter-spacing: 4px; }
+  .hero h2 em { font-style: normal; color: var(--gold); }
+  .hero p { margin-top: 24px; color: var(--sub); font-size: 14px; max-width: 480px; }
+  .hero .hint { margin-top: 30px; font-size: 10px; letter-spacing: 3px; color: rgba(212, 178, 94, 0.6); }
 
-  section { margin-bottom: 96px; }
-  .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
-  .sec-head .patch { display: grid; grid-template-columns: 1fr 1fr; width: 24px; height: 24px; flex-shrink: 0; }
-  .sec-head .patch i { display: block; }
-  .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; color: #fff; }
-  .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(200, 126, 58, 0.6), transparent); }
+  section { margin-bottom: 110px; }
+  .sec-head { display: flex; align-items: baseline; gap: 20px; margin-bottom: 44px; }
+  .sec-head .rn { font-size: 15px; color: var(--gold); letter-spacing: 2px; }
+  .sec-head h2 { font-size: 21px; letter-spacing: 8px; font-weight: 500; color: #fff; }
+  .sec-head .rule { flex: 1; height: 1px; background: var(--hair); position: relative; top: -5px; }
 
-  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
   .work {
-    border: 1px solid rgba(200, 126, 58, 0.3); padding: 30px; position: relative;
-    background: rgba(36, 29, 22, 0.92);
-    transition: transform .25s, border-color .25s, box-shadow .25s;
+    padding: 36px 32px; position: relative;
+    background: rgba(13, 21, 37, 0.94);
+    transition: background .35s;
   }
-  .work .corner {
-    position: absolute; top: 0; right: 0; width: 40px; height: 40px;
-    clip-path: polygon(100% 0, 0 0, 100% 100%); transition: width .25s, height .25s;
+  .work::after {
+    content: ""; position: absolute; left: 32px; bottom: 26px; height: 1px; width: 0;
+    background: var(--gold); transition: width .45s ease;
   }
-  .work:hover { transform: translateY(-6px); border-color: var(--ochre); box-shadow: 0 20px 46px rgba(0, 0, 0, 0.5); }
-  .work:hover .corner { width: 56px; height: 56px; }
-  .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; letter-spacing: 1px; }
+  .work:hover { background: rgba(19, 30, 52, 0.96); }
+  .work:hover::after { width: 44px; }
+  .work .no { font-size: 11px; color: rgba(212, 178, 94, 0.5); letter-spacing: 3px; margin-bottom: 14px; }
+  .work h3 { font-size: 17px; margin-bottom: 10px; color: #fff; letter-spacing: 2px; font-weight: 500; }
   .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
-  .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--ochre); font-weight: 700; }
-  .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
-  .work .links a {
-    color: var(--text); text-decoration: none; padding: 6px 14px;
-    border: 1px solid rgba(200, 126, 58, 0.5); transition: all .2s;
-  }
-  .work .links a:hover { background: var(--sienna); border-color: var(--sienna); color: #fff; }
+  .work .stack { font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; color: var(--silver); }
+  .work .links { display: flex; gap: 24px; font-size: 11px; letter-spacing: 3px; }
+  .work .links a { color: var(--silver); text-decoration: none; transition: color .3s; }
+  .work .links a:hover { color: var(--gold); }
 
   .article {
-    display: flex; align-items: baseline; gap: 20px; padding: 22px 18px;
-    border-bottom: 1px solid rgba(200, 126, 58, 0.22);
-    text-decoration: none; color: inherit; transition: background .25s, padding-left .25s;
-    background: rgba(29, 23, 18, 0.7);
+    display: flex; align-items: baseline; gap: 24px; padding: 24px 8px;
+    border-bottom: 1px solid rgba(174, 191, 214, 0.14);
+    text-decoration: none; color: inherit; transition: padding-left .35s;
   }
-  .article:first-of-type { border-top: 1px solid rgba(200, 126, 58, 0.4); }
-  .article:hover { background: rgba(200, 126, 58, 0.12); padding-left: 30px; }
-  .article time { font-size: 12px; color: var(--olive); white-space: nowrap; letter-spacing: 1px; font-weight: 700; }
-  .article .t { font-size: 15px; flex: 1; }
-  .article:hover .t { color: var(--ochre); }
-  .article .src { font-size: 11px; color: var(--sub); border: 1px solid rgba(200, 126, 58, 0.35); border-radius: 999px; padding: 1px 10px; }
+  .article:first-of-type { border-top: 1px solid var(--hair); }
+  .article:hover { padding-left: 22px; }
+  .article time { font-size: 11px; color: var(--gold); white-space: nowrap; letter-spacing: 2px; }
+  .article .t { font-size: 15px; flex: 1; letter-spacing: 1px; }
+  .article:hover .t { color: #fff; }
+  .article .src { font-size: 10px; color: var(--sub); letter-spacing: 2px; }
 
-  .timeline { border-left: 1px solid rgba(200, 126, 58, 0.4); padding-left: 28px; margin-left: 10px; }
-  .tl-item { position: relative; padding-bottom: 32px; }
+  .timeline { border-left: 1px solid var(--hair); padding-left: 30px; margin-left: 8px; }
+  .tl-item { position: relative; padding-bottom: 36px; }
   .tl-item::before {
-    content: ""; position: absolute; left: -34px; top: 8px;
-    width: 10px; height: 10px; background: var(--ochre); transition: transform .25s, background .2s;
+    content: ""; position: absolute; left: -34px; top: 12px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--bg); border: 1px solid var(--silver); transition: all .3s;
   }
-  .tl-item:nth-child(2)::before { background: var(--olive); }
-  .tl-item:hover::before { transform: rotate(45deg) scale(1.3); background: var(--sienna); }
-  .tl-item time { font-size: 12px; color: var(--ochre); letter-spacing: 2px; }
-  .tl-item h4 { font-size: 16px; margin: 2px 0; color: #fff; letter-spacing: 1px; }
+  .tl-item:hover::before { background: var(--gold); border-color: var(--gold); }
+  .tl-item time { font-size: 11px; color: var(--gold); letter-spacing: 3px; }
+  .tl-item h4 { font-size: 16px; margin: 4px 0; color: #fff; letter-spacing: 2px; font-weight: 500; }
   .tl-item p { font-size: 13px; color: var(--sub); }
 
   footer {
-    border-top: 1px solid rgba(200, 126, 58, 0.3); padding-top: 24px;
-    display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); letter-spacing: 2px;
+    border-top: 1px solid var(--hair); padding-top: 26px;
+    display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); letter-spacing: 4px;
   }
 
   @media (max-width: 900px) {
     aside { position: static; width: 100%; }
     body { flex-direction: column; }
-    main { margin-left: 0; padding: 32px 20px; }
+    main { margin-left: 0; padding: 40px 20px; }
     .works { grid-template-columns: 1fr; }
-    .hero h2 { font-size: 34px; }
+    .hero h2 { font-size: 32px; }
   }
 </style>
 </head>
@@ -172,19 +165,15 @@
 <div id="cur-dot"></div>
 
 <aside>
-  <div class="avatar">
-    <i style="background:#a4452c"></i><i style="background:#c87e3a"></i><i style="background:#7a8c4f"></i>
-    <i style="background:#4f6d8c"></i><i style="background:#b8973f"></i><i style="background:#8c5a74"></i>
-    <i style="background:#3f5e54"></i><i style="background:#a4452c"></i><i style="background:#c87e3a"></i>
-  </div>
+  <div class="avatar"></div>
   <h1>IKEDA</h1>
   <div class="role sans">WEB ENGINEER</div>
   <p class="bio sans">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
   <nav class="sans">
-    <a href="#works" class="active"><span class="sq"></span>WORKS</a>
-    <a href="#articles"><span class="sq"></span>ARTICLES</a>
-    <a href="#career"><span class="sq"></span>CAREER</a>
-    <a href="#contact"><span class="sq"></span>CONTACT</a>
+    <a href="#works" class="active"><span class="rn">I.</span>WORKS</a>
+    <a href="#articles"><span class="rn">II.</span>ARTICLES</a>
+    <a href="#career"><span class="rn">III.</span>CAREER</a>
+    <a href="#contact"><span class="rn">IV.</span>CONTACT</a>
   </nav>
   <div class="side-sec sans">
     <h3>Skills</h3>
@@ -203,37 +192,38 @@
 
 <main>
   <div class="hero">
-    <div class="eyebrow sans">AFTER KLEE — MAGIC SQUARES</div>
-    <h2>色の区画が、<br><em>静かに呼吸する</em>。</h2>
-    <p class="sans">パウル・クレーの色彩パッチワーク（魔方陣）シリーズに着想を得たポートフォリオ。大地の色のセルがゆっくり明滅し、境界が生き物のように動きます。</p>
-    <div class="hint sans">✦ 余白をクリックすると区画が増えます / スクロールでセルが流されます</div>
+    <div class="eyebrow sans">AFTER WHISTLER — NOCTURNE IN BLUE AND GOLD</div>
+    <h2>夜の青に、<br>区画は<em>静かに</em>揺れる。</h2>
+    <p class="sans">ホイッスラー《ノクターン》の霧がかった夜の青に着想を得たポートフォリオ。ボロノイのセルが夜霧のように溶け合い、金の火花がまばらに降ります。</p>
+    <div class="hint sans">✦ 余白をクリックすると新しい区画と火花が生まれます / スクロールで夜が流れます</div>
   </div>
 
   <section id="works">
-    <div class="sec-head reveal">
-      <span class="patch"><i style="background:#a4452c"></i><i style="background:#c87e3a"></i><i style="background:#7a8c4f"></i><i style="background:#4f6d8c"></i></span>
-      <h2>WORKS</h2><span class="rule"></span>
-    </div>
+    <div class="sec-head reveal"><span class="rn">I.</span><h2>WORKS</h2><span class="rule"></span></div>
     <div class="works sans">
-      <div class="work reveal"><span class="corner" style="background:#a4452c"></span>
+      <div class="work reveal">
+        <div class="no">N° 01</div>
         <h3>タスク管理アプリ</h3>
         <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
         <div class="stack">NEXT.JS / SUPABASE</div>
         <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
       </div>
-      <div class="work reveal"><span class="corner" style="background:#4f6d8c"></span>
+      <div class="work reveal">
+        <div class="no">N° 02</div>
         <h3>RAG チャットボット</h3>
         <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
         <div class="stack">PYTHON / AZURE OPENAI</div>
         <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
       </div>
-      <div class="work reveal"><span class="corner" style="background:#7a8c4f"></span>
+      <div class="work reveal">
+        <div class="no">N° 03</div>
         <h3>家計簿 PWA</h3>
         <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
         <div class="stack">REACT / PWA</div>
         <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
       </div>
-      <div class="work reveal"><span class="corner" style="background:#b8973f"></span>
+      <div class="work reveal">
+        <div class="no">N° 04</div>
         <h3>CLI ツール集</h3>
         <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
         <div class="stack">GO</div>
@@ -243,34 +233,28 @@
   </section>
 
   <section id="articles">
-    <div class="sec-head reveal">
-      <span class="patch"><i style="background:#b8973f"></i><i style="background:#3f5e54"></i><i style="background:#8c5a74"></i><i style="background:#c87e3a"></i></span>
-      <h2>ARTICLES</h2><span class="rule"></span>
-    </div>
+    <div class="sec-head reveal"><span class="rn">II.</span><h2>ARTICLES</h2><span class="rule"></span></div>
     <div class="sans">
       <a class="article reveal" href="#">
         <time>2026.07.10</time>
         <span class="t">WSL2 + Claude Code で開発環境を整える</span>
-        <span class="src">Zenn</span>
+        <span class="src">ZENN</span>
       </a>
       <a class="article reveal" href="#">
         <time>2026.06.28</time>
         <span class="t">Terraform で AWS 環境をコード管理する入門</span>
-        <span class="src">Zenn</span>
+        <span class="src">ZENN</span>
       </a>
       <a class="article reveal" href="#">
         <time>2026.06.05</time>
         <span class="t">RAG の精度を上げるチャンク分割戦略</span>
-        <span class="src">Qiita</span>
+        <span class="src">QIITA</span>
       </a>
     </div>
   </section>
 
   <section id="career">
-    <div class="sec-head reveal">
-      <span class="patch"><i style="background:#7a8c4f"></i><i style="background:#a4452c"></i><i style="background:#4f6d8c"></i><i style="background:#b8973f"></i></span>
-      <h2>CAREER</h2><span class="rule"></span>
-    </div>
+    <div class="sec-head reveal"><span class="rn">III.</span><h2>CAREER</h2><span class="rule"></span></div>
     <div class="timeline sans">
       <div class="tl-item reveal">
         <time>2024 —</time>
@@ -287,7 +271,7 @@
 
   <footer id="contact" class="sans">
     <span>© 2026 IKEDA</span>
-    <span>MAGIC SQUARES</span>
+    <span>NOCTURNE</span>
   </footer>
 </main>
 
@@ -295,7 +279,7 @@
 (function () {
   const canvas = document.getElementById('bg');
   const ctx = canvas.getContext('2d');
-  const SCALE = 6;
+  const SCALE = 5;
   const off = document.createElement('canvas');
   const octx = off.getContext('2d');
   let W, H, gw, gh;
@@ -311,43 +295,53 @@
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // クレー風の大地のパレット
+  // 夜の青のパレット（ノクターン：ごく近い明度の青を重ねる）
   const PALETTE = [
-    [164, 69, 44],   // シエナ
-    [200, 126, 58],  // オーカー
-    [122, 140, 79],  // オリーブ
-    [79, 109, 140],  // スレートブルー
-    [184, 151, 63],  // ゴールド
-    [140, 90, 116],  // プラム
-    [63, 94, 84],    // パイン
-    [92, 74, 56]     // アンバー
+    [13, 22, 40], [17, 28, 49], [21, 34, 58], [11, 19, 34],
+    [25, 40, 66], [15, 26, 46], [19, 31, 54], [23, 37, 62]
   ];
 
-  const MAXSEEDS = 26;
+  const MAXSEEDS = 20;
   const seeds = [];
   function addSeed(x, y) {
     seeds.push({
       x, y,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
       c: PALETTE[Math.floor(Math.random() * PALETTE.length)],
-      ph: Math.random() * Math.PI * 2   // 呼吸の位相
+      ph: Math.random() * Math.PI * 2
     });
     if (seeds.length > MAXSEEDS) seeds.shift();
   }
-  for (let i = 0; i < 20; i++) addSeed(Math.random() * 1920, Math.random() * 1080);
+  for (let i = 0; i < 16; i++) addSeed(Math.random() * 1920, Math.random() * 1080);
+
+  // 金の火花（ノクターンの花火）
+  const sparks = [];
+  function addSpark(x, y) {
+    sparks.push({
+      x: x !== undefined ? x : Math.random() * W,
+      y: y !== undefined ? y : Math.random() * H * 0.5,
+      vy: 0.12 + Math.random() * 0.25,
+      vx: (Math.random() - 0.5) * 0.12,
+      tw: Math.random() * 6.28,
+      life: 1
+    });
+  }
+  for (let i = 0; i < 14; i++) addSpark();
 
   window.addEventListener('click', e => {
     if (e.target.closest('a')) return;
     addSeed(e.clientX, e.clientY);
+    for (let i = 0; i < 8; i++) {
+      addSpark(e.clientX + (Math.random() - 0.5) * 60, e.clientY + (Math.random() - 0.5) * 40);
+    }
   });
 
-  // スクロール → セルが下から上へ流される + 進捗バー
   let lastY = window.scrollY;
   window.addEventListener('scroll', () => {
     const dy = window.scrollY - lastY;
     lastY = window.scrollY;
-    for (const s of seeds) s.y -= dy * 0.25;
+    for (const s of seeds) s.y -= dy * 0.18;
     const max = document.documentElement.scrollHeight - window.innerHeight;
     document.getElementById('progress').style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
   });
@@ -367,8 +361,8 @@
     const img = octx.createImageData(gw, gh);
     const data = img.data;
     const n = seeds.length;
-    // 各セルの「呼吸」係数を先に計算
-    const breath = seeds.map(s => 1 + 0.10 * Math.sin(t * 0.8 + s.ph));
+    const breath = seeds.map(s => 1 + 0.05 * Math.sin(t * 0.5 + s.ph));
+    const EDGE_W = SCALE * 1.6; // 幅広に取り、なだらかなグラデーションの境界にする
 
     for (let gy = 0; gy < gh; gy++) {
       const py = gy * SCALE;
@@ -383,24 +377,41 @@
         }
         const edge = Math.sqrt(d2) - Math.sqrt(d1);
         const idx = (gy * gw + gx) * 4;
-        if (edge < SCALE * 1.0) {
-          // 境界：深い焦げ茶（クレーの黒い縁取り）
-          data[idx] = 20; data[idx + 1] = 15; data[idx + 2] = 11;
-          data[idx + 3] = 240;
-        } else {
-          const c = seeds[k1].c, b = breath[k1];
-          data[idx] = Math.min(255, c[0] * b);
-          data[idx + 1] = Math.min(255, c[1] * b);
-          data[idx + 2] = Math.min(255, c[2] * b);
-          data[idx + 3] = 255;
+        const c = seeds[k1].c, b = breath[k1];
+        let r = c[0] * b, g = c[1] * b, bl = c[2] * b;
+        if (edge < EDGE_W) {
+          // 境界：塗り分けではなく、霧のように淡い銀青を混ぜる
+          const w = 1 - edge / EDGE_W;           // 0→1
+          const soft = w * w * (3 - 2 * w);      // smoothstep で滑らかに
+          const mix = soft * 0.5;
+          r = r + (150 - r) * mix;
+          g = g + (172 - g) * mix;
+          bl = bl + (200 - bl) * mix;
         }
+        data[idx] = r; data[idx + 1] = g; data[idx + 2] = bl;
+        data[idx + 3] = 255;
       }
     }
     octx.putImageData(img, 0, 0);
 
-    ctx.clearRect(0, 0, W, H);
     ctx.imageSmoothingEnabled = true;
     ctx.drawImage(off, 0, 0, gw, gh, 0, 0, W, H);
+
+    // 金の火花：ゆっくり落ちながらまたたく
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const sp = sparks[i];
+      if (!reduced) { sp.y += sp.vy; sp.x += sp.vx; }
+      sp.life -= 0.0012;
+      const a = Math.max(0, sp.life) * (0.4 + 0.4 * Math.sin(t * 3 + sp.tw));
+      const g2 = ctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, 5);
+      g2.addColorStop(0, 'rgba(230, 200, 120, ' + a + ')');
+      g2.addColorStop(1, 'rgba(212, 178, 94, 0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      if (sp.life <= 0 || sp.y > H + 10) { sparks.splice(i, 1); addSpark(); }
+    }
 
     if (!reduced) requestAnimationFrame(frame);
   }
