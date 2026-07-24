@@ -308,9 +308,9 @@
 
 <aside>
   <div class="avatar"><canvas id="av" width="184" height="184"></canvas></div>
-  <h1>IKEDA</h1>
-  <div class="role sans">WEB ENGINEER</div>
-  <p class="bio sans">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <h1>IKEDA.K</h1>
+  <div class="role sans">COMPUTER VISION / AI ENGINEER</div>
+  <p class="bio sans">コンピュータビジョンが専門のエンジニア。物体検出・異常検知・SLAM から、LLM エージェント・RAG の構築、AWS / Azure のクラウド設計までを一気通貫で手がけます。</p>
   <nav class="sans">
     <a href="#works" class="active"><span class="st">✦</span>WORKS</a>
     <a href="#articles"><span class="st">✦</span>ARTICLES</a>
@@ -320,8 +320,10 @@
   <div class="side-sec sans">
     <h3>Skills</h3>
     <div class="skill-tags">
-      <span>TypeScript</span><span>React</span><span>Next.js</span>
-      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+      <span>Python</span><span>PyTorch</span><span>YOLOX</span>
+      <span>ONNX / TensorRT</span><span>OpenCV</span><span>C++</span>
+      <span>LangGraph</span><span>RAG / LLM</span>
+      <span>AWS</span><span>Azure</span><span>Docker</span>
     </div>
   </div>
   <div class="side-sec sns sans">
@@ -336,7 +338,7 @@
   <div class="hero">
     <div class="eyebrow sans">AFTER VAN GOGH — THE STARRY NIGHT</div>
     <h2>渦巻く夜に、<br><em>光</em>を灯す。</h2>
-    <p class="sans">ゴッホ《星月夜》(1889) に着想を得たポートフォリオ。見えない流れ場が夜空の筆致を描き、星のまわりに渦を巻きます。</p>
+    <p class="sans">コンピュータビジョンと生成 AI が専門です。検出・認識モデルの開発から、LLM エージェント・RAG、クラウド構築まで。ゴッホ《星月夜》に着想を得た夜空とともに制作物を展示しています。</p>
     <div class="hint sans">✦ 余白をクリックすると、そこに星が生まれて渦を巻きます / スクロールで夜空が流れます</div>
     <div class="scrolldown sans"><i></i>SCROLL</div>
   </div>
@@ -346,72 +348,72 @@
     <div class="works sans" id="works-grid">
       <div class="work">
         <i class="fr"></i>
-        <h3>タスク管理アプリ</h3>
-        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
-        <div class="stack">NEXT.JS / SUPABASE</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        <h3>損傷作物の検出モデル</h3>
+        <p>YOLOX ベースの物体検出。データセット構築からベンチマーク・TensorRT 高速化まで。</p>
+        <div class="stack">YOLOX / PYTORCH / TENSORRT</div>
+        <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work">
         <i class="fr"></i>
-        <h3>RAG チャットボット</h3>
-        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
-        <div class="stack">PYTHON / AZURE OPENAI</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        <h3>映像異常検知</h3>
+        <p>監視映像から異常行動を検知する研究実装。UCF-Crime / VisA データセットで検証。</p>
+        <div class="stack">PYTORCH / ANOMALY DETECTION</div>
+        <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work">
         <i class="fr"></i>
-        <h3>家計簿 PWA</h3>
-        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
-        <div class="stack">REACT / PWA</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+        <h3>VSLAM シミュレーション</h3>
+        <p>自己位置推定と地図生成（SLAM）のシミュレーション実装。</p>
+        <div class="stack">C++ / OPENGL / SLAM</div>
+        <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work">
         <i class="fr"></i>
-        <h3>CLI ツール集</h3>
-        <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
-        <div class="stack">GO</div>
+        <h3>経費精算 AI エージェント</h3>
+        <p>請求書の抽出→検証→仕訳→人間承認まで行うマルチモーダルエージェント。</p>
+        <div class="stack">LANGGRAPH / BEDROCK</div>
         <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work more">
         <i class="fr"></i>
-        <h3>ポートフォリオサイト</h3>
-        <p>星月夜モチーフの本サイト。Canvas アニメーション製。</p>
-        <div class="stack">HTML / CANVAS</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
-      </div>
-      <div class="work more">
-        <i class="fr"></i>
-        <h3>Zenn 分析ダッシュボード</h3>
-        <p>記事の PV・いいねを可視化するダッシュボード。</p>
-        <div class="stack">NEXT.JS / GCP</div>
-        <div class="links"><a href="#">DEMO</a></div>
-      </div>
-      <div class="work more">
-        <i class="fr"></i>
-        <h3>議事録要約 Bot</h3>
-        <p>会議録画から議事録を自動生成する Slack Bot。</p>
-        <div class="stack">PYTHON / WHISPER</div>
+        <h3>有価証券報告書 RAG 分析</h3>
+        <p>EDINET の開示資料をローカル LLM だけで RAG 分析。データを外部へ出さない構成。</p>
+        <div class="stack">OLLAMA / CHROMADB / LANGGRAPH</div>
         <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work more">
         <i class="fr"></i>
-        <h3>画像最適化 CLI</h3>
-        <p>WebP 変換とリサイズを一括処理するツール。</p>
-        <div class="stack">RUST</div>
+        <h3>SNS 風評検知エージェント</h3>
+        <p>センチメントと拡散予兆から炎上リスクを判定し Slack へアラート。</p>
+        <div class="stack">LANGGRAPH / BEDROCK / SLACK</div>
         <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work more">
         <i class="fr"></i>
-        <h3>レシピ検索アプリ</h3>
-        <p>冷蔵庫の食材からレシピを提案するアプリ。</p>
-        <div class="stack">FLUTTER / FIREBASE</div>
-        <div class="links"><a href="#">DEMO</a></div>
+        <h3>フリーランス案件レーダー</h3>
+        <p>案件サイトを巡回し、スコアリングと変化検知で通知するエージェント。</p>
+        <div class="stack">LANGGRAPH / AWS</div>
+        <div class="links"><a href="#">GITHUB</a></div>
       </div>
       <div class="work more">
         <i class="fr"></i>
-        <h3>構成図ジェネレーター</h3>
-        <p>Terraform コードからインフラ構成図を自動生成。</p>
-        <div class="stack">PYTHON / TERRAFORM</div>
+        <h3>Kaggle: LLM Science Exam</h3>
+        <p>RAG の ablation を重ね Public 0.855 / Private 0.871 を達成した挑戦記録。</p>
+        <div class="stack">RAG / DEBERTA / QWEN</div>
+        <div class="links"><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>Scan-to-BIM 検証</h3>
+        <p>点群・写真から 3D モデルを生成する BIM/CIM の 4 テーマ検証。</p>
+        <div class="stack">POINTCLOUD / 3DGS / CUDA</div>
+        <div class="links"><a href="#">GITHUB</a></div>
+      </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>ノスタルジックカメラアプリ</h3>
+        <p>フィルムカメラ風の「現像」体験ができる Android カメラアプリ。</p>
+        <div class="stack">KOTLIN / CAMERAX</div>
         <div class="links"><a href="#">GITHUB</a></div>
       </div>
     </div>
@@ -455,7 +457,12 @@
     <div class="sec-head reveal"><span class="moon"></span><span class="num sans">03</span><h2>CAREER</h2><span class="rule"></span></div>
     <div class="timeline sans">
       <div class="tl-item reveal">
-        <time>2025 —</time>
+        <time>2026 —</time>
+        <h4>個人事業主</h4>
+        <p>コンピュータビジョン・AI エージェント開発を軸に独立。開発から技術支援まで請け負う。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2025 — 2026</time>
         <h4>IT コンサルタント</h4>
         <p>DX 推進・システム導入の企画から実行までを支援。</p>
       </div>
