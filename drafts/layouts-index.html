@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポートフォリオ モック比較</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: #1e1e28; color: #eee; padding: 32px;
+  }
+  h1 { font-size: 20px; margin-bottom: 6px; }
+  .note { color: #999; font-size: 13px; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cell { background: #2a2a36; border-radius: 12px; overflow: hidden; }
+  .cell .bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+  }
+  .cell .bar a { color: #22d3ee; font-size: 12px; text-decoration: none; font-weight: normal; }
+  .cell .bar a:hover { text-decoration: underline; }
+  iframe {
+    width: 200%; height: 1100px; border: none; background: #fff;
+    transform: scale(0.5); transform-origin: 0 0; display: block;
+  }
+  .frame-wrap { height: 550px; overflow: hidden; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <h1>ポートフォリオ モック比較（4 案）</h1>
+  <p class="note">各パネルは 50% 縮小表示です。「原寸で開く」から実際のサイズで確認してください。</p>
+  <div class="grid">
+    <div class="cell">
+      <div class="bar">A. ヒーロー + カードグリッド型 <a href="mock-a-hero-grid.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-a-hero-grid.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">B. サイドバー固定型 <a href="mock-b-sidebar.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-b-sidebar.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">C. ミニマル・タイポグラフィ型 <a href="mock-c-minimal.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-c-minimal.html"></iframe></div>
+    </div>
+    <div class="cell">
+      <div class="bar">D. ダーク・ビジュアル型 <a href="mock-d-dark-visual.html" target="_blank">原寸で開く ↗</a></div>
+      <div class="frame-wrap"><iframe src="mock-d-dark-visual.html"></iframe></div>
+    </div>
+  </div>
+</body>
+</html>
