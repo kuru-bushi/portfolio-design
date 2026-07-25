@@ -107,6 +107,7 @@
   .skill-tags span:hover { color: var(--bg); background: var(--star); border-color: var(--star); }
   .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
   .sns a:hover { color: var(--star); }
+  .side-copy { margin-top: 4px; font-size: 10px; letter-spacing: 2px; color: #5f6c96; }
 
   main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
 
@@ -238,12 +239,14 @@
   .works .more { display: none; }
   .works.open .more { display: block; animation: fadeUp .55s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-  .show-all {
-    margin-top: 24px; width: 100%; padding: 13px; font-size: 12px; letter-spacing: 3px;
-    background: transparent; border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px;
-    color: var(--star); cursor: none; transition: all .25s; font-family: inherit;
+  /* 「すべて表示する」: Works カードと同じ厚塗りフレームのカードとして全幅表示 */
+  .works .show-all {
+    grid-column: 1 / -1; min-height: 96px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; letter-spacing: 3px; color: var(--star);
+    cursor: none; font-family: inherit; text-align: center;
   }
-  .show-all:hover { background: rgba(255, 215, 106, 0.12); border-style: solid; }
+  .works .show-all:hover { color: var(--moon); text-shadow: 0 0 10px rgba(255, 215, 106, 0.7); }
   /* Articles: 最新のみ + アーカイブ導線 */
   .archive {
     display: block; text-align: right; margin-top: 20px;
@@ -332,6 +335,7 @@
     <a href="#">Zenn</a>
     <a href="#">X (Twitter)</a>
   </div>
+  <div class="side-copy sans">© 2026 IKEDA.K</div>
 </aside>
 
 <main>
@@ -416,9 +420,9 @@
         <div class="stack">KOTLIN / CAMERAX</div>
         <div class="links"><a href="#">GITHUB</a></div>
       </div>
+      <button class="work show-all sans" data-target="works-grid"
+        data-open="✦ たたむ" data-closed="✦ すべて表示する（全 10 件）"><i class="fr"></i><span class="sa-t"></span></button>
     </div>
-    <button class="show-all sans" data-target="works-grid"
-      data-open="✦ たたむ" data-closed="✦ すべて表示する（全 10 件）"></button>
   </section>
 
   <section id="articles">
@@ -489,7 +493,7 @@
   </section>
 
   <footer class="sans">
-    <span>© 2026 IKEDA</span>
+    <span>© 2026 IKEDA.K</span>
     <span>LA NUIT ÉTOILÉE</span>
   </footer>
 </main>
@@ -662,18 +666,68 @@
     }
   }
 
-  // 糸杉（画面左下の炎のようなシルエット）
-  function drawCypress() {
-    const bx = 300 + 40, by = H;
+  // 夜の村：画面幅に応じて糸杉と家のシルエットが増減する（教会の村・暫定構成）
+  const HOUSE_RATIO = 0.55, WIN_RATIO = 0.5, CHURCH = true;
+  let sil = [], silW = 0;
+  function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  function buildSkyline() {
+    sil = []; silW = W;
+    sil.push({ t: 'cy', x: 340, h: 0.56, s: 1 });          // 左端の大糸杉（従来のもの）
+    const start = 470, end = W - 40;
+    const n = Math.max(2, Math.round((end - start) / 170)); // 画面幅に応じて本数が増える
+    for (let i = 0; i < n; i++) {
+      const x = start + (end - start) * (i + 0.15 + rnd(i) * 0.7) / n;
+      if (rnd(i * 7 + 3) < HOUSE_RATIO) {
+        sil.push({ t: 'house', x, w: 54 + rnd(i + 11) * 46, h: 34 + rnd(i + 23) * 34,
+                   roof: 14 + rnd(i + 31) * 14, win: rnd(i + 41) < WIN_RATIO, tower: false });
+      } else {
+        sil.push({ t: 'cy', x, h: 0.14 + rnd(i + 53) * 0.26, s: 0.4 + rnd(i + 61) * 0.5 });
+      }
+    }
+    if (CHURCH) sil.push({ t: 'house', x: start + (end - start) * 0.55, w: 70, h: 42,
+                           roof: 16, win: WIN_RATIO > 0, tower: true });
+  }
+  function drawCy(bx, hf, s) {
+    const by = H, hh = H * hf;
     ctx.beginPath();
-    ctx.moveTo(bx - 34, by);
-    ctx.bezierCurveTo(bx - 26, by - H * 0.18, bx - 44, by - H * 0.30, bx - 10, by - H * 0.46);
-    ctx.bezierCurveTo(bx - 26, by - H * 0.34, bx + 2, by - H * 0.30, bx + 4, by - H * 0.56);
-    ctx.bezierCurveTo(bx + 8, by - H * 0.38, bx + 18, by - H * 0.30, bx + 26, by - H * 0.16);
-    ctx.bezierCurveTo(bx + 38, by - H * 0.08, bx + 30, by, bx + 24, by);
+    ctx.moveTo(bx - 34 * s, by);
+    ctx.bezierCurveTo(bx - 26 * s, by - hh * 0.32, bx - 44 * s, by - hh * 0.54, bx - 10 * s, by - hh * 0.82);
+    ctx.bezierCurveTo(bx - 26 * s, by - hh * 0.61, bx + 2 * s, by - hh * 0.54, bx + 4 * s, by - hh);
+    ctx.bezierCurveTo(bx + 8 * s, by - hh * 0.68, bx + 18 * s, by - hh * 0.54, bx + 26 * s, by - hh * 0.29);
+    ctx.bezierCurveTo(bx + 38 * s, by - hh * 0.14, bx + 30 * s, by, bx + 24 * s, by);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(8, 14, 26, 0.9)';
     ctx.fill();
+  }
+  function drawHouse(o) {
+    const by = H;
+    ctx.beginPath();
+    ctx.rect(o.x, by - o.h, o.w, o.h);
+    ctx.moveTo(o.x - 5, by - o.h);
+    ctx.lineTo(o.x + o.w / 2, by - o.h - o.roof);
+    ctx.lineTo(o.x + o.w + 5, by - o.h);
+    ctx.closePath();
+    ctx.fill();
+    if (o.tower) {
+      const tx = o.x + o.w / 2 - 7, ty = by - o.h - o.roof;
+      ctx.beginPath();
+      ctx.rect(tx, ty - 40, 14, 44);
+      ctx.moveTo(tx - 4, ty - 40);
+      ctx.lineTo(tx + 7, ty - 64);
+      ctx.lineTo(tx + 18, ty - 40);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if (o.win) {
+      ctx.fillStyle = 'rgba(226, 189, 85, 0.8)';
+      ctx.fillRect(o.x + o.w * 0.22, by - o.h * 0.55, 5, 7);
+      if (o.w > 70) ctx.fillRect(o.x + o.w * 0.62, by - o.h * 0.5, 5, 7);
+      ctx.fillStyle = 'rgba(8, 14, 26, 0.92)';
+    }
+  }
+  function drawSkyline() {
+    if (silW !== W) buildSkyline();
+    ctx.fillStyle = 'rgba(8, 14, 26, 0.92)';
+    for (const o of sil) o.t === 'cy' ? drawCy(o.x, o.h, o.s) : drawHouse(o);
   }
 
   function step() {
@@ -739,7 +793,7 @@
     }
 
     drawStars();
-    drawCypress();
+    drawSkyline();
   }
 
   function loop() { step(); requestAnimationFrame(loop); }
@@ -792,7 +846,8 @@
 // Works の「すべて表示する」展開 UI
   document.querySelectorAll('.show-all').forEach(btn => {
     const box = document.getElementById(btn.dataset.target);
-    const set = () => btn.textContent = box.classList.contains('open') ? btn.dataset.open : btn.dataset.closed;
+    const label = btn.querySelector('.sa-t') || btn;
+    const set = () => label.textContent = box.classList.contains('open') ? btn.dataset.open : btn.dataset.closed;
     btn.addEventListener('click', () => {
       box.classList.toggle('open');
       if (!box.classList.contains('open')) box.closest('section').scrollIntoView({ behavior: 'smooth', block: 'start' });
