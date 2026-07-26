@@ -798,8 +798,11 @@
     ctx.fillRect(0, 0, W, H);
     ctx.globalAlpha = 1;
 
-    const speed = 1.4 + flowBoost;
-    t += 0.0016 * (1 + flowBoost * 0.4);
+    // スマホ（幅 700px 未満）は流れの速度を 1/2 に。W は resize で更新されるため
+    // PC⇔スマホのウィンドウ切り替え時も次フレームから自動で速度が切り替わる
+    const spdScale = W < 700 ? 0.5 : 1;
+    const speed = (1.4 + flowBoost) * spdScale;
+    t += 0.0016 * (1 + flowBoost * 0.4) * spdScale;
     flowBoost *= 0.96;
 
     for (const p of particles) {
