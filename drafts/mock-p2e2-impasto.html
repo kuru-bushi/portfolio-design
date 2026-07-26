@@ -673,10 +673,9 @@
   }
   for (let i = 0; i < N; i++) { const p = {}; spawn(p); particles.push(p); }
 
-  // クリック → 星が生まれ、渦ができる
-  window.addEventListener('click', e => {
-    if (e.target.closest('a')) return;
-    stars.push({ x: e.clientX / W, y: e.clientY / H, r: 5 + Math.random() * 5, moon: false });
+  // クリック / タップ → 星が生まれ、渦ができる
+  function birthStar(cx, cy) {
+    stars.push({ x: cx / W, y: cy / H, r: 5 + Math.random() * 5, moon: false });
     if (stars.filter(s => !s.moon).length > 9) {
       const idx = stars.findIndex(s => !s.moon);
       stars.splice(idx, 1);
@@ -684,9 +683,30 @@
     for (let i = 0; i < 60; i++) {
       const p = particles[Math.floor(Math.random() * particles.length)];
       const th = Math.random() * Math.PI * 2;
-      spawn(p, e.clientX + Math.cos(th) * 30, e.clientY + Math.sin(th) * 30);
+      spawn(p, cx + Math.cos(th) * 30, cy + Math.sin(th) * 30);
     }
+  }
+  window.addEventListener('click', e => {
+    if (isTouch) return;  // タッチ端末は下の touchend で生成（合成 click との二重発火防止）
+    if (e.target.closest('a, button')) return;
+    birthStar(e.clientX, e.clientY);
   });
+  // LINE 等のアプリ内ブラウザ(WKWebView)では、非インタラクティブ要素のタップで
+  // window まで click が届かないことがあるため、タッチ端末はタップ判定を自前で行う
+  if (isTouch) {
+    let sx = 0, sy = 0, st = 0;
+    window.addEventListener('touchstart', e => {
+      const t = e.touches[0]; if (!t) return;
+      sx = t.clientX; sy = t.clientY; st = performance.now();
+    }, { passive: true });
+    window.addEventListener('touchend', e => {
+      const t = e.changedTouches[0]; if (!t) return;
+      // スクロールやスワイプでは生成しない: 350ms 以内・移動 12px 以内のタップのみ
+      if (performance.now() - st > 350 || Math.hypot(t.clientX - sx, t.clientY - sy) > 12) return;
+      if (e.target.closest('a, button, #mnav-overlay')) return;
+      birthStar(t.clientX, t.clientY);
+    }, { passive: true });
+  }
 
   // 真円ではなく、絵の具で描いたようにいびつな輪を描く
   function blob(cx, cy, R, ph) {
@@ -933,31 +953,54 @@
 
 // 表示アクションの仕様は PC とスマホで分ける:
   //  - PC（ホバーあり）: ホバーが主役。スクロール時は初回リビール + セクション見出しの強調のみ
-  //  - スマホ（ホバーなし）: 下スクロールで入ってきた要素だけが約 1 秒金色に灯って消える「通過グロー」。
-  //    上スクロールでは光らせず、通り過ぎた要素は通常表示に戻る（全部白くなって見づらくならない）
+  //  - スマホ（ホバーなし）: 「中央フォーカス」方式。基準線（画面上から 45%）に最も近い 1 要素だけを
+  //    常時アクティブ(.mfocus)にする。上下どちらのスクロールでも中央の要素が入れ替わりで灯り、
+  //    複数同時には光らない。タップした要素は即座にアクティブになり、次にスクロールするまで保持する
   if (!reduced && window.matchMedia('(hover: none)').matches) {
-    // goingDown は「実際に下へスクロールしている間」だけ true。
-    // 初期表示・アンカー遷移直後・「すべて表示する」展開時の誤発火を防ぐため、
-    // 初期値は false とし、スクロールが 250ms 止まったらリセットする
-    let lastScrollY = window.scrollY, goingDown = false, scrollIdleT;
-    window.addEventListener('scroll', () => {
-      goingDown = window.scrollY > lastScrollY;
-      lastScrollY = window.scrollY;
-      clearTimeout(scrollIdleT);
-      scrollIdleT = setTimeout(() => { goingDown = false; }, 250);
-    }, { passive: true });
-    const glowTimers = new WeakMap();
-    const mio = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting && goingDown) {
-        e.target.classList.add('mfocus');
-        clearTimeout(glowTimers.get(e.target));
-        glowTimers.set(e.target, setTimeout(() => e.target.classList.remove('mfocus'), 1100));
-      } else if (!e.isIntersecting) {
-        clearTimeout(glowTimers.get(e.target));
-        e.target.classList.remove('mfocus');
+    const CAND_SEL = '.work:not(.show-all), .article, .tl-item, .contact-box';
+    const cands = Array.from(document.querySelectorAll(CAND_SEL));
+    let active = null, hold = false;
+    const setActive = el => {
+      if (el === active) return;
+      if (active) active.classList.remove('mfocus');
+      active = el;
+      if (active) active.classList.add('mfocus');
+    };
+    let pending = false;
+    const update = () => {
+      pending = false;
+      if (hold) return;  // タップ選択を保持中はスクロールが起きるまで上書きしない
+      const mid = window.innerHeight * 0.45;  // 少し上寄りの「中央」基準線
+      let best = null, bestD = Infinity;
+      for (const el of cands) {
+        const r = el.getBoundingClientRect();
+        // display:none（未展開の .more 等）や画面外の要素は対象外
+        if (r.height === 0 || r.bottom < 0 || r.top > window.innerHeight) continue;
+        const d = Math.abs((r.top + r.bottom) / 2 - mid);
+        if (d < bestD) { bestD = d; best = el; }
       }
-    }), { rootMargin: '0px 0px -30% 0px' });
-    document.querySelectorAll('.work, .article, .tl-item, .contact-box').forEach(el => mio.observe(el));
+      // 最寄り要素でも基準線から遠い（ヒーロー付近や見切れだけ）ときは何もアクティブにしない
+      if (best && bestD > window.innerHeight * 0.3) best = null;
+      setActive(best);
+    };
+    const requestUpdate = () => { if (!pending) { pending = true; requestAnimationFrame(update); } };
+    window.addEventListener('scroll', () => { hold = false; requestUpdate(); }, { passive: true });
+    window.addEventListener('resize', () => { hold = false; requestUpdate(); });
+    // 「すべて表示する」展開でレイアウトが変わった後にも追従させる
+    document.querySelectorAll('.show-all').forEach(b => b.addEventListener('click', requestUpdate));
+    // タップで即アクティブ（スクロール・スワイプでは反応しない: 350ms 以内・移動 12px 以内のみ）
+    let fx = 0, fy = 0, ft = 0;
+    window.addEventListener('touchstart', e => {
+      const t = e.touches[0]; if (!t) return;
+      fx = t.clientX; fy = t.clientY; ft = performance.now();
+    }, { passive: true });
+    window.addEventListener('touchend', e => {
+      const t = e.changedTouches[0]; if (!t) return;
+      if (performance.now() - ft > 350 || Math.hypot(t.clientX - fx, t.clientY - fy) > 12) return;
+      const el = e.target.closest(CAND_SEL);
+      if (el) { hold = true; setActive(el); }
+    }, { passive: true });
+    update();
   }
 
   // モバイルナビ：ハンバーガーでサイドバーをドロワー開閉
