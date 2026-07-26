@@ -48,10 +48,11 @@
   p.lead { font-size: 13px; color: var(--sub); margin-bottom: 30px; }
   .mail {
     display: inline-block; font-size: 14px; letter-spacing: 1px;
-    color: var(--star); text-decoration: none; padding: 12px 26px;
-    border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px; transition: all .25s;
+    color: var(--star); padding: 12px 26px;
+    border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px;
+    user-select: all;
   }
-  .mail:hover { background: rgba(255, 215, 106, 0.12); border-style: solid; text-shadow: 0 0 10px var(--star); }
+  .repl { font-size: 11px; color: var(--sub); margin-top: 12px; }
   .back {
     display: inline-block; margin-top: 34px; font-size: 12px; letter-spacing: 2px;
     color: var(--sub); text-decoration: none; transition: color .2s;
@@ -72,8 +73,8 @@
     <h1>CONTACT</h1>
     <div class="wip sans">※ このページは作成中です</div>
     <p class="lead sans">お仕事のご相談・ご連絡は、下記メールアドレスまでお願いします。<br>お問い合わせフォームは現在準備中です。</p>
-    <a class="mail sans" href="mailto:ikeda.k.autom92@gmail.com">✉ ikeda.k.autom92@gmail.com</a>
-    <br>
+    <span class="mail sans">✉ ikeda.k.autom92〇gmail.com</span>
+    <p class="repl sans">（迷惑メール対策のため、「〇」を「@」に置き換えて送信してください）</p>
     <a class="back sans" href="index.html">← トップへ戻る</a>
   </div>
 </body>
