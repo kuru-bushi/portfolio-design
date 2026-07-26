@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IKEDA — Portfolio</title>
+<title>IKEDA.K — Portfolio</title>
 <style>
   :root {
     --bg: #0d1b3e;
@@ -24,6 +24,15 @@
   }
   a { cursor: none; }
   .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+
+  /* ==SCROLLBAR== */
+  /* 標準の細いスクロールバー（装飾なし） */
+  html { scrollbar-width: thin; scrollbar-color: #3d4f7e #0a142e; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #0a142e; }
+  ::-webkit-scrollbar-thumb { background: #3d4f7e; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #52689e; }
+  /* ==/SCROLLBAR== */
 
   #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: url(#oilpaint); }
   #progress {
@@ -50,18 +59,26 @@
   .works .reveal:nth-child(4) { transition-delay: .18s; }
 
   aside {
-    width: 280px; background: rgba(10, 20, 46, 0.88); backdrop-filter: blur(4px);
-    border-right: 1px solid rgba(126, 168, 232, 0.3);
+    width: 280px; height: 100vh; background: rgba(10, 20, 46, 0.88); backdrop-filter: blur(4px);
+    border-right: none;
     padding: 40px 28px; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 2;
+    scrollbar-width: none;
   }
+  aside::-webkit-scrollbar { display: none; }
+  /* P7 と同じ、流れる寒色グラデーションの境界線 */
+  aside::after {
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, #5b8dd8, #58c4ba, #6b79d0, #7fc4de, #5b8dd8);
+    background-size: 100% 400%;
+    animation: borderFlow 9s linear infinite;
+  }
+  @keyframes borderFlow { to { background-position: 0 400%; } }
+  /* 3D 油絵の月：筆致テクスチャが自転し、球面の陰影で立体に見せる */
   .avatar {
-    width: 92px; height: 92px; border-radius: 50%; margin-bottom: 20px;
-    background:
-      radial-gradient(circle at 38% 34%, #ffe9a8 0 14%, rgba(255, 215, 106, 0.65) 26%, rgba(255, 215, 106, 0.12) 48%, transparent 60%),
-      radial-gradient(circle at 60% 66%, rgba(126, 168, 232, 0.5), transparent 55%),
-      #122450;
-    box-shadow: 0 0 40px -4px rgba(255, 215, 106, 0.5);
+    width: 92px; height: 92px; border-radius: 50%; margin-bottom: 20px; position: relative;
+    box-shadow: 0 0 40px -4px rgba(255, 215, 106, 0.5), 0 12px 26px -10px rgba(0, 0, 0, 0.65);
   }
+  .avatar canvas { width: 100%; height: 100%; border-radius: 50%; display: block; }
   aside h1 { font-size: 22px; letter-spacing: 3px; font-weight: 600; color: #fff; }
   aside .role { font-size: 12px; letter-spacing: 3px; margin: 4px 0 20px; color: var(--star); }
   aside .bio { font-size: 13px; margin-bottom: 34px; color: var(--sub); }
@@ -85,6 +102,7 @@
   .skill-tags span:hover { color: var(--bg); background: var(--star); border-color: var(--star); }
   .sns a { color: var(--sub); font-size: 13px; text-decoration: none; display: block; padding: 4px 0; }
   .sns a:hover { color: var(--star); }
+  .side-copy { margin-top: 4px; font-size: 10px; letter-spacing: 2px; color: #5f6c96; }
 
   main { margin-left: 280px; flex: 1; padding: 72px 64px 56px; max-width: 1080px; position: relative; z-index: 1; }
 
@@ -94,6 +112,24 @@
   .hero h2 em { font-style: normal; color: var(--star); text-shadow: 0 0 30px rgba(255, 215, 106, 0.5); }
   .hero p { margin-top: 20px; color: var(--sub); font-size: 14px; max-width: 500px; }
   .hero .hint { margin-top: 28px; font-size: 11px; letter-spacing: 2px; color: rgba(255, 215, 106, 0.7); }
+  .hero h2 em { animation: emPulse 5s ease-in-out infinite; }
+  @keyframes emPulse {
+    0%, 100% { text-shadow: 0 0 30px rgba(255, 215, 106, 0.5); }
+    50% { text-shadow: 0 0 46px rgba(255, 215, 106, 0.85), 0 0 80px rgba(255, 215, 106, 0.3); }
+  }
+  .scrolldown {
+    display: flex; align-items: center; gap: 12px; margin-top: 48px;
+    font-size: 10px; letter-spacing: 4px; color: rgba(147, 160, 200, 0.85);
+  }
+  .scrolldown i {
+    width: 1px; height: 44px; position: relative; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 215, 106, 0.5), transparent);
+  }
+  .scrolldown i::after {
+    content: ""; position: absolute; top: -14px; left: 0; width: 1px; height: 14px;
+    background: var(--moon); animation: sdrop 1.9s ease-in-out infinite;
+  }
+  @keyframes sdrop { to { top: 44px; } }
 
   section { margin-bottom: 96px; }
   .sec-head { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
@@ -105,21 +141,58 @@
   .sec-head h2 { font-size: 24px; letter-spacing: 6px; font-weight: 600; color: #fff; }
   .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255, 215, 106, 0.6), transparent); }
 
-  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .work {
-    border: 1px solid rgba(126, 168, 232, 0.3); border-radius: 4px; padding: 30px; position: relative;
-    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
-    transition: transform .25s, border-color .25s, box-shadow .25s;
+  /* セクション強調（厚塗り案）：筆で描いた太い下線がスッと走り、見出しに絵の具が乗る */
+  .sec-head .num { font-size: 11px; letter-spacing: 3px; color: rgba(255, 215, 106, 0.5); transition: color .6s; }
+  section.focus .sec-head .num { color: var(--star); }
+  .sec-head h2 { color: rgba(232, 236, 251, 0.5); transition: color .7s, text-shadow .7s; }
+  section.focus .sec-head h2 { color: #fff; text-shadow: 0 0 18px rgba(255, 215, 106, 0.4); }
+  .sec-head .moon { filter: url(#oilframe); transition: transform .7s, box-shadow .7s; }
+  section.focus .sec-head .moon { transform: scale(1.18) rotate(10deg); box-shadow: 0 0 26px rgba(255, 215, 106, 0.8); }
+  .sec-head .rule {
+    height: 7px; border-radius: 4px; filter: url(#oilframe);
+    background: linear-gradient(90deg, rgba(255, 215, 106, 0.85), rgba(126, 168, 232, 0.55) 55%, transparent 92%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1s cubic-bezier(.22, .8, .3, 1);
   }
+  section.focus .sec-head .rule { transform: scaleX(1); }
+
+  .works { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  /* 絵の具で描いた枠：oilframe フィルタで縁が筆致のように揺らぐ二重フレーム */
+  .work {
+    border: none; border-radius: 3px; padding: 34px 32px; position: relative;
+    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
+    transition: transform .5s cubic-bezier(.22, .8, .3, 1);
+  }
+  .work .fr {
+    position: absolute; inset: -4px; pointer-events: none; z-index: 1;
+    border: 2.5px solid rgba(126, 168, 232, 0.55); border-radius: 5px;
+    filter: url(#oilframe); transition: border-color .5s;
+  }
+  .work .fr::before {
+    content: ""; position: absolute; inset: 6px;
+    border: 1.5px solid rgba(255, 215, 106, 0.28); border-radius: 3px; transition: border-color .5s;
+  }
+  .work:hover { transform: translateY(-6px) rotate(-0.6deg); }
+  .work:hover .fr { border-color: var(--star); }
+  .work:hover .fr::before { border-color: rgba(126, 168, 232, 0.65); }
+  .work::after {
+    content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+    background: linear-gradient(165deg, rgba(186, 208, 246, 0.15), rgba(226, 236, 252, 0.07));
+    opacity: 0; transition: opacity .5s ease;
+  }
+  .work > * { position: relative; z-index: 1; }
   .work::before {
-    content: "✦"; position: absolute; top: 16px; right: 20px;
+    content: "✦"; position: absolute; top: 16px; right: 20px; z-index: 1;
     color: rgba(255, 215, 106, 0.25); font-size: 20px; transition: all .3s;
   }
-  .work:hover { transform: translateY(-6px); border-color: var(--star); box-shadow: 0 20px 48px -12px rgba(255, 215, 106, 0.35); }
   .work:hover::before { color: var(--star); transform: rotate(72deg) scale(1.3); text-shadow: 0 0 16px var(--star); }
-  .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; letter-spacing: 1px; }
-  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; }
-  .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--swirl); font-weight: 700; }
+  .work:hover::after { opacity: 1; }
+  .work h3 { font-size: 18px; margin-bottom: 8px; color: #fff; letter-spacing: 1px; transition: text-shadow .45s; }
+  .work p { font-size: 13px; color: var(--sub); margin-bottom: 14px; transition: color .45s; }
+  .work .stack { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; color: var(--swirl); font-weight: 700; transition: color .45s; }
+  .work:hover h3 { text-shadow: 0 0 14px rgba(232, 240, 255, 0.4); }
+  .work:hover p { color: #c9d4ee; }
+  .work:hover .stack { color: #a9c6f2; }
   .work .links { display: flex; gap: 12px; font-size: 12px; letter-spacing: 2px; }
   .work .links a {
     color: var(--star); text-decoration: none; padding: 6px 14px;
@@ -157,12 +230,129 @@
     display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); letter-spacing: 2px;
   }
 
+  /* Works: 省略 + 「すべて表示する」展開 UI */
+  .works .more { display: none; }
+  .works.open .more { display: block; animation: fadeUp .55s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  /* 「すべて表示する」: Works カードと同じ厚塗りフレームのカードとして全幅表示 */
+  .works .show-all {
+    grid-column: 1 / -1; min-height: 96px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; letter-spacing: 3px; color: var(--star);
+    cursor: none; font-family: inherit; text-align: center;
+  }
+  .works .show-all:hover { color: var(--moon); text-shadow: 0 0 10px rgba(255, 215, 106, 0.7); }
+  /* Articles: 最新のみ + アーカイブ導線 */
+  .archive {
+    display: block; text-align: right; margin-top: 20px;
+    color: var(--star); text-decoration: none; font-size: 12px; letter-spacing: 2px; transition: text-shadow .25s;
+  }
+  .archive:hover { text-shadow: 0 0 12px var(--star); }
+
+  /* CONTACT: 厚塗り枠のボックスから別ページへ飛ばす */
+  .contact-box {
+    position: relative; text-align: center; padding: 46px 30px;
+    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
+    border-radius: 3px;
+  }
+  .contact-box .cfr {
+    position: absolute; inset: -4px; pointer-events: none;
+    border: 2.5px solid rgba(126, 168, 232, 0.55); border-radius: 5px; filter: url(#oilframe);
+  }
+  .contact-box p { font-size: 13px; color: var(--sub); margin-bottom: 24px; }
+  .contact-btn {
+    display: inline-block; padding: 13px 36px; font-size: 12px; letter-spacing: 3px;
+    color: var(--star); text-decoration: none;
+    border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px; transition: all .25s;
+  }
+  .contact-btn:hover { background: rgba(255, 215, 106, 0.12); border-style: solid; text-shadow: 0 0 10px var(--star); }
+
+  /* ===== モバイル（900px 以下）: 上部固定ヘッダー + ハンバーガーでサイドバーをドロワー化 ===== */
+  .mhead { display: none; }
+  #mnav-overlay { display: none; }
   @media (max-width: 900px) {
-    aside { position: static; width: 100%; }
     body { flex-direction: column; }
-    main { margin-left: 0; padding: 32px 20px; }
+    body.nav-open { overflow: hidden; }
+    .mhead {
+      display: flex; align-items: center; gap: 10px;
+      position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 60;
+      padding: 0 16px; background: rgba(10, 20, 46, 0.92); backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(126, 168, 232, 0.3);
+    }
+    .mhead .mtitle { font-size: 15px; letter-spacing: 2px; color: #fff; font-weight: 600; }
+    .mhead .mrole { font-size: 9px; letter-spacing: 1.5px; color: var(--star); }
+    .mhead .mburger {
+      margin-left: auto; width: 44px; height: 44px; background: none; border: none;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+      cursor: pointer;
+    }
+    .mhead .mburger i { width: 20px; height: 1.5px; background: var(--text); transition: transform .3s, opacity .3s; }
+    body.nav-open .mburger i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    body.nav-open .mburger i:nth-child(2) { opacity: 0; }
+    body.nav-open .mburger i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    aside {
+      position: fixed; top: 0; bottom: 0; left: 0; width: min(300px, 84vw); height: 100%;
+      transform: translateX(-105%); transition: transform .35s cubic-bezier(.22, .8, .3, 1);
+      z-index: 62;
+    }
+    body.nav-open aside { transform: none; }
+    #mnav-overlay {
+      display: block; position: fixed; inset: 0; background: rgba(4, 8, 20, 0.6); z-index: 61;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    body.nav-open #mnav-overlay { opacity: 1; pointer-events: auto; }
+    main { margin-left: 0; padding: 84px 20px 48px; }
+    .hero { margin-bottom: 70px; }
+    .hero h2 { font-size: 32px; letter-spacing: 1px; }
+    .hero .hint { font-size: 10px; }
+    .scrolldown { margin-top: 36px; }
+    section { margin-bottom: 72px; }
+    .sec-head { gap: 12px; }
+    .sec-head h2 { font-size: 19px; letter-spacing: 4px; }
     .works { grid-template-columns: 1fr; }
-    .hero h2 { font-size: 34px; }
+    .work { padding: 26px 22px; }
+    .article { gap: 12px; padding: 18px 10px; }
+    .article:hover { padding-left: 16px; }
+    .timeline { padding-left: 22px; margin-left: 6px; }
+    .contact-box { padding: 36px 20px; }
+    footer { flex-direction: column; gap: 6px; align-items: flex-start; }
+  }
+  /* スマホの通過グロー: 下スクロールで入ってきた要素だけが約 1 秒ホバー相当に灯り、
+     すっと元に戻る。PC はホバーが主役なので適用しない */
+  @media (hover: none) {
+    /* タップ後に :hover が残る端末対策: ホバー装飾を無効化し、状態表現は .mfocus に一本化する */
+    .work:hover { transform: none; }
+    .work:hover .fr { border-color: rgba(126, 168, 232, 0.55); }
+    .work:hover .fr::before { border-color: rgba(255, 215, 106, 0.28); }
+    .work:hover::after { opacity: 0; }
+    .work:hover::before { color: rgba(255, 215, 106, 0.25); transform: none; text-shadow: none; }
+    .work:hover h3 { text-shadow: none; }
+    .work:hover p { color: var(--sub); }
+    .work:hover .stack { color: var(--swirl); }
+    .article:hover { background: transparent; padding-left: 18px; }
+    .article:hover .t { color: inherit; }
+    .tl-item:hover::before { box-shadow: 0 0 10px rgba(255, 215, 106, 0.5); }
+    .avatar:hover { transform: none; }
+    .work.mfocus { transform: translateY(-4px); }
+    .work.mfocus .fr { border-color: var(--star); }
+    .work.mfocus .fr::before { border-color: rgba(126, 168, 232, 0.65); }
+    .work.mfocus::after { opacity: 1; }
+    .work.mfocus::before { color: var(--star); transform: rotate(72deg) scale(1.3); text-shadow: 0 0 16px var(--star); }
+    .work.mfocus h3 { text-shadow: 0 0 14px rgba(232, 240, 255, 0.4); }
+    .work.mfocus p { color: #c9d4ee; }
+    .article.mfocus { background: rgba(126, 168, 232, 0.1); padding-left: 16px; }
+    .article.mfocus .t { color: #fff; }
+    .tl-item.mfocus::before { box-shadow: 0 0 22px rgba(255, 215, 106, 0.95); }
+    .contact-box.mfocus .cfr { border-color: var(--star); }
+  }
+  @media (hover: none) and (max-width: 900px) {
+    .article:hover { padding-left: 10px; }
+  }
+  /* アクセシビリティ: 動きを減らす設定ではアニメーション・遷移・スムーズスクロールを止める */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
@@ -175,15 +365,27 @@
     <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="13" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
+  <filter id="oilframe">
+    <feTurbulence type="fractalNoise" baseFrequency="0.05 0.07" numOctaves="2" seed="4" result="m"/>
+    <feDisplacementMap in="SourceGraphic" in2="m" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
 </svg>
 <div id="cur-ring"></div>
 <div id="cur-dot"></div>
+<!-- ==SBHTML== -->
+
+<header class="mhead sans">
+  <span class="mtitle">IKEDA.K</span>
+  <span class="mrole">COMPUTER VISION / AI</span>
+  <button class="mburger" aria-label="メニューを開閉"><i></i><i></i><i></i></button>
+</header>
+<div id="mnav-overlay"></div>
 
 <aside>
-  <div class="avatar"></div>
-  <h1>IKEDA</h1>
-  <div class="role sans">WEB ENGINEER</div>
-  <p class="bio sans">個人開発と技術記事の執筆をしています。クラウド・自動化・AI 活用が好きです。</p>
+  <div class="avatar"><canvas id="av" width="184" height="184"></canvas></div>
+  <h1>IKEDA.K</h1>
+  <div class="role sans">COMPUTER VISION / AI ENGINEER</div>
+  <p class="bio sans">コンピュータビジョンが専門のエンジニア。物体検出・異常検知・SLAM から、LLM エージェント・RAG の構築、AWS / Azure のクラウド設計までを一気通貫で手がけます。</p>
   <nav class="sans">
     <a href="#works" class="active"><span class="st">✦</span>WORKS</a>
     <a href="#articles"><span class="st">✦</span>ARTICLES</a>
@@ -193,8 +395,10 @@
   <div class="side-sec sans">
     <h3>Skills</h3>
     <div class="skill-tags">
-      <span>TypeScript</span><span>React</span><span>Next.js</span>
-      <span>Python</span><span>AWS</span><span>Azure</span><span>Terraform</span>
+      <span>Python</span><span>PyTorch</span><span>YOLOX</span>
+      <span>ONNX / TensorRT</span><span>OpenCV</span><span>C++</span>
+      <span>LangGraph</span><span>RAG / LLM</span>
+      <span>AWS</span><span>Azure</span><span>Docker</span>
     </div>
   </div>
   <div class="side-sec sns sans">
@@ -203,86 +407,150 @@
     <a href="#">Zenn</a>
     <a href="#">X (Twitter)</a>
   </div>
+  <div class="side-copy sans">© 2026 IKEDA.K</div>
 </aside>
 
 <main>
   <div class="hero">
     <div class="eyebrow sans">AFTER VAN GOGH — THE STARRY NIGHT</div>
-    <h2>渦巻く夜に、<br><em>光</em>を灯す。</h2>
-    <p class="sans">ゴッホ《星月夜》(1889) に着想を得たポートフォリオ。見えない流れ場が夜空の筆致を描き、星のまわりに渦を巻きます。</p>
+    <h2>機械が見ているあいだ、<br>人は<em>考える</em>ことができる。</h2>
+    <p class="sans">コンピュータビジョンと生成 AI が専門です。検出・認識モデルの開発から、LLM エージェント・RAG、クラウド構築まで。</p>
     <div class="hint sans">✦ 余白をクリックすると、そこに星が生まれて渦を巻きます / スクロールで夜空が流れます</div>
+    <div class="scrolldown sans"><i></i>SCROLL</div>
   </div>
 
   <section id="works">
-    <div class="sec-head reveal"><span class="moon"></span><h2>WORKS</h2><span class="rule"></span></div>
-    <div class="works sans">
-      <div class="work reveal">
-        <h3>タスク管理アプリ</h3>
-        <p>チーム向けのシンプルなタスク管理サービス。リアルタイム同期対応。</p>
-        <div class="stack">NEXT.JS / SUPABASE</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+    <div class="sec-head reveal"><span class="moon"></span><span class="num sans">01</span><h2>WORKS</h2><span class="rule"></span></div>
+    <div class="works sans" id="works-grid">
+      <div class="work">
+        <i class="fr"></i>
+        <h3>確定申告サポートチャット</h3>
+        <p>確定申告の疑問に答えるエージェンティック RAG チャット。公開中のサービス。</p>
+        <div class="stack">AMPLIFY GEN2 / BEDROCK / RAG</div>
+        <div class="links"><a href="https://deploy-reiwa7-demo.dt8c64t3iq9ek.amplifyapp.com" target="_blank" rel="noopener">SITE</a></div>
       </div>
-      <div class="work reveal">
-        <h3>RAG チャットボット</h3>
-        <p>社内ドキュメント検索 AI チャット。Azure OpenAI を利用。</p>
-        <div class="stack">PYTHON / AZURE OPENAI</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      <div class="work">
+        <i class="fr"></i>
+        <h3>freelance-hub 案件チェックサイト</h3>
+        <p>フリーランス案件サイトを巡回し、スコアリングと変化検知で通知するサービス。</p>
+        <div class="stack">LANGGRAPH / AWS</div>
       </div>
-      <div class="work reveal">
-        <h3>家計簿 PWA</h3>
-        <p>オフライン対応の家計簿アプリ。グラフで支出を可視化。</p>
-        <div class="stack">REACT / PWA</div>
-        <div class="links"><a href="#">DEMO</a><a href="#">GITHUB</a></div>
+      <div class="work">
+        <i class="fr"></i>
+        <h3>個人事業主経費計算サイト</h3>
+        <p>請求書の抽出→検証→仕訳→人間承認まで行う経費精算サービス。</p>
+        <div class="stack">LANGGRAPH / BEDROCK</div>
       </div>
-      <div class="work reveal">
-        <h3>CLI ツール集</h3>
-        <p>開発を効率化する小さな CLI ツール群。Go 製。</p>
-        <div class="stack">GO</div>
-        <div class="links"><a href="#">GITHUB</a></div>
+      <div class="work">
+        <i class="fr"></i>
+        <h3>有価証券報告書 RAG 分析</h3>
+        <p>EDINET の開示資料をローカル LLM だけで RAG 分析。データを外部へ出さない構成。</p>
+        <div class="stack">OLLAMA / CHROMADB / LANGGRAPH</div>
+        <div class="links"><a href="https://github.com/kuru-bushi/LocalAgent" target="_blank" rel="noopener">GITHUB</a></div>
       </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>Kaggle: LLM Science Exam</h3>
+        <p>RAG の ablation を重ね Public 0.855 / Private 0.871 を達成した挑戦記録。</p>
+        <div class="stack">RAG / DEBERTA / QWEN</div>
+        <div class="links"><a href="https://github.com/kuru-bushi/Kaggle_ViveCoding" target="_blank" rel="noopener">GITHUB</a></div>
+      </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>Scan-to-BIM 検証</h3>
+        <p>点群・写真から 3D モデルを生成する BIM/CIM の 4 テーマ検証。</p>
+        <div class="stack">POINTCLOUD / 3DGS / CUDA</div>
+        <div class="links"><a href="https://github.com/kuru-bushi/tutorial-bim-cim" target="_blank" rel="noopener">GITHUB</a></div>
+      </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>Dify セルフホスト RAG 検証</h3>
+        <p>Dify を WSL2 にセルフホストして RAG を検証。詰まりどころの記録付き。</p>
+        <div class="stack">DIFY / DOCKER / WSL2</div>
+        <div class="links"><a href="https://github.com/kuru-bushi/PortFolioTestDify" target="_blank" rel="noopener">GITHUB</a></div>
+      </div>
+      <div class="work more">
+        <i class="fr"></i>
+        <h3>ポートフォリオサイト（本サイト）</h3>
+        <p>星月夜モチーフの本サイト。依存ライブラリなしの単一 HTML + Canvas。</p>
+        <div class="stack">HTML / CANVAS</div>
+        <div class="links"><a href="https://kuru-bushi.github.io/portfolio-design/" target="_blank" rel="noopener">SITE</a><a href="https://github.com/kuru-bushi/portfolio-design" target="_blank" rel="noopener">GITHUB</a></div>
+      </div>
+      <button class="work show-all sans" data-target="works-grid"
+        data-open="✦ たたむ" data-closed="✦ すべて表示する（全 8 件）"><i class="fr"></i><span class="sa-t"></span></button>
     </div>
   </section>
 
   <section id="articles">
-    <div class="sec-head reveal"><span class="moon"></span><h2>ARTICLES</h2><span class="rule"></span></div>
-    <div class="sans">
-      <a class="article reveal" href="#">
+    <div class="sec-head reveal"><span class="moon"></span><span class="num sans">02</span><h2>ARTICLES</h2><span class="rule"></span></div>
+    <div class="art-list sans">
+      <a class="article" href="#">
         <time>2026.07.10</time>
         <span class="t">WSL2 + Claude Code で開発環境を整える</span>
         <span class="src">Zenn</span>
       </a>
-      <a class="article reveal" href="#">
+      <a class="article" href="#">
         <time>2026.06.28</time>
         <span class="t">Terraform で AWS 環境をコード管理する入門</span>
         <span class="src">Zenn</span>
       </a>
-      <a class="article reveal" href="#">
+      <a class="article" href="#">
         <time>2026.06.05</time>
         <span class="t">RAG の精度を上げるチャンク分割戦略</span>
         <span class="src">Qiita</span>
       </a>
+      <a class="article" href="#">
+        <time>2026.04.18</time>
+        <span class="t">GitHub Actions で Next.js を自動デプロイする</span>
+        <span class="src">Zenn</span>
+      </a>
+      <a class="article" href="#">
+        <time>2026.02.02</time>
+        <span class="t">Azure OpenAI の関数呼び出し実践</span>
+        <span class="src">Qiita</span>
+      </a>
     </div>
+    <a class="archive sans" href="#">✦ 過去の記事アーカイブへ（全 8 件）→</a>
   </section>
 
   <section id="career">
-    <div class="sec-head reveal"><span class="moon"></span><h2>CAREER</h2><span class="rule"></span></div>
+    <div class="sec-head reveal"><span class="moon"></span><span class="num sans">03</span><h2>CAREER</h2><span class="rule"></span></div>
     <div class="timeline sans">
       <div class="tl-item reveal">
-        <time>2024 —</time>
-        <h4>Web エンジニア</h4>
-        <p>クラウドインフラの構築・自動化、社内 AI ツールの開発を担当。</p>
+        <time>2026 —</time>
+        <h4>個人事業主</h4>
+        <p>コンピュータビジョン・AI エージェント開発を軸に独立。開発から技術支援まで請け負う。</p>
       </div>
       <div class="tl-item reveal">
-        <time>2022 — 2024</time>
-        <h4>システムエンジニア</h4>
-        <p>業務システムの開発・保守。要件定義から運用まで幅広く経験。</p>
+        <time>2025 — 2026</time>
+        <h4>IT コンサルタント</h4>
+        <p>DX 推進・システム導入の企画から実行までを支援。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2022 — 2025</time>
+        <h4>AI クラウドエンジニア</h4>
+        <p>クラウドインフラの構築・自動化、AI サービスの開発を担当。</p>
+      </div>
+      <div class="tl-item reveal">
+        <time>2021 — 2022</time>
+        <h4>Web エンジニア</h4>
+        <p>Web アプリケーションの開発・運用を担当。</p>
       </div>
     </div>
   </section>
 
-  <footer id="contact" class="sans">
-    <span>© 2026 IKEDA</span>
-    <a href="drafts/" style="color: var(--star); text-decoration: none; letter-spacing: 2px;">LA NUIT ÉTOILÉE — 草案アーカイブ ↗</a>
+  <section id="contact">
+    <div class="sec-head reveal"><span class="moon"></span><span class="num sans">04</span><h2>CONTACT</h2><span class="rule"></span></div>
+    <div class="contact-box sans reveal">
+      <i class="cfr"></i>
+      <p>お仕事のご相談・ご連絡は、お問い合わせページからお願いします。</p>
+      <a class="contact-btn" href="contact.html">✦ お問い合わせページへ →</a>
+    </div>
+  </section>
+
+  <footer class="sans">
+    <span>© 2026 IKEDA.K</span>
+    <span>LA NUIT ÉTOILÉE</span>
   </footer>
 </main>
 
@@ -292,13 +560,16 @@
   const ctx = canvas.getContext('2d');
   let W, H, dpr;
 
+  // 元の夜空グラデーションを保持しておき、毎フレームこれへ向かって減衰させる
+  let baseGrad;
+  function makeBaseGrad() {
+    baseGrad = ctx.createLinearGradient(0, 0, 0, H);
+    baseGrad.addColorStop(0, '#0a1533');
+    baseGrad.addColorStop(0.6, '#0d1b3e');
+    baseGrad.addColorStop(1, '#12264a');
+  }
   function paintBase() {
-    // 夜空のグラデーション（上ほど深い藍、下は少し緑がかる）
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, '#0a1533');
-    g.addColorStop(0.6, '#0d1b3e');
-    g.addColorStop(1, '#12264a');
-    ctx.fillStyle = g;
+    ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, W, H);
   }
   function resize() {
@@ -307,6 +578,7 @@
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    makeBaseGrad();
     paintBase();
   }
   resize();
@@ -359,7 +631,7 @@
     return a;
   }
 
-  const N = 300;
+  const N = window.innerWidth < 700 ? 150 : 300;  // モバイルは筆致の数を半減して負荷を抑える
   const particles = [];
   function spawn(p, x, y) {
     p.x = x !== undefined ? x : Math.random() * 1920;
@@ -450,26 +722,79 @@
     }
   }
 
-  // 糸杉（画面左下の炎のようなシルエット）
-  function drawCypress() {
-    const bx = 300 + 40, by = H;
+  // 夜の村：元の左の大糸杉 + 家々に統一（画面幅に応じて家の数が増減する）
+  const WIN_RATIO = 0.5;
+  let sil = [], silW = 0;
+  function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  function buildSkyline() {
+    sil = []; silW = W;
+    // モバイルではサイドバーが無いぶん左から配置し、糸杉も控えめに
+    const mobile = W < 700;
+    sil.push({ t: 'cy', x: mobile ? W * 0.14 : 340, h: mobile ? 0.4 : 0.56, s: mobile ? 0.75 : 1 });
+    const start = mobile ? W * 0.32 : 470, end = W - 40;
+    const n = Math.max(2, Math.round((end - start) / 170)); // 画面幅に応じて軒数が増える
+    for (let i = 0; i < n; i++) {
+      const x = start + (end - start) * (i + 0.15 + rnd(i) * 0.7) / n;
+      sil.push({ t: 'house', x, w: 54 + rnd(i + 11) * 46, h: 34 + rnd(i + 23) * 34,
+                 roof: 14 + rnd(i + 31) * 14, win: rnd(i + 41) < WIN_RATIO, tower: false });
+    }
+  }
+  function drawCy(bx, hf, s) {
+    const by = H, hh = H * hf;
     ctx.beginPath();
-    ctx.moveTo(bx - 34, by);
-    ctx.bezierCurveTo(bx - 26, by - H * 0.18, bx - 44, by - H * 0.30, bx - 10, by - H * 0.46);
-    ctx.bezierCurveTo(bx - 26, by - H * 0.34, bx + 2, by - H * 0.30, bx + 4, by - H * 0.56);
-    ctx.bezierCurveTo(bx + 8, by - H * 0.38, bx + 18, by - H * 0.30, bx + 26, by - H * 0.16);
-    ctx.bezierCurveTo(bx + 38, by - H * 0.08, bx + 30, by, bx + 24, by);
+    ctx.moveTo(bx - 34 * s, by);
+    ctx.bezierCurveTo(bx - 26 * s, by - hh * 0.32, bx - 44 * s, by - hh * 0.54, bx - 10 * s, by - hh * 0.82);
+    ctx.bezierCurveTo(bx - 26 * s, by - hh * 0.61, bx + 2 * s, by - hh * 0.54, bx + 4 * s, by - hh);
+    ctx.bezierCurveTo(bx + 8 * s, by - hh * 0.68, bx + 18 * s, by - hh * 0.54, bx + 26 * s, by - hh * 0.29);
+    ctx.bezierCurveTo(bx + 38 * s, by - hh * 0.14, bx + 30 * s, by, bx + 24 * s, by);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(8, 14, 26, 0.9)';
     ctx.fill();
+  }
+  function drawHouse(o) {
+    const by = H;
+    ctx.beginPath();
+    ctx.rect(o.x, by - o.h, o.w, o.h);
+    ctx.moveTo(o.x - 5, by - o.h);
+    ctx.lineTo(o.x + o.w / 2, by - o.h - o.roof);
+    ctx.lineTo(o.x + o.w + 5, by - o.h);
+    ctx.closePath();
+    ctx.fill();
+    if (o.tower) {
+      const tx = o.x + o.w / 2 - 7, ty = by - o.h - o.roof;
+      ctx.beginPath();
+      ctx.rect(tx, ty - 40, 14, 44);
+      ctx.moveTo(tx - 4, ty - 40);
+      ctx.lineTo(tx + 7, ty - 64);
+      ctx.lineTo(tx + 18, ty - 40);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if (o.win) {
+      ctx.fillStyle = 'rgba(226, 189, 85, 0.8)';
+      ctx.fillRect(o.x + o.w * 0.22, by - o.h * 0.55, 5, 7);
+      if (o.w > 70) ctx.fillRect(o.x + o.w * 0.62, by - o.h * 0.5, 5, 7);
+      ctx.fillStyle = 'rgba(8, 14, 26, 0.92)';
+    }
+  }
+  function drawSkyline() {
+    if (silW !== W) buildSkyline();
+    ctx.fillStyle = 'rgba(8, 14, 26, 0.92)';
+    for (const o of sil) o.t === 'cy' ? drawCy(o.x, o.h, o.s) : drawHouse(o);
   }
 
   function step() {
-    ctx.fillStyle = 'rgba(13, 27, 62, 0.04)';
+    // 元の夜空グラデーションへ毎フレーム少しずつ戻す。
+    // 筆あとは数秒かけて夜空に溶けて消え、背景全体の色が濁らない。
+    ctx.globalAlpha = 0.06;
+    ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
 
-    const speed = 1.4 + flowBoost;
-    t += 0.0016 * (1 + flowBoost * 0.4);
+    // スマホ（幅 700px 未満）は流れの速度を 1/2 に。W は resize で更新されるため
+    // PC⇔スマホのウィンドウ切り替え時も次フレームから自動で速度が切り替わる
+    const spdScale = W < 700 ? 0.5 : 1;
+    const speed = (1.4 + flowBoost) * spdScale;
+    t += 0.0016 * (1 + flowBoost * 0.4) * spdScale;
     flowBoost *= 0.96;
 
     for (const p of particles) {
@@ -503,13 +828,13 @@
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(nx, ny);
-        ctx.strokeStyle = 'rgba(' + Math.round(rr * 0.4) + ',' + Math.round(gg * 0.45) + ',' + Math.round(bb * 0.6) + ', 0.32)';
+        ctx.strokeStyle = 'rgba(' + Math.round(rr * 0.4) + ',' + Math.round(gg * 0.45) + ',' + Math.round(bb * 0.6) + ', 0.28)';
         ctx.lineWidth = p.w + 1.8;
         ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(nx, ny);
-        ctx.strokeStyle = 'rgba(' + rr + ',' + gg + ',' + bb + ', 0.5)';
+        ctx.strokeStyle = 'rgba(' + rr + ',' + gg + ',' + bb + ', 0.42)';
         ctx.lineWidth = p.w;
         ctx.stroke();
 
@@ -523,7 +848,7 @@
     }
 
     drawStars();
-    drawCypress();
+    drawSkyline();
   }
 
   function loop() { step(); requestAnimationFrame(loop); }
@@ -554,6 +879,128 @@
     el.addEventListener('mouseenter', () => ring.classList.add('on'));
     el.addEventListener('mouseleave', () => ring.classList.remove('on'));
   });
+
+// 表示アクションの仕様は PC とスマホで分ける:
+  //  - PC（ホバーあり）: ホバーが主役。スクロール時は初回リビール + セクション見出しの強調のみ
+  //  - スマホ（ホバーなし）: 下スクロールで入ってきた要素だけが約 1 秒金色に灯って消える「通過グロー」。
+  //    上スクロールでは光らせず、通り過ぎた要素は通常表示に戻る（全部白くなって見づらくならない）
+  if (!reduced && window.matchMedia('(hover: none)').matches) {
+    // goingDown は「実際に下へスクロールしている間」だけ true。
+    // 初期表示・アンカー遷移直後・「すべて表示する」展開時の誤発火を防ぐため、
+    // 初期値は false とし、スクロールが 250ms 止まったらリセットする
+    let lastScrollY = window.scrollY, goingDown = false, scrollIdleT;
+    window.addEventListener('scroll', () => {
+      goingDown = window.scrollY > lastScrollY;
+      lastScrollY = window.scrollY;
+      clearTimeout(scrollIdleT);
+      scrollIdleT = setTimeout(() => { goingDown = false; }, 250);
+    }, { passive: true });
+    const glowTimers = new WeakMap();
+    const mio = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting && goingDown) {
+        e.target.classList.add('mfocus');
+        clearTimeout(glowTimers.get(e.target));
+        glowTimers.set(e.target, setTimeout(() => e.target.classList.remove('mfocus'), 1100));
+      } else if (!e.isIntersecting) {
+        clearTimeout(glowTimers.get(e.target));
+        e.target.classList.remove('mfocus');
+      }
+    }), { rootMargin: '0px 0px -30% 0px' });
+    document.querySelectorAll('.work, .article, .tl-item, .contact-box').forEach(el => mio.observe(el));
+  }
+
+  // モバイルナビ：ハンバーガーでサイドバーをドロワー開閉
+  const mburger = document.querySelector('.mburger');
+  if (mburger) {
+    const closeNav = () => document.body.classList.remove('nav-open');
+    mburger.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+    document.getElementById('mnav-overlay').addEventListener('click', closeNav);
+    document.querySelectorAll('aside nav a').forEach(a => a.addEventListener('click', closeNav));
+  }
+
+  // スクロールスパイ：常にどれか 1 つのセクションが選ばれる方式。
+  // 画面中央線を最後に越えたセクションを現在地とするので、上へ戻っても正しく再計算される
+  const secs = Array.from(document.querySelectorAll('main section'));
+  const footerC = document.querySelector('main footer');
+  const navLinks = document.querySelectorAll('aside nav a');
+  function spyUpdate() {
+    const line = window.innerHeight * 0.5;
+    let cur = secs[0];
+    for (const s of secs) if (s.getBoundingClientRect().top <= line) cur = s;
+    secs.forEach(s => s.classList.toggle('focus', s === cur));
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+    const id = (atBottom && footerC && footerC.id) ? footerC.id : cur.id;
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  }
+  window.addEventListener('scroll', spyUpdate, { passive: true });
+  window.addEventListener('resize', spyUpdate);
+  spyUpdate();
+
+// Works の「すべて表示する」展開 UI
+  document.querySelectorAll('.show-all').forEach(btn => {
+    const box = document.getElementById(btn.dataset.target);
+    const label = btn.querySelector('.sa-t') || btn;
+    const set = () => label.textContent = box.classList.contains('open') ? btn.dataset.open : btn.dataset.closed;
+    btn.addEventListener('click', () => {
+      box.classList.toggle('open');
+      if (!box.classList.contains('open')) box.closest('section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      set();
+    });
+    set();
+  });
+
+// 3D 油絵の月：オフスクリーンに渦の筆致テクスチャを一度だけ描き、
+  // それを自転させながら球面の陰影（左上ハイライト + 縁の落ち込み）を重ねる
+  (function () {
+    const av = document.getElementById('av');
+    if (!av) return;
+    const c = av.getContext('2d');
+    const S = 184, R = S / 2;
+    const tex = document.createElement('canvas');
+    tex.width = tex.height = S * 2;
+    const tc = tex.getContext('2d');
+    tc.fillStyle = '#122450';
+    tc.fillRect(0, 0, S * 2, S * 2);
+    const cols = ['#7ea8e8', '#3454a0', '#ffd76a', '#e8ecfb', '#5078c8', '#eed185'];
+    for (let i = 0; i < 340; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random() * S;
+      const x = S + Math.cos(a) * r, y = S + Math.sin(a) * r;
+      const t0 = a + Math.PI / 2;
+      tc.strokeStyle = cols[Math.floor(Math.random() * cols.length)];
+      tc.globalAlpha = 0.45 + Math.random() * 0.4;
+      tc.lineWidth = 3 + Math.random() * 5;
+      tc.lineCap = 'round';
+      tc.beginPath();
+      tc.moveTo(x, y);
+      tc.quadraticCurveTo(
+        x + Math.cos(t0) * 14, y + Math.sin(t0) * 14,
+        x + Math.cos(t0) * 26 + (Math.random() - 0.5) * 8,
+        y + Math.sin(t0) * 26 + (Math.random() - 0.5) * 8);
+      tc.stroke();
+    }
+    let rot = 0;
+    function drawAv() {
+      c.clearRect(0, 0, S, S);
+      c.save();
+      c.beginPath(); c.arc(R, R, R, 0, 6.29); c.clip();
+      c.translate(R, R); c.rotate(rot);
+      c.drawImage(tex, -S, -S);
+      c.restore();
+      const g = c.createRadialGradient(R * 0.62, R * 0.58, R * 0.1, R, R, R);
+      g.addColorStop(0, 'rgba(255, 240, 200, 0.35)');
+      g.addColorStop(0.45, 'rgba(255, 233, 168, 0.06)');
+      g.addColorStop(0.8, 'rgba(6, 10, 24, 0.25)');
+      g.addColorStop(1, 'rgba(4, 8, 20, 0.75)');
+      c.fillStyle = g;
+      c.beginPath(); c.arc(R, R, R, 0, 6.29); c.fill();
+    }
+    function avLoop() { rot += 0.0035; drawAv(); requestAnimationFrame(avLoop); }
+    drawAv();
+    if (!reduced) requestAnimationFrame(avLoop);
+  })();
+
+  // ==SBJS==
 })();
 </script>
 

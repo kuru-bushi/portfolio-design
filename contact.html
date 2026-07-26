@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTACT — IKEDA.K</title>
+<style>
+  :root {
+    --bg: #0d1b3e;
+    --panel: #122450;
+    --text: #e8ecfb;
+    --sub: #93a0c8;
+    --star: #ffd76a;
+    --moon: #ffe9a8;
+    --swirl: #7ea8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", "Hiragino Sans", serif;
+    background:
+      radial-gradient(circle at 84% 12%, rgba(255, 233, 168, 0.16), transparent 26%),
+      radial-gradient(circle at 30% 30%, rgba(126, 168, 232, 0.10), transparent 40%),
+      linear-gradient(180deg, #0a1533, #0d1b3e 60%, #12264a);
+    color: var(--text); line-height: 1.9;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+  .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+
+  .box {
+    max-width: 560px; width: 100%; text-align: center;
+    border: 1px solid rgba(126, 168, 232, 0.35); border-radius: 4px;
+    background: linear-gradient(165deg, rgba(18, 36, 80, 0.92), rgba(10, 20, 46, 0.92));
+    padding: 56px 36px; position: relative;
+  }
+  .box::before {
+    content: ""; position: absolute; inset: 8px; pointer-events: none;
+    border: 1px solid rgba(255, 215, 106, 0.35); border-radius: 3px;
+  }
+  .moon {
+    width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 22px;
+    background: radial-gradient(circle at 62% 38%, var(--moon), var(--star) 60%, rgba(255, 215, 106, 0.4));
+    box-shadow: 0 0 26px rgba(255, 215, 106, 0.55);
+  }
+  h1 { font-size: 26px; letter-spacing: 8px; font-weight: 600; color: #fff; }
+  .wip { font-size: 12px; letter-spacing: 2px; color: var(--star); margin: 8px 0 26px; }
+  p.lead { font-size: 13px; color: var(--sub); margin-bottom: 30px; }
+  .mail {
+    display: inline-block; font-size: 14px; letter-spacing: 1px;
+    color: var(--star); text-decoration: none; padding: 12px 26px;
+    border: 1px dashed rgba(255, 215, 106, 0.5); border-radius: 4px; transition: all .25s;
+  }
+  .mail:hover { background: rgba(255, 215, 106, 0.12); border-style: solid; text-shadow: 0 0 10px var(--star); }
+  .back {
+    display: inline-block; margin-top: 34px; font-size: 12px; letter-spacing: 2px;
+    color: var(--sub); text-decoration: none; transition: color .2s;
+  }
+  .back:hover { color: var(--star); }
+  @media (prefers-reduced-motion: no-preference) {
+    .moon { animation: glow 4s ease-in-out infinite alternate; }
+    @keyframes glow {
+      from { box-shadow: 0 0 18px rgba(255, 215, 106, 0.4); }
+      to   { box-shadow: 0 0 34px rgba(255, 215, 106, 0.75); }
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="moon"></div>
+    <h1>CONTACT</h1>
+    <div class="wip sans">※ このページは作成中です</div>
+    <p class="lead sans">お仕事のご相談・ご連絡は、下記メールアドレスまでお願いします。<br>お問い合わせフォームは現在準備中です。</p>
+    <a class="mail sans" href="mailto:ikeda.k.autom92@gmail.com">✉ ikeda.k.autom92@gmail.com</a>
+    <br>
+    <a class="back sans" href="index.html">← トップへ戻る</a>
+  </div>
+</body>
+</html>
