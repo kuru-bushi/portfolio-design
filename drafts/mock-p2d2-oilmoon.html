@@ -793,20 +793,22 @@
     for (const o of sil) o.t === 'cy' ? drawCy(o.x, o.h, o.s) : drawHouse(o);
   }
 
-  function step() {
+  // k = 60fps 基準のフレーム倍率（120Hz なら約 0.5 フレーム分ずつ進む）。
+  // これがないと進行量がリフレッシュレートに比例し、120Hz の Mac 等で 2 倍速になる
+  function step(k) {
     // 元の夜空グラデーションへ毎フレーム少しずつ戻す。
     // 筆あとは数秒かけて夜空に溶けて消え、背景全体の色が濁らない。
-    ctx.globalAlpha = 0.06;
+    ctx.globalAlpha = 1 - Math.pow(0.94, k);
     ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, W, H);
     ctx.globalAlpha = 1;
 
     // スマホ（幅 700px 未満）は流れの速度を 1/2 に。W は resize で更新されるため
     // PC⇔スマホのウィンドウ切り替え時も次フレームから自動で速度が切り替わる
-    const spdScale = W < 700 ? 0.5 : 1;
+    const spdScale = (W < 700 ? 0.5 : 1) * k;
     const speed = (1.4 + flowBoost) * spdScale;
     t += 0.0016 * (1 + flowBoost * 0.4) * spdScale;
-    flowBoost *= 0.96;
+    flowBoost *= Math.pow(0.96, k);
 
     for (const p of particles) {
       const a = fieldAngle(p.x, p.y);
@@ -815,8 +817,9 @@
 
       if (p.gap > 0) {
         // 筆がキャンバスから離れている間は描かない → 短いタッチの連なりになる
-        p.gap--;
-        if (p.gap === 0) {
+        p.gap -= k;
+        if (p.gap <= 0) {
+          p.gap = 0;
           p.dab = 6 + Math.floor(Math.random() * 10);
           p.w = 2.4 + Math.random() * 2.6;
         }
@@ -849,12 +852,12 @@
         ctx.lineWidth = p.w;
         ctx.stroke();
 
-        p.dab--;
+        p.dab -= k;
         if (p.dab <= 0) p.gap = 2 + Math.floor(Math.random() * 5);
       }
 
       p.x = nx; p.y = ny;
-      p.life--;
+      p.life -= k;
       if (p.life <= 0 || p.x < -30 || p.x > W + 30 || p.y < -30 || p.y > H + 30) spawn(p);
     }
 
@@ -862,8 +865,16 @@
     drawSkyline();
   }
 
-  function loop() { step(); requestAnimationFrame(loop); }
-  for (let i = 0; i < 170; i++) step();
+  // 実時間（60fps 基準）で正規化して進める。タブ復帰などの大きな空白は 3 フレーム分に制限
+  let lastTs = 0;
+  function loop(ts) {
+    if (!lastTs) lastTs = ts;
+    const k = Math.min(3, (ts - lastTs) / (1000 / 60));
+    lastTs = ts;
+    if (k > 0) step(k);
+    requestAnimationFrame(loop);
+  }
+  for (let i = 0; i < 170; i++) step(1);
   if (!reduced) requestAnimationFrame(loop);
 
   // リビール
@@ -881,9 +892,16 @@
     mouse.x = e.clientX; mouse.y = e.clientY;
     dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
   });
-  (function curLoop() {
-    rx += (mouse.x - rx) * 0.16; ry += (mouse.y - ry) * 0.16;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  let curLast = 0;
+  (function curLoop(ts) {
+    if (ts) {
+      if (!curLast) curLast = ts;
+      const k = Math.min(3, (ts - curLast) / (1000 / 60));
+      curLast = ts;
+      const e = 1 - Math.pow(0.84, k);
+      rx += (mouse.x - rx) * e; ry += (mouse.y - ry) * e;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    }
     requestAnimationFrame(curLoop);
   })();
   document.querySelectorAll('a, .work').forEach(el => {
@@ -1006,7 +1024,15 @@
       c.fillStyle = g;
       c.beginPath(); c.arc(R, R, R, 0, 6.29); c.fill();
     }
-    function avLoop() { rot += 0.0035; drawAv(); requestAnimationFrame(avLoop); }
+    let avLast = 0;
+    function avLoop(ts) {
+      if (!avLast) avLast = ts;
+      const k = Math.min(3, (ts - avLast) / (1000 / 60));
+      avLast = ts;
+      rot += 0.0035 * k;
+      drawAv();
+      requestAnimationFrame(avLoop);
+    }
     drawAv();
     if (!reduced) requestAnimationFrame(avLoop);
   })();
