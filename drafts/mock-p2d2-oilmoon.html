@@ -236,6 +236,15 @@
   /* Works: 省略 + 「すべて表示する」展開 UI */
   .works .more { display: none; }
   .works.open .more { display: block; animation: fadeUp .55s ease both; }
+  /* 展開時のみ現れる「調査・検証リポジトリ」の区切りラベル（サービスと調査系を分ける） */
+  .works .more-label {
+    grid-column: 1 / -1; margin-top: 8px;
+    font-size: 11px; letter-spacing: 3px; color: var(--sub);
+    align-items: center; gap: 14px;
+  }
+  .works.open .more-label { display: flex; }
+  .works .more-label::before { content: ""; width: 24px; height: 1px; background: rgba(255, 215, 106, 0.5); }
+  .works .more-label::after { content: ""; flex: 1; height: 1px; background: rgba(126, 168, 232, 0.3); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
   /* 「すべて表示する」: Works カードと同じ厚塗りフレームのカードとして全幅表示 */
   .works .show-all {
@@ -463,6 +472,7 @@
         <div class="stack">OLLAMA / CHROMADB / LANGGRAPH</div>
         <div class="links"><span class="soon">開発中</span><a href="https://github.com/kuru-bushi/LocalAgent" target="_blank" rel="noopener">GITHUB</a></div>
       </div>
+      <div class="more-label more sans">調査・検証リポジトリ</div>
       <div class="work more">
         <i class="fr"></i>
         <h3>Scan-to-BIM 検証</h3>
