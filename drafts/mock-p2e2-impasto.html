@@ -52,6 +52,9 @@
   }
   #cur-ring.on { width: 58px; height: 58px; border-color: var(--moon); background: rgba(255, 233, 168, 0.10); }
   @media (hover: none) { body, a { cursor: auto; } #cur-dot, #cur-ring { display: none; } }
+  /* タッチ端末の低負荷モード: 全画面 SVG 歪みフィルタはモバイル(特にアプリ内ブラウザ)で
+     毎フレーム全画素の再フィルタリングになり極端に重いため外す。筆致自体が油絵調なので印象は保たれる */
+  @media (hover: none) { #bg { filter: none; } }
 
   .reveal { opacity: 0; transform: translateY(38px); transition: opacity .9s ease, transform .9s ease; }
   .reveal.in { opacity: 1; transform: none; }
@@ -596,8 +599,10 @@
     ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, W, H);
   }
+  // タッチ端末の低負荷モード（CSS のフィルタ無効と対）: 内部解像度を等倍に + 描画を約 30fps に間引く
+  const isTouch = window.matchMedia('(hover: none)').matches;
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, isTouch ? 1 : 2);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
@@ -880,11 +885,15 @@
 
   // 実時間（60fps 基準）で正規化して進める。タブ復帰などの大きな空白は 3 フレーム分に制限
   let lastTs = 0;
+  const minFrame = isTouch ? 1000 / 30 - 4 : 0;  // タッチ端末は約 30fps に間引く（-4ms は vsync 誤差の余裕。k 補正で速度は不変）
   function loop(ts) {
     if (!lastTs) lastTs = ts;
-    const k = Math.min(3, (ts - lastTs) / (1000 / 60));
-    lastTs = ts;
-    if (k > 0) step(k);
+    const dt = ts - lastTs;
+    if (dt >= minFrame) {
+      lastTs = ts;
+      const k = Math.min(3, dt / (1000 / 60));
+      if (k > 0) step(k);
+    }
     requestAnimationFrame(loop);
   }
   for (let i = 0; i < 170; i++) step(1);
