@@ -1,0 +1,35 @@
+name: Deploy Pages
+
+# main へ push すると、現役候補ページから index.html を生成して GitHub Pages にデプロイする。
+# 公開サイトの実体は drafts/ の現役候補（scripts/build_index.py の SRC）。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 現役候補から index.html を生成
+        run: python3 scripts/build_index.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

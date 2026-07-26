@@ -30,7 +30,10 @@
 ## 構成
 
 ```
-index.html      … 本サイト（P-2 ベース。今後の開発対象）
+index.html      … 本サイト（自動生成。直接編集しない — 下記「公開サイトの更新フロー」参照）
+contact.html    … お問い合わせページ（簡易版・作成中）
+scripts/build_index.py … 現役候補から index.html を生成するスクリプト
+.github/workflows/deploy-pages.yml … push 時に生成 + GitHub Pages デプロイ
 drafts/         … 検討過程の草案アーカイブ（保存用・原則編集しない）
   index.html        … 草案の一覧ハブ
   layouts-index.html … 第1段階: レイアウト 4 案の比較
@@ -39,6 +42,15 @@ drafts/         … 検討過程の草案アーカイブ（保存用・原則編
   p2-index.html      … P-2 洗練の比較ハブ（現在は現役候補 2 案: アイコンのみ比較。旧候補はドロワー内）
   mock-*.html        … 各草案本体
 ```
+
+## 公開サイトの更新フロー（2026-07-26〜）
+
+公開サイト https://kuru-bushi.github.io/portfolio-design/ は**現役候補ページと自動で同期**する。
+
+1. 現役候補 `drafts/mock-p2d2-oilmoon.html`（D2。`scripts/build_index.py` の `SRC` で指定）を編集する
+2. main に push すると GitHub Actions（deploy-pages.yml）が `build_index.py` で index.html を生成し、Pages にデプロイする
+3. `index.html` は生成物のため git 管理外（.gitignore）。直接編集しない。ローカル確認は `python3 scripts/build_index.py` を実行
+4. 採用候補を切り替える（例: E2 へ）ときは `build_index.py` の `SRC` を書き換える
 
 ## 検討の経緯
 

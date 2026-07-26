@@ -1,0 +1,3 @@
+# 本番 index.html はデプロイ時に scripts/build_index.py が現役候補から自動生成する。
+# ローカルで確認したいときは python3 scripts/build_index.py を実行する。
+/index.html
