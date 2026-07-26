@@ -338,6 +338,18 @@
     .contact-box { padding: 36px 20px; }
     footer { flex-direction: column; gap: 6px; align-items: flex-start; }
     .pback { right: 14px; bottom: 12px; font-size: 10px; padding: 5px 12px; }
+    /* スクロールフォーカス: 中央帯に入った要素がホバー相当に光る（タッチ端末の代替アクション） */
+    .work.mfocus { transform: translateY(-4px); }
+    .work.mfocus .fr { border-color: var(--star); }
+    .work.mfocus .fr::before { border-color: rgba(126, 168, 232, 0.65); }
+    .work.mfocus::after { opacity: 1; }
+    .work.mfocus::before { color: var(--star); transform: rotate(72deg) scale(1.3); text-shadow: 0 0 16px var(--star); }
+    .work.mfocus h3 { text-shadow: 0 0 14px rgba(232, 240, 255, 0.4); }
+    .work.mfocus p { color: #c9d4ee; }
+    .article.mfocus { background: rgba(126, 168, 232, 0.1); padding-left: 16px; }
+    .article.mfocus .t { color: #fff; }
+    .tl-item.mfocus::before { box-shadow: 0 0 22px rgba(255, 215, 106, 0.95); }
+    .contact-box.mfocus .cfr { border-color: var(--star); }
   }
 </style>
 </head>
@@ -724,8 +736,8 @@
     }
   }
 
-  // 夜の村：画面幅に応じて糸杉と家のシルエットが増減する（教会の村・暫定構成）
-  const HOUSE_RATIO = 0.55, WIN_RATIO = 0.5, CHURCH = true;
+  // 夜の村：元の左の大糸杉 + 家々に統一（画面幅に応じて家の数が増減する）
+  const WIN_RATIO = 0.5;
   let sil = [], silW = 0;
   function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   function buildSkyline() {
@@ -734,18 +746,12 @@
     const mobile = W < 700;
     sil.push({ t: 'cy', x: mobile ? W * 0.14 : 340, h: mobile ? 0.4 : 0.56, s: mobile ? 0.75 : 1 });
     const start = mobile ? W * 0.32 : 470, end = W - 40;
-    const n = Math.max(2, Math.round((end - start) / 170)); // 画面幅に応じて本数が増える
+    const n = Math.max(2, Math.round((end - start) / 170)); // 画面幅に応じて軒数が増える
     for (let i = 0; i < n; i++) {
       const x = start + (end - start) * (i + 0.15 + rnd(i) * 0.7) / n;
-      if (rnd(i * 7 + 3) < HOUSE_RATIO) {
-        sil.push({ t: 'house', x, w: 54 + rnd(i + 11) * 46, h: 34 + rnd(i + 23) * 34,
-                   roof: 14 + rnd(i + 31) * 14, win: rnd(i + 41) < WIN_RATIO, tower: false });
-      } else {
-        sil.push({ t: 'cy', x, h: 0.14 + rnd(i + 53) * 0.26, s: 0.4 + rnd(i + 61) * 0.5 });
-      }
+      sil.push({ t: 'house', x, w: 54 + rnd(i + 11) * 46, h: 34 + rnd(i + 23) * 34,
+                 roof: 14 + rnd(i + 31) * 14, win: rnd(i + 41) < WIN_RATIO, tower: false });
     }
-    if (CHURCH) sil.push({ t: 'house', x: start + (end - start) * 0.55, w: 70, h: 42,
-                           roof: 16, win: WIN_RATIO > 0, tower: true });
   }
   function drawCy(bx, hf, s) {
     const by = H, hh = H * hf;
@@ -888,7 +894,16 @@
     el.addEventListener('mouseleave', () => ring.classList.remove('on'));
   });
 
-// モバイルナビ：ハンバーガーでサイドバーをドロワー開閉
+// モバイル：スクロールで画面中央帯に入ったカード・記事・年表・CONTACT を
+  // ホバー相当に光らせる（タッチ端末にはホバーが無いための代替アクション）
+  if (window.matchMedia('(hover: none)').matches || window.innerWidth <= 900) {
+    const mio = new IntersectionObserver(es => es.forEach(e => {
+      e.target.classList.toggle('mfocus', e.isIntersecting);
+    }), { rootMargin: '-30% 0px -30% 0px' });
+    document.querySelectorAll('.work, .article, .tl-item, .contact-box').forEach(el => mio.observe(el));
+  }
+
+  // モバイルナビ：ハンバーガーでサイドバーをドロワー開閉
   const mburger = document.querySelector('.mburger');
   if (mburger) {
     const closeNav = () => document.body.classList.remove('nav-open');
