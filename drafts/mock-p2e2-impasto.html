@@ -338,7 +338,10 @@
     .contact-box { padding: 36px 20px; }
     footer { flex-direction: column; gap: 6px; align-items: flex-start; }
     .pback { right: 14px; bottom: 12px; font-size: 10px; padding: 5px 12px; }
-    /* スクロールフォーカス: 中央帯に入った要素がホバー相当に光る（タッチ端末の代替アクション） */
+  }
+  /* スマホの通過グロー: 下スクロールで入ってきた要素だけが約 1 秒ホバー相当に灯り、
+     すっと元に戻る。PC はホバーが主役なので適用しない */
+  @media (hover: none) {
     .work.mfocus { transform: translateY(-4px); }
     .work.mfocus .fr { border-color: var(--star); }
     .work.mfocus .fr::before { border-color: rgba(126, 168, 232, 0.65); }
@@ -894,12 +897,27 @@
     el.addEventListener('mouseleave', () => ring.classList.remove('on'));
   });
 
-// モバイル：スクロールで画面中央帯に入ったカード・記事・年表・CONTACT を
-  // ホバー相当に光らせる（タッチ端末にはホバーが無いための代替アクション）
-  if (window.matchMedia('(hover: none)').matches || window.innerWidth <= 900) {
+// 表示アクションの仕様は PC とスマホで分ける:
+  //  - PC（ホバーあり）: ホバーが主役。スクロール時は初回リビール + セクション見出しの強調のみ
+  //  - スマホ（ホバーなし）: 下スクロールで入ってきた要素だけが約 1 秒金色に灯って消える「通過グロー」。
+  //    上スクロールでは光らせず、通り過ぎた要素は通常表示に戻る（全部白くなって見づらくならない）
+  if (window.matchMedia('(hover: none)').matches) {
+    let lastScrollY = window.scrollY, goingDown = true;
+    window.addEventListener('scroll', () => {
+      goingDown = window.scrollY > lastScrollY;
+      lastScrollY = window.scrollY;
+    }, { passive: true });
+    const glowTimers = new WeakMap();
     const mio = new IntersectionObserver(es => es.forEach(e => {
-      e.target.classList.toggle('mfocus', e.isIntersecting);
-    }), { rootMargin: '-30% 0px -30% 0px' });
+      if (e.isIntersecting && goingDown) {
+        e.target.classList.add('mfocus');
+        clearTimeout(glowTimers.get(e.target));
+        glowTimers.set(e.target, setTimeout(() => e.target.classList.remove('mfocus'), 1100));
+      } else if (!e.isIntersecting) {
+        clearTimeout(glowTimers.get(e.target));
+        e.target.classList.remove('mfocus');
+      }
+    }), { rootMargin: '0px 0px -30% 0px' });
     document.querySelectorAll('.work, .article, .tl-item, .contact-box').forEach(el => mio.observe(el));
   }
 
