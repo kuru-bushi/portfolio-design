@@ -330,6 +330,19 @@
   /* スマホの通過グロー: 下スクロールで入ってきた要素だけが約 1 秒ホバー相当に灯り、
      すっと元に戻る。PC はホバーが主役なので適用しない */
   @media (hover: none) {
+    /* タップ後に :hover が残る端末対策: ホバー装飾を無効化し、状態表現は .mfocus に一本化する */
+    .work:hover { transform: none; }
+    .work:hover .fr { border-color: rgba(126, 168, 232, 0.55); }
+    .work:hover .fr::before { border-color: rgba(255, 215, 106, 0.28); }
+    .work:hover::after { opacity: 0; }
+    .work:hover::before { color: rgba(255, 215, 106, 0.25); transform: none; text-shadow: none; }
+    .work:hover h3 { text-shadow: none; }
+    .work:hover p { color: var(--sub); }
+    .work:hover .stack { color: var(--swirl); }
+    .article:hover { background: transparent; padding-left: 18px; }
+    .article:hover .t { color: inherit; }
+    .tl-item:hover::before { box-shadow: 0 0 10px rgba(255, 215, 106, 0.5); }
+    .avatar:hover { transform: none; }
     .work.mfocus { transform: translateY(-4px); }
     .work.mfocus .fr { border-color: var(--star); }
     .work.mfocus .fr::before { border-color: rgba(126, 168, 232, 0.65); }
@@ -341,6 +354,15 @@
     .article.mfocus .t { color: #fff; }
     .tl-item.mfocus::before { box-shadow: 0 0 22px rgba(255, 215, 106, 0.95); }
     .contact-box.mfocus .cfr { border-color: var(--star); }
+  }
+  @media (hover: none) and (max-width: 900px) {
+    .article:hover { padding-left: 10px; }
+  }
+  /* アクセシビリティ: 動きを減らす設定ではアニメーション・遷移・スムーズスクロールを止める */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
@@ -889,11 +911,16 @@
   //  - PC（ホバーあり）: ホバーが主役。スクロール時は初回リビール + セクション見出しの強調のみ
   //  - スマホ（ホバーなし）: 下スクロールで入ってきた要素だけが約 1 秒金色に灯って消える「通過グロー」。
   //    上スクロールでは光らせず、通り過ぎた要素は通常表示に戻る（全部白くなって見づらくならない）
-  if (window.matchMedia('(hover: none)').matches) {
-    let lastScrollY = window.scrollY, goingDown = true;
+  if (!reduced && window.matchMedia('(hover: none)').matches) {
+    // goingDown は「実際に下へスクロールしている間」だけ true。
+    // 初期表示・アンカー遷移直後・「すべて表示する」展開時の誤発火を防ぐため、
+    // 初期値は false とし、スクロールが 250ms 止まったらリセットする
+    let lastScrollY = window.scrollY, goingDown = false, scrollIdleT;
     window.addEventListener('scroll', () => {
       goingDown = window.scrollY > lastScrollY;
       lastScrollY = window.scrollY;
+      clearTimeout(scrollIdleT);
+      scrollIdleT = setTimeout(() => { goingDown = false; }, 250);
     }, { passive: true });
     const glowTimers = new WeakMap();
     const mio = new IntersectionObserver(es => es.forEach(e => {
