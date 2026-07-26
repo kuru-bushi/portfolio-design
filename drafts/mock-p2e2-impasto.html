@@ -26,17 +26,12 @@
   .sans { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
 
   /* ==SCROLLBAR== */
-  /* パターン B「月光の筆」: 極細ゴールド→群青グラデーションのピル型バー */
-  html { scrollbar-width: thin; scrollbar-color: #b98a2e #0a142e; }
-  ::-webkit-scrollbar { width: 10px; }
+  /* 標準の細いスクロールバー（装飾なし） */
+  html { scrollbar-width: thin; scrollbar-color: #3d4f7e #0a142e; }
+  ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: #0a142e; }
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ffd76a, #c39135 45%, #4a6cb0);
-    border-radius: 999px; border: 3px solid #0a142e; min-height: 48px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #ffe9a8, #ffd76a 45%, #7ea8e8);
-  }
+  ::-webkit-scrollbar-thumb { background: #3d4f7e; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #52689e; }
   /* ==/SCROLLBAR== */
 
   #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: url(#oilpaint); }
