@@ -343,8 +343,8 @@
     footer { flex-direction: column; gap: 6px; align-items: flex-start; }
     .pback { right: 14px; bottom: 12px; font-size: 10px; padding: 5px 12px; }
   }
-  /* スマホの通過グロー: 下スクロールで入ってきた要素だけが約 1 秒ホバー相当に灯り、
-     すっと元に戻る。PC はホバーが主役なので適用しない */
+  /* スマホの中央フォーカス: 画面中央の基準線に最も近い 1 要素だけが .mfocus で灯る
+     （上下スクロール両対応・タップで即アクティブ）。PC はホバーが主役なので適用しない */
   @media (hover: none) {
     /* タップ後に :hover が残る端末対策: ホバー装飾を無効化し、状態表現は .mfocus に一本化する */
     .work:hover { transform: none; }
