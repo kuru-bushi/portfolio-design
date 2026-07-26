@@ -276,12 +276,56 @@
   }
   .pback:hover { color: var(--star); border-color: var(--star); }
 
+  /* ===== モバイル（900px 以下）: 上部固定ヘッダー + ハンバーガーでサイドバーをドロワー化 ===== */
+  .mhead { display: none; }
+  #mnav-overlay { display: none; }
   @media (max-width: 900px) {
-    aside { position: static; width: 100%; height: auto; }
     body { flex-direction: column; }
-    main { margin-left: 0; padding: 32px 20px; }
+    body.nav-open { overflow: hidden; }
+    .mhead {
+      display: flex; align-items: center; gap: 10px;
+      position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 60;
+      padding: 0 16px; background: rgba(10, 20, 46, 0.92); backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(126, 168, 232, 0.3);
+    }
+    .mhead .mtitle { font-size: 15px; letter-spacing: 2px; color: #fff; font-weight: 600; }
+    .mhead .mrole { font-size: 9px; letter-spacing: 1.5px; color: var(--star); }
+    .mhead .mburger {
+      margin-left: auto; width: 44px; height: 44px; background: none; border: none;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+      cursor: pointer;
+    }
+    .mhead .mburger i { width: 20px; height: 1.5px; background: var(--text); transition: transform .3s, opacity .3s; }
+    body.nav-open .mburger i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    body.nav-open .mburger i:nth-child(2) { opacity: 0; }
+    body.nav-open .mburger i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    aside {
+      position: fixed; top: 0; bottom: 0; left: 0; width: min(300px, 84vw); height: 100%;
+      transform: translateX(-105%); transition: transform .35s cubic-bezier(.22, .8, .3, 1);
+      z-index: 62;
+    }
+    body.nav-open aside { transform: none; }
+    #mnav-overlay {
+      display: block; position: fixed; inset: 0; background: rgba(4, 8, 20, 0.6); z-index: 61;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    body.nav-open #mnav-overlay { opacity: 1; pointer-events: auto; }
+    main { margin-left: 0; padding: 84px 20px 48px; }
+    .hero { margin-bottom: 70px; }
+    .hero h2 { font-size: 32px; letter-spacing: 1px; }
+    .hero .hint { font-size: 10px; }
+    .scrolldown { margin-top: 36px; }
+    section { margin-bottom: 72px; }
+    .sec-head { gap: 12px; }
+    .sec-head h2 { font-size: 19px; letter-spacing: 4px; }
     .works { grid-template-columns: 1fr; }
-    .hero h2 { font-size: 34px; }
+    .work { padding: 26px 22px; }
+    .article { gap: 12px; padding: 18px 10px; }
+    .article:hover { padding-left: 16px; }
+    .timeline { padding-left: 22px; margin-left: 6px; }
+    .contact-box { padding: 36px 20px; }
+    footer { flex-direction: column; gap: 6px; align-items: flex-start; }
+    .pback { right: 14px; bottom: 12px; font-size: 10px; padding: 5px 12px; }
   }
 </style>
 </head>
@@ -303,6 +347,13 @@
 <div id="cur-dot"></div>
 <!-- ==SBHTML== -->
 <a class="pback sans" href="p2-index.html">✦ P2-D 更新版｜パターン一覧へ</a>
+
+<header class="mhead sans">
+  <span class="mtitle">IKEDA.K</span>
+  <span class="mrole">COMPUTER VISION / AI</span>
+  <button class="mburger" aria-label="メニューを開閉"><i></i><i></i><i></i></button>
+</header>
+<div id="mnav-overlay"></div>
 
 <aside>
   <div class="avatar"><canvas id="av" width="184" height="184"></canvas></div>
@@ -570,7 +621,7 @@
     return a;
   }
 
-  const N = 300;
+  const N = window.innerWidth < 700 ? 150 : 300;  // モバイルは筆致の数を半減して負荷を抑える
   const particles = [];
   function spawn(p, x, y) {
     p.x = x !== undefined ? x : Math.random() * 1920;
@@ -667,8 +718,10 @@
   function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   function buildSkyline() {
     sil = []; silW = W;
-    sil.push({ t: 'cy', x: 340, h: 0.56, s: 1 });          // 左端の大糸杉（従来のもの）
-    const start = 470, end = W - 40;
+    // モバイルではサイドバーが無いぶん左から配置し、糸杉も控えめに
+    const mobile = W < 700;
+    sil.push({ t: 'cy', x: mobile ? W * 0.14 : 340, h: mobile ? 0.4 : 0.56, s: mobile ? 0.75 : 1 });
+    const start = mobile ? W * 0.32 : 470, end = W - 40;
     const n = Math.max(2, Math.round((end - start) / 170)); // 画面幅に応じて本数が増える
     for (let i = 0; i < n; i++) {
       const x = start + (end - start) * (i + 0.15 + rnd(i) * 0.7) / n;
@@ -819,6 +872,15 @@
     el.addEventListener('mouseenter', () => ring.classList.add('on'));
     el.addEventListener('mouseleave', () => ring.classList.remove('on'));
   });
+
+// モバイルナビ：ハンバーガーでサイドバーをドロワー開閉
+  const mburger = document.querySelector('.mburger');
+  if (mburger) {
+    const closeNav = () => document.body.classList.remove('nav-open');
+    mburger.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+    document.getElementById('mnav-overlay').addEventListener('click', closeNav);
+    document.querySelectorAll('aside nav a').forEach(a => a.addEventListener('click', closeNav));
+  }
 
   // スクロールスパイ：常にどれか 1 つのセクションが選ばれる方式。
   // 画面中央線を最後に越えたセクションを現在地とするので、上へ戻っても正しく再計算される
