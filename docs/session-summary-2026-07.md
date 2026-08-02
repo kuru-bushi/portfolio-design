@@ -2,12 +2,28 @@
 
 P-2《星月夜》採用後、本セッションで行った検討・決定・実装のまとめ。次セッションはこのドキュメントと README を読めば続きから再開できる。
 
-## 現在の状態（v0.1.0 以降）
+## 現在の状態（2026-07-27 時点）
 
-- **現役候補は 2 枚のみ**: `drafts/mock-p2d2-oilmoon.html`（アイコン=3D 油絵の月）と `drafts/mock-p2e2-impasto.html`（アイコン=パレットナイフ）。**残る未決はアイコンのどちらかだけ**（ユーザー指示により 2 通りのまま並走中）
+- **公開中**: https://kuru-bushi.github.io/portfolio-design/ （GitHub Pages・Actions デプロイ）
+- 公開ページの実体は現役候補 D2 `drafts/mock-p2d2-oilmoon.html`。**D2 を編集して push すると自動で公開サイトに反映**される（`index.html` は git 管理外の生成物。直接編集しない。README「公開サイトの更新フロー」参照）
+- E2 `drafts/mock-p2e2-impasto.html`（パレットナイフ）も現役候補として残存。アイコンは D2 を採用したが「後から差し替え可能」扱い。**両候補への変更は常に同期させる**
 - 比較ハブ: `drafts/p2-index.html`（現役 2 案 + 決定事項リスト + 候補外はドロワー内リンク）
-- 本体 `index.html` への統合は未実施（アイコン決定後に行う）
 - git tag: **v0.1.0**（2026-07-26。以後の変更は次タグ候補）
+- 残タスクは「次セッションの TODO」参照
+
+## 2026-07-26〜27 追記: 公開と公開後の改修
+
+- **公開・自動同期**: index.html に D2 を統合して公開。以後は push 時に GitHub Actions（`.github/workflows/deploy-pages.yml`）が `scripts/build_index.py` で D2 から index.html を生成して Pages にデプロイ（Pages は workflow ビルドに切替済み。gh トークンに workflow スコープが必要）
+- **contact.html**: 簡易版を作成（「※作成中」表記）。メールは「〇を@に置き換えてください」方式で mailto なし・生アドレスなし
+- **favicon**: 候補 b「渦の芯」を適用（SVG データ URI）。候補比較ページ: `drafts/favicon-candidates.html`（a 渦と月 / b 渦の芯 / c 月と糸杉 / d 光輪の三日月、64/32/16px + タブモック）
+- **Articles 実データ化**: Zenn（somewhere_panda）の最新 5 件 + アーカイブリンク（全 7 件）。サイドバー Links の GitHub / Zenn も実 URL 化（X は未設定 → TODO 10）
+- **Works 再編（全 6 件）**: Kaggle と本サイトを削除。開発中サービスは「開発中」バッジ（破線・非リンク）、freelance-hub は公開に伴い SITE（https://13.193.123.16.sslip.io/ui, Lightsail・IP ベースなので IP 変更時は要差し替え）へ。調査系 2 件（Scan-to-BIM / Dify）は展開時のみ表示 + 全幅区切りラベル「調査・検証リポジトリ」
+- **文言**: 肩書きを COMPUTER VISION / AI / CLOUD / WEB ENGINEER に（モバイルヘッダーは CV / AI / CLOUD / WEB）。ヒーローの「AFTER VAN GOGH — THE STARRY NIGHT」を削除。「LLM エージェント」→「AI エージェント」
+- **不具合修正・性能改善**（Codex レビュー 3 本を docs/reviews/ に保存）:
+  1. フレームレート依存（120Hz の Mac で背景が 2 倍速）→ デルタタイム正規化（60fps 基準の倍率 k・k≤3 クランプ）で修正
+  2. タッチ端末の低負荷モード（SVG 歪みフィルタ無効 + 解像度等倍 + 30fps 間引き）。CPU x4 スロットルで 26.5→60.4fps。LINE 内ブラウザの激重対策
+  3. スマホの表示アクションを「中央フォーカス」方式に刷新（詳細は下の「レスポンシブ・スマホ仕様」）
+  4. LINE 内ブラウザ（WKWebView）でタップしても星が生まれない問題 → touchend の自前タップ判定に変更
 
 ## 決定事項の一覧
 
@@ -21,25 +37,23 @@ P-2《星月夜》採用後、本セッションで行った検討・決定・�
 | Articles 件数表示 | M 案「最新 5 件 + 過去記事アーカイブへ →」 |
 | サイドバー追加情報 | STATUS 等は廃止し **コピーライトのみ**（© 2026 IKEDA.K） |
 | 背景シルエット | **元の左の大糸杉 + 家々に統一**（小糸杉・教会は廃止）。画面幅に応じて軒数が増減、約半数の窓に灯り |
-| プロフィール | 名前 **IKEDA.K** / COMPUTER VISION / AI ENGINEER / 専門はコンピュータビジョン |
+| プロフィール | 名前 **IKEDA.K** / **COMPUTER VISION / AI / CLOUD / WEB ENGINEER**（2026-07-26 にクラウド・Web を追加。モバイルヘッダーは CV / AI / CLOUD / WEB） |
 | Career | 2026- 個人事業主 / 2025-2026 IT コンサルタント / 2022-2025 AI クラウドエンジニア / 2021-2022 Web エンジニア |
-| CONTACT | Career 下にセクション新設。`contact.html` へ飛ぶボタン（**リンク先ページは未作成**） |
-| ヒーロー説明文 | 「コンピュータビジョンと生成 AI が専門です。検出・認識モデルの開発から、LLM エージェント・RAG、クラウド構築まで。」（星月夜への言及文は削除済み） |
+| CONTACT | Career 下にセクション新設。`contact.html` へ飛ぶボタン（簡易版を作成済み・※作成中表記。メールは「〇を@に置き換え」方式） |
+| ヒーロー説明文 | 「コンピュータビジョンと生成 AI が専門です。検出・認識モデルの開発から、AI エージェント・RAG、クラウド構築まで。」（星月夜への言及文は削除済み。「AFTER VAN GOGH…」の eyebrow も 2026-07-26 削除） |
 
-## Works の掲載ルールと現在の 8 件
+## Works の掲載ルールと現在の 6 件（2026-07-27 更新）
 
-**ルール**: ①最上段は 3 サービス固定 ②リリース済みサービスは URL を載せる ③それ以外は **GitHub 公開リポジトリのみ**掲載（非公開は載せない）
+**ルール**: ①最上段はサービス（独自開発） ②リリース済みサービスは SITE ボタンで URL を載せる ③公開予定だが未リリースのサービスは「開発中」バッジ（破線・非リンク） ④調査・検証系リポジトリは**展開時のみ表示**（区切りラベル「調査・検証リポジトリ」の下）⑤非公開のものは載せない
 
-1. 確定申告サポートチャット — SITE: https://deploy-reiwa7-demo.dt8c64t3iq9ek.amplifyapp.com（唯一のリリース済み）
-2. freelance-hub 案件チェックサイト — 非公開・リンクなし
-3. 個人事業主経費計算サイト — 非公開・リンクなし
-4. 有価証券報告書 RAG 分析 — GITHUB: kuru-bushi/LocalAgent（開発場所: `DevClaude/01_PortFolioLocalAIAgent/LocalAgent`）
-5. Kaggle: LLM Science Exam — GITHUB: kuru-bushi/Kaggle_ViveCoding（more 側）
-6. Scan-to-BIM 検証 — GITHUB: kuru-bushi/tutorial-bim-cim（more 側）
-7. Dify セルフホスト RAG 検証 — GITHUB: kuru-bushi/PortFolioTestDify（more 側）
-8. ポートフォリオサイト本体 — SITE + GITHUB: kuru-bushi/portfolio-design（more 側）
+1. 確定申告サポートチャット — SITE: https://deploy-reiwa7-demo.dt8c64t3iq9ek.amplifyapp.com
+2. freelance-hub 案件チェックサイト — SITE: https://13.193.123.16.sslip.io/ui（2026-07-27 公開。IP ベースなので IP 変更時は要差し替え）
+3. 個人事業主経費計算サイト — 開発中バッジ
+4. 有価証券報告書 RAG 分析 — 開発中バッジ + GITHUB: kuru-bushi/LocalAgent（開発場所: `DevClaude/01_PortFolioLocalAIAgent/LocalAgent`）
+5. Scan-to-BIM 検証 — GITHUB: kuru-bushi/tutorial-bim-cim（展開側・調査系）
+6. Dify セルフホスト RAG 検証 — GITHUB: kuru-bushi/PortFolioTestDify（展開側・調査系）
 
-※ 非公開のため削除した旧掲載: 損傷作物検出 / 映像異常検知 / VSLAM / 風評検知エージェント / カメラアプリ
+※ 削除した旧掲載: 損傷作物検出 / 映像異常検知 / VSLAM / 風評検知エージェント / カメラアプリ（非公開）、Kaggle: LLM Science Exam / ポートフォリオサイト本体（2026-07-26 ユーザー指示で削除）
 
 ## レスポンシブ・スマホ仕様（実装済み）
 
